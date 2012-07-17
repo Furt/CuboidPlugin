@@ -1,0 +1,6 @@
+name: CuboidPlugin
+main: me.furt.cuboidplugin.Main
+version: 1.0
+author: furt
+database: false
+description: Powerful plugin now for Bukkit, allowing ingame word editing and per-area features.

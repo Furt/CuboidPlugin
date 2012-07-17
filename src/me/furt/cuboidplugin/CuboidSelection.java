@@ -1,3 +1,4 @@
+package me.furt.cuboidplugin;
 public class CuboidSelection {	
 	boolean status = false;	// status == false --> the first corner is to be selected
 	boolean undoable = false;

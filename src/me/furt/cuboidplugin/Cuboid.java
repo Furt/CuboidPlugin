@@ -1,6 +1,13 @@
+package me.furt.cuboidplugin;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("serial")
 public class Cuboid implements Serializable{
@@ -119,7 +126,7 @@ public class Cuboid implements Serializable{
 	public void playerEnters( Player player ){
 		this.presentPlayers.add(player.getName());
 		if ( this.welcomeMessage != null )
-			player.sendMessage(Colors.Yellow + this.welcomeMessage);
+			player.sendMessage(ChatColor.YELLOW + this.welcomeMessage);
 		if ( this.inventories ){
 			CuboidInventory cuboidInventory;
 			boolean newVisitor = true;
@@ -146,7 +153,10 @@ public class Cuboid implements Serializable{
 			// restore old inventory
 			if (!newVisitor){
 				for (CuboidItem item : cuboidInventory.inside){
-					player.giveItem( new Item(item.itemId, item.amount, item.slot) );
+					ItemStack is = new ItemStack(item.itemId);
+					is.setAmount(item.amount);
+					player.getInventory().addItem(is);
+					//player.giveItem( new Item(item.itemId, item.amount, item.slot) );
 				}
 			}
 		}
@@ -155,7 +165,7 @@ public class Cuboid implements Serializable{
 	public void playerLeaves( Player player ){
 		this.presentPlayers.remove(player.getName());
 		if ( this.farewellMessage != null )
-			player.sendMessage(Colors.Yellow + this.farewellMessage);
+			player.sendMessage(ChatColor.YELLOW + this.farewellMessage);
 		if ( this.inventories ){
 			CuboidInventory cuboidInventory = playerInventories.get(player.getName());
 			Inventory insideInventory = player.getInventory();
@@ -173,17 +183,20 @@ public class Cuboid implements Serializable{
 			
 			// restore old inventory
 			for (CuboidItem item : cuboidInventory.outside){
-				player.giveItem(new Item(item.itemId, item.amount, item.slot));
+				ItemStack is = new ItemStack(item.itemId);
+				is.setAmount(item.amount);
+				player.getInventory().addItem(is);
+				//player.giveItem(new Item(item.itemId, item.amount, item.slot));
 			}
 		}
 	}
 
 	public void printInfos(Player player, boolean allowed, boolean players, boolean commands ){
-		player.sendMessage(Colors.Yellow + "----    Area information    ----");
-		player.sendMessage(Colors.Yellow + "Name : " + Colors.White + this.name);
-		player.sendMessage(Colors.Yellow + "Protection : " + Colors.White + (this.protection ? "enabled" : "disabled"));
-		player.sendMessage(Colors.Yellow + "Restriction : " + Colors.White + (this.restricted ? "enabled" : "disabled"));
-		player.sendMessage(Colors.Yellow + "Area specific inventory : " + Colors.White + (this.inventories ? "yes" : "no"));
+		player.sendMessage(ChatColor.YELLOW + "----    Area information    ----");
+		player.sendMessage(ChatColor.YELLOW+ "Name : " + ChatColor.WHITE + this.name);
+		player.sendMessage(ChatColor.YELLOW + "Protection : " + ChatColor.WHITE + (this.protection ? "enabled" : "disabled"));
+		player.sendMessage(ChatColor.YELLOW + "Restriction : " + ChatColor.WHITE + (this.restricted ? "enabled" : "disabled"));
+		player.sendMessage(ChatColor.YELLOW + "Area specific inventory : " + ChatColor.WHITE + (this.inventories ? "yes" : "no"));
 		if ( allowed ){
 			printAllowedPlayers(player);
 		}
@@ -197,37 +210,37 @@ public class Cuboid implements Serializable{
 	
 	public void printAllowedPlayers(Player player){
 		if ( this.allowedPlayers.size() == 0 ){
-			player.sendMessage(Colors.Yellow + "Allowed players : " + Colors.White + "<list is empty>");
+			player.sendMessage(ChatColor.YELLOW + "Allowed players : " + ChatColor.WHITE + "<list is empty>");
 			return;
 		}
 		String list = "";
 		for ( String playerName : this.allowedPlayers){
 			list += " " + playerName;
 		}
-		player.sendMessage(Colors.Yellow + "Allowed players :" + Colors.White + list);
+		player.sendMessage(ChatColor.YELLOW + "Allowed players :" + ChatColor.WHITE + list);
 	}
 	
 	public void printPresentPlayers(Player player){
 		if ( this.presentPlayers.size() == 0 ){
-			player.sendMessage(Colors.Yellow + "Present players : " + Colors.White + "<list is empty>");
+			player.sendMessage(ChatColor.YELLOW + "Present players : " + ChatColor.WHITE + "<list is empty>");
 			return;
 		}
 		String list = "";
 		for ( String playerName : this.presentPlayers){
 			list += " " + playerName;
 		}
-		player.sendMessage(Colors.Yellow + "Present players :" + Colors.White + list);
+		player.sendMessage(ChatColor.YELLOW + "Present players :" + ChatColor.WHITE + list);
 	}
 	
 	public void printDisallowedCommands(Player player){
 		if ( this.disallowedCommands.size() == 0 ){
-			player.sendMessage(Colors.Yellow + "Disallowed commands : " + Colors.White + "<list is empty>");
+			player.sendMessage(ChatColor.YELLOW + "Disallowed commands : " + ChatColor.WHITE + "<list is empty>");
 			return;
 		}
 		String list = "";
 		for ( String command : this.disallowedCommands){
 			list += " " + command;
 		}
-		player.sendMessage(Colors.Yellow + "Disallowed commands :" + Colors.White + list);
+		player.sendMessage(ChatColor.YELLOW + "Disallowed commands :" + ChatColor.WHITE + list);
 	}
 }

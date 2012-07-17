@@ -1,4 +1,7 @@
+package me.furt.cuboidplugin;
 import java.io.Serializable;
+
+import org.bukkit.entity.Item;
 
 @SuppressWarnings("serial")
 public class CuboidItem implements Serializable{	

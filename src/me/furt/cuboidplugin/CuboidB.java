@@ -36,17 +36,9 @@ public class CuboidB implements Serializable{
 		return false;
 	}
 	
+	// TODO come back to later
 	public boolean isAllowed( Player player ){
-		String playerName = player.getName().toLowerCase();
-		for (String allowedPlayer : allowedPlayers){
-			if ( allowedPlayer.equalsIgnoreCase(playerName) || allowedPlayer.equalsIgnoreCase("o:"+playerName) ){
-				return true;
-			}
-			if ( allowedPlayer.startsWith("g:") && player.isInGroup(allowedPlayer.substring(2)) ){
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 	
 	public boolean isAllowed( String command ){
@@ -133,18 +125,21 @@ public class CuboidB implements Serializable{
 			Inventory outsideInventory = player.getInventory();
 			
 			cuboidInventory.outside = new ArrayList<CuboidItem>();
-			for (int i=0; i<outsideInventory.getArray().length; i++){
-				Item item = outsideInventory.getItemFromSlot(i);
-				if (item != null)
-					cuboidInventory.outside.add(new CuboidItem(item));;
+			for (int i = 0; i < outsideInventory.getContents().length; i++) {
+				ItemStack item = outsideInventory.getItem(i);
+				if (item != null) {
+					cuboidInventory.outside.add(new CuboidItem(item));
+					outsideInventory.remove(i);
+				}
 			}
-			outsideInventory.clearContents();
-			outsideInventory.updateInventory();
 			playerInventories.put(player.getName(), cuboidInventory);
 			
 			if (!newVisitor){
-				for (CuboidItem item : cuboidInventory.inside){
-					player.giveItem( new Item(item.itemId, item.amount, item.slot) );
+				for (CuboidItem item : cuboidInventory.inside) {
+					ItemStack is = new ItemStack(item.itemId);
+					is.setDurability((short) item.durability);
+					is.setAmount(item.amount);
+					player.getInventory().addItem(is);
 				}
 			}
 		}
@@ -164,20 +159,20 @@ public class CuboidB implements Serializable{
 			Inventory insideInventory = player.getInventory();
 			
 			cuboidInventory.inside = new ArrayList<CuboidItem>();
-			for (int i=0; i<insideInventory.getArray().length; i++){
-				Item item = insideInventory.getItemFromSlot(i);
-				if (item != null)
-					cuboidInventory.inside.add(new CuboidItem(item));
+			for (int i = 0; i < insideInventory.getContents().length; i++) {
+				ItemStack item = insideInventory.getItem(i);
+				if (item != null) {
+					cuboidInventory.outside.add(new CuboidItem(item));
+					insideInventory.remove(i);
+				}
 			}
-			insideInventory.clearContents();
-			insideInventory.updateInventory();
 			playerInventories.put(player.getName(), cuboidInventory);
 			
-			for (CuboidItem item : cuboidInventory.outside){
+			for (CuboidItem item : cuboidInventory.outside) {
 				ItemStack is = new ItemStack(item.itemId);
+				is.setDurability((short) item.durability);
 				is.setAmount(item.amount);
 				player.getInventory().addItem(is);
-				//player.giveItem(new Item(item.itemId, item.amount, item.slot));
 			}
 		}
 	}

@@ -151,8 +151,6 @@ public class Cuboid implements Serializable {
 					is.setDurability((short) item.durability);
 					is.setAmount(item.amount);
 					player.getInventory().addItem(is);
-					// player.giveItem( new Item(item.itemId, item.amount,
-					// item.slot) );
 				}
 			}
 		}
@@ -179,13 +177,11 @@ public class Cuboid implements Serializable {
 			playerInventories.put(player.getName(), cuboidInventory);
 
 			// restore old inventory
-			for (CuboidItem item : cuboidInventory.inside) {
+			for (CuboidItem item : cuboidInventory.outside) {
 				ItemStack is = new ItemStack(item.itemId);
 				is.setDurability((short) item.durability);
 				is.setAmount(item.amount);
 				player.getInventory().addItem(is);
-				// player.giveItem( new Item(item.itemId, item.amount,
-				// item.slot) );
 			}
 		}
 	}

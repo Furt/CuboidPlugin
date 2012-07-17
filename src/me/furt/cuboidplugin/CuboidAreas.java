@@ -46,6 +46,11 @@ public class CuboidAreas {
 	static String currentDataVersion = "C";
 	static int addedHeight = 0;
 	static boolean newestHavePriority = true;
+	static Main plugin;
+	
+	public CuboidAreas(Main instance) {
+		this.plugin = instance;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static void loadCuboidAreas() {
@@ -97,7 +102,7 @@ public class CuboidAreas {
 					continue;
 				}
 
-				CuboidC newArea = new CuboidC();
+				CuboidC newArea = new CuboidC(plugin);
 				int[] tempCoords = new int[6];
 				for (short i = 0; i < 6; i++) {
 					tempCoords[i] = Integer.parseInt(donnees[i]);
@@ -146,7 +151,7 @@ public class CuboidAreas {
 
 			listOfCuboids = new ArrayList<CuboidC>();
 			for (Cuboid oldCuboid : oldCuboids) {
-				CuboidC newCuboid = new CuboidC();
+				CuboidC newCuboid = new CuboidC(plugin);
 				newCuboid.name = oldCuboid.name;
 				newCuboid.coords = oldCuboid.coords;
 				newCuboid.allowedPlayers = oldCuboid.allowedPlayers;
@@ -176,7 +181,7 @@ public class CuboidAreas {
 
 			listOfCuboids = new ArrayList<CuboidC>();
 			for (CuboidB oldCuboid : oldCuboids) {
-				CuboidC newCuboid = new CuboidC();
+				CuboidC newCuboid = new CuboidC(plugin);
 				newCuboid.name = oldCuboid.name;
 				newCuboid.coords = oldCuboid.coords;
 				newCuboid.allowedPlayers = oldCuboid.allowedPlayers;
@@ -310,7 +315,7 @@ public class CuboidAreas {
 			if (cuboid.contains(loc) && !presence.contains(cuboid)) {
 				cuboid.playerEnters(player);
 				if (cuboid.heal && healPower > 0 && player.getHealth() > 0) {
-					healTimer.schedule(new CuboidHealJob(player.getName(),
+					healTimer.schedule(new CuboidHealJob(plugin, player.getName(),
 							cuboid), healDelay);
 				}
 				presence.add(cuboid);
@@ -380,7 +385,7 @@ public class CuboidAreas {
 		int[] firstPoint = CuboidAction.getPoint(playerName, false);
 		int[] secondPoint = CuboidAction.getPoint(playerName, true);
 
-		CuboidC newCuboid = new CuboidC();
+		CuboidC newCuboid = new CuboidC(plugin);
 		for (short i = 0; i < 3; i++)
 			newCuboid.coords[i] = firstPoint[i];
 		for (short i = 0; i < 3; i++)
@@ -438,7 +443,7 @@ public class CuboidAreas {
 			secondPoint[1] += addedHeight;
 		}
 
-		CuboidC newCuboid = new CuboidC();
+		CuboidC newCuboid = new CuboidC(plugin);
 		for (short i = 0; i < 3; i++)
 			newCuboid.coords[i] = firstPoint[i];
 		for (short i = 0; i < 3; i++)
@@ -482,7 +487,7 @@ public class CuboidAreas {
 					firstPoint[2], secondPoint[0], secondPoint[1],
 					secondPoint[2]);
 
-		byte returnCode = new CuboidBackup(cuboid, true).writeToDisk();
+		byte returnCode = new CuboidBackup(plugin, cuboid, true).writeToDisk();
 		player.sendMessage(ChatColor.GREEN + "return code of backup : "
 				+ returnCode);
 
@@ -500,7 +505,7 @@ public class CuboidAreas {
 					cuboid.coords[2], cuboid.coords[3], cuboid.coords[4],
 					cuboid.coords[5]);
 
-		if (new CuboidBackup(cuboid, false).deleteFromDisc()) {
+		if (new CuboidBackup(plugin, cuboid, false).deleteFromDisc()) {
 			player.sendMessage(ChatColor.GREEN
 					+ "Cuboid area successfuly removed");
 			if (Main.logging)

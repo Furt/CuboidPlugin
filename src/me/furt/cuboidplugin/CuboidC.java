@@ -12,17 +12,17 @@ public class CuboidC implements Serializable {
 	String name = "noname";
 	int[] coords = new int[6]; // int[]{firstX, firstY, firstZ, secondX,
 								// secondY, secondZ}
-	boolean protection = false;
-	boolean restricted = false;
+	public boolean protection = false;
+	public boolean restricted = false;
 	boolean trespassing = false;
 	boolean PvP = true;
 	boolean heal = false;
-	boolean creeper = true;
-	boolean sanctuary = false;
+	public boolean creeper = true;
+	public boolean sanctuary = false;
 	ArrayList<String> allowedPlayers = new ArrayList<String>();
 	String welcomeMessage = null;
 	String farewellMessage = null;
-	String warning = null;
+	public String warning = null;
 	ArrayList<String> disallowedCommands = new ArrayList<String>();
 	private Main plugin;
 
@@ -41,19 +41,9 @@ public class CuboidC implements Serializable {
 		return contains((int) l.getX(), (int) l.getY(), (int) l.getZ());
 	}
 
+	// TODO come back to later
 	public boolean isAllowed(Player player) {
-		String playerName = player.getName().toLowerCase();
-		for (String allowedPlayer : allowedPlayers) {
-			if (allowedPlayer.equalsIgnoreCase(playerName)
-					|| allowedPlayer.equalsIgnoreCase("o:" + playerName)) {
-				return true;
-			}
-			if (allowedPlayer.startsWith("g:")
-					&& player.isInGroup(allowedPlayer.substring(2))) {
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 
 	public boolean isAllowed(String command) {

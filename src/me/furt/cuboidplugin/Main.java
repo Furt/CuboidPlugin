@@ -15,7 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -31,16 +33,16 @@ public class Main extends JavaPlugin {
 	static ArrayList<Integer> operableItems;
 	static boolean allowBlacklistedBlocks = false;
 	static boolean chestProtection = true;
-	static int mainToolID = 269;
-	static int checkToolID = 268;
+	public static int mainToolID = 269;
+	public static int checkToolID = 268;
 
-	static boolean protectionSytem = true;
-	static boolean protectionWarn = false;
+	public static boolean protectionSytem = true;
+	public static boolean protectionWarn = false;
 	// worldwide area features
 	static String[] restrictedGroups;
 	static boolean globalDisablePvP = false;
-	static boolean globalCreeperProt = false;
-	static boolean globalSanctuary = false;
+	public static boolean globalCreeperProt = false;
+	public static boolean globalSanctuary = false;
 	// local area features default values
 	static boolean protectionOnDefault = false;
 	static boolean restrictedOnDefault = false;
@@ -49,7 +51,7 @@ public class Main extends JavaPlugin {
 	static boolean pvpDisabledOnDefault = false;
 	static boolean healOnDefault = false;
 	// local area features allowance for owners/and protect-allowed
-	static boolean onMoveFeatures = true;
+	public static boolean onMoveFeatures = true;
 	static boolean allowOwnersToBackup = false;
 	static boolean allowRestrictedZones = false;
 	static boolean allowNoPvpZones = true;
@@ -57,7 +59,7 @@ public class Main extends JavaPlugin {
 	static boolean allowSanctuaries = false;
 	// List of players denied entry to a restricted cuboid, that are to not
 	// trigger the teleport functions
-	static ArrayList<String> notTeleport;
+	public static ArrayList<String> notTeleport;
 	// Temporaty fix for wrinting to disk...
 	static long writeDelay = 1800000;
 
@@ -176,21 +178,8 @@ public class Main extends JavaPlugin {
 				}
 			}
 		}
-
-		try {
-			/*
-			 * SQL if (SQLstorage){ CuboidAreas.SQLdriver =
-			 * properties.getString("SQLdriver", "com.mysql.jdbc.Driver");
-			 * CuboidAreas.SQLusername = properties.getString("SQLuser",
-			 * "root"); CuboidAreas.SQLpassword =
-			 * properties.getString("SQLpass", "root"); CuboidAreas.SQLdb =
-			 * properties.getString("SQLdb",
-			 * "jdbc:mysql://localhost:3306/minecraft"); try {
-			 * Class.forName(CuboidAreas.SQLdriver); } catch
-			 * (ClassNotFoundException ex) {
-			 * log.severe("CuboidPlugin : unable to find driver class " +
-			 * CuboidAreas.SQLdriver); SQLstorage = false; } }
-			 */
+		// TODO update config
+		/*try {
 			// Protection properties
 			CuboidAreas.addedHeight = properties
 					.getInt("minProtectedHeight", 0);
@@ -278,7 +267,7 @@ public class Main extends JavaPlugin {
 		} catch (Exception e) {
 			log.log(Level.SEVERE,
 					"Exception while reading from server.properties", e);
-		}
+		}*/
 
 	}
 
@@ -397,7 +386,7 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	private boolean isGloballyRestricted(Player player) {
+	public boolean isGloballyRestricted(Player player) {
 		if (player.hasPermission("cuboidplugin.globalretrict"))
 			return true;
 
@@ -405,52 +394,9 @@ public class Main extends JavaPlugin {
 	}
 
 	private void broadcast(String message) {
-		for (Player p : etc.getServer().getPlayerList()) {
+		for (Player p : this.getServer().getOnlinePlayers()) {
 			p.sendMessage(message);
 		}
-	}
-
-	// ////////////////////////////
-	// // LISTENER STUFF ////
-	// ////////////////////////////
-
-	public void initialize() {
-		CuboidListener listener = new CuboidListener();
-		PluginLoader loader = etc.getLoader();
-		loader.addListener(PluginLoader.Hook.COMMAND, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.ITEM_USE, listener, this,
-				PluginListener.Priority.HIGH);
-		loader.addListener(PluginLoader.Hook.BLOCK_PLACE, listener, this,
-				PluginListener.Priority.HIGH);
-		loader.addListener(PluginLoader.Hook.BLOCK_BROKEN, listener, this,
-				PluginListener.Priority.HIGH);
-		loader.addListener(PluginLoader.Hook.BLOCK_RIGHTCLICKED, listener,
-				this, PluginListener.Priority.HIGH);
-		loader.addListener(PluginLoader.Hook.PLAYER_MOVE, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.TELEPORT, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.COMPLEX_BLOCK_CHANGE, listener,
-				this, PluginListener.Priority.HIGH);
-		loader.addListener(PluginLoader.Hook.COMPLEX_BLOCK_SEND, listener,
-				this, PluginListener.Priority.HIGH);
-		loader.addListener(PluginLoader.Hook.SERVERCOMMAND, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.DISCONNECT, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.KICK, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.BAN, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.IPBAN, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.DAMAGE, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.EXPLODE, listener, this,
-				PluginListener.Priority.MEDIUM);
-		loader.addListener(PluginLoader.Hook.MOB_SPAWN, listener, this,
-				PluginListener.Priority.MEDIUM);
 	}
 
 	public class CuboidListener implements Listener {
@@ -598,7 +544,7 @@ public class Main extends JavaPlugin {
 				if (split[2].equalsIgnoreCase("create")
 						|| split[2].equalsIgnoreCase("add")) {
 					if (!player.hasPermission("/protect")) {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not allowed to use this command.");
 						return true;
 					}
@@ -665,29 +611,29 @@ public class Main extends JavaPlugin {
 				} else if (split[2].startsWith("info")) {
 					cuboidArea.printInfos(player, true, true);
 				} else if (split[2].startsWith("select")) {
-					if (!player.canUseCommand("/cuboid")) {
-						player.sendMessage(Colors.Rose
+					if (!player.hasPermission("/cuboid")) {
+						player.sendMessage(ChatColor.RED
 								+ "You are not allowed to use this command.");
 						return true;
 					}
 					CuboidAction.setBothPoint(playerName, cuboidArea.coords);
-					player.sendMessage(Colors.Green + "Area selected : "
+					player.sendMessage(ChatColor.GREEN + "Area selected : "
 							+ cuboidArea.name);
 				} else if (split[2].equalsIgnoreCase("move")) {
-					if (!player.canUseCommand("/protect")) {
-						player.sendMessage(Colors.Rose
+					if (!player.hasPermission("/protect")) {
+						player.sendMessage(ChatColor.RED
 								+ "You are not allowed to use this command.");
 						return true;
 					}
 					if (CuboidAction.isReady(playerName, true))
 						CuboidAreas.moveCuboidArea(player, cuboidArea);
 					else
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 				} else if (split[2].equalsIgnoreCase("delete")
 						|| split[2].equalsIgnoreCase("remove")) {
-					if (!player.canUseCommand("/protect")) {
-						player.sendMessage(Colors.Rose
+					if (!player.hasPermission("/protect")) {
+						player.sendMessage(ChatColor.RED
 								+ "You are not allowed to use this command.");
 						return true;
 					}
@@ -708,126 +654,126 @@ public class Main extends JavaPlugin {
 									cuboidArea.coords[0], cuboidArea.coords[1],
 									cuboidArea.coords[2], cuboidArea.coords[3],
 									cuboidArea.coords[4], cuboidArea.coords[5]);
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Protection : "
 									+ (cuboidArea.protection ? "enabled"
 											: "disabled"));
 						} else if (split[3].startsWith("restric")) {
-							if (!player.canUseCommand("/cuboidAreas")
+							if (!player.hasPermission("/cuboidAreas")
 									&& !allowRestrictedZones) {
-								player.sendMessage(Colors.Yellow
+								player.sendMessage(ChatColor.YELLOW
 										+ "Restricted areas switching is disabled");
 								return true;
 							}
 							cuboidArea.restricted = !cuboidArea.restricted;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Restricted access : "
 									+ (cuboidArea.restricted ? "enabled"
 											: "disabled"));
 						} else if (split[3].equalsIgnoreCase("pvp")) {
-							if (!player.canUseCommand("/cuboidAreas")
+							if (!player.hasPermission("/cuboidAreas")
 									&& !allowNoPvpZones) {
-								player.sendMessage(Colors.Yellow
+								player.sendMessage(ChatColor.YELLOW
 										+ "No-PvP areas switching is disabled");
 								return true;
 							}
 							cuboidArea.PvP = !cuboidArea.PvP;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "No PvP allowed : "
 									+ (!cuboidArea.PvP ? "enabled" : "disabled"));
 						} else if (split[3].equalsIgnoreCase("heal")) {
-							if (!player.canUseCommand("/cuboidAreas")
+							if (!player.hasPermission("/cuboidAreas")
 									&& CuboidAreas.healPower == 0) {
-								player.sendMessage(Colors.Yellow
+								player.sendMessage(ChatColor.YELLOW
 										+ "Healing areas switching is disabled");
 								return true;
 							}
 							cuboidArea.heal = !cuboidArea.heal;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Healing : "
 									+ (cuboidArea.heal ? "enabled" : "disabled"));
 						} else if (split[3].equalsIgnoreCase("sanctuary")) {
-							if (!player.canUseCommand("/cuboidAreas")
+							if (!player.hasPermission("/cuboidAreas")
 									&& !allowSanctuaries) {
-								player.sendMessage(Colors.Yellow
+								player.sendMessage(ChatColor.YELLOW
 										+ "Sanctuaries switching is disabled");
 								return true;
 							}
 							cuboidArea.sanctuary = !cuboidArea.sanctuary;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Sanctuary : "
 									+ (cuboidArea.sanctuary ? "enabled"
 											: "disabled"));
 						} else if (split[3].equalsIgnoreCase("creeper")) {
-							if (!player.canUseCommand("/cuboidAreas")
+							if (!player.hasPermission("/cuboidAreas")
 									&& !allowNoCreeperZones) {
-								player.sendMessage(Colors.Yellow
+								player.sendMessage(ChatColor.YELLOW
 										+ "No-Creeper areas switching is disabled");
 								return true;
 							}
 							cuboidArea.creeper = !cuboidArea.creeper;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "No creeper explosion : "
 									+ (!cuboidArea.creeper ? "enabled"
 											: "disabled"));
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : toggle <protection/restriction/pvp/heal/sanctuary/creeper>");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not an owner of this cuboid area.");
 						return true;
 					}
 				} else if (split[2].equalsIgnoreCase("backup")) {
 					if (cuboidArea.isOwner(player)
-							|| player.canUseCommand("/protect")) {
-						byte returnCode = new CuboidBackup(cuboidArea, true)
+							|| player.hasPermission("/protect")) {
+						byte returnCode = new CuboidBackup(null, cuboidArea, true)
 								.writeToDisk();
 						if (returnCode == 0) {
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Cuboid area successfuly backed up");
 						} else if (returnCode == 1) {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Error when creating necessary folders");
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Error when writing the cuboid file");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not an owner of this cuboid area.");
 						return true;
 					}
 				} else if (split[2].equalsIgnoreCase("restore")) {
 					if ((allowOwnersToBackup && cuboidArea.isOwner(player))
-							|| player.canUseCommand("/protect")) {
-						byte returnCode = new CuboidBackup(cuboidArea, false)
+							|| player.hasPermission("/protect")) {
+						byte returnCode = new CuboidBackup(null, cuboidArea, false)
 								.loadFromDisc();
 						if (returnCode == 0) {
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Cuboid area successfuly restored");
 						} else if (returnCode == 1) {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Found no backup of this cuboid Area");
 						} else if (returnCode == 2) {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Not allowed to access the backup file");
 						} else if (returnCode == 3) {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Error while reading the backup file");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not an owner of this cuboid area.");
 						return true;
 					}
 				} else if (split[2].equalsIgnoreCase("welcome")) {
 					if (cuboidArea.isOwner(player)
-							|| player.canUseCommand("/protect")) {
+							|| player.hasPermission("/protect")) {
 						if (split.length == 3) {
 							cuboidArea.welcomeMessage = null;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Welcome message disabled.");
 							return true;
 						}
@@ -836,19 +782,19 @@ public class Main extends JavaPlugin {
 							message += " " + split[i];
 						}
 						cuboidArea.welcomeMessage = message.trim();
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "Welcome message successfuly changed.");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not an owner of this cuboid area.");
 						return true;
 					}
 				} else if (split[2].equalsIgnoreCase("farewell")) {
 					if (cuboidArea.isOwner(player)
-							|| player.canUseCommand("/protect")) {
+							|| player.hasPermission("/protect")) {
 						if (split.length == 3) {
 							cuboidArea.farewellMessage = null;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Farewell message disabled.");
 							return true;
 						}
@@ -857,19 +803,19 @@ public class Main extends JavaPlugin {
 							message += " " + split[i];
 						}
 						cuboidArea.farewellMessage = message.trim();
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "Farewell message successfuly changed.");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not an owner of this cuboid area.");
 						return true;
 					}
 				} else if (split[2].equalsIgnoreCase("warning")) {
 					if (cuboidArea.isOwner(player)
-							|| player.canUseCommand("/protect")) {
+							|| player.hasPermission("/protect")) {
 						if (split.length == 3) {
 							cuboidArea.warning = null;
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "Restricted area message disabled.");
 							return true;
 						}
@@ -878,10 +824,10 @@ public class Main extends JavaPlugin {
 							message += " " + split[i];
 						}
 						cuboidArea.warning = message.trim();
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "Restricted area message successfuly changed.");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "You are not an owner of this cuboid area.");
 						return true;
 					}
@@ -893,7 +839,7 @@ public class Main extends JavaPlugin {
 			// // PROTECTION COMMANDS ////
 			// /////////////////////////////////
 
-			else if (player.canUseCommand("/protect")) {
+			else if (player.hasPermission("/protect")) {
 				boolean highProtect = split[0].equalsIgnoreCase("/highprotect");
 				if (split[0].equalsIgnoreCase("/protect") || highProtect) {
 					if (CuboidAction.isReady(playerName, true)) {
@@ -908,11 +854,11 @@ public class Main extends JavaPlugin {
 							CuboidAreas.protectCuboidArea(player, ownersList,
 									cuboidName, highProtect);
 						} else {
-							player.sendMessage(Colors.Yellow
+							player.sendMessage(ChatColor.YELLOW
 									+ "You need to specify at least one player or group, and a name.");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -923,7 +869,7 @@ public class Main extends JavaPlugin {
 			// // CUBOID COMMANDS ////
 			// /////////////////////////////
 
-			if (player.canUseCommand("/cuboid")) {
+			if (player.hasPermission("/cuboid")) {
 
 				// ///////////////////////////
 				// // CORE COMMANDS ////
@@ -931,12 +877,12 @@ public class Main extends JavaPlugin {
 
 				if (split[0].equalsIgnoreCase("/csize")) {
 					if (CuboidAction.isReady(playerName, true)) {
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "The selected cuboid size is : "
 								+ CuboidAction.blocksCount(playerName)
 								+ " blocks");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -945,10 +891,10 @@ public class Main extends JavaPlugin {
 				else if (split[0].equalsIgnoreCase("/cdel")) {
 					if (CuboidAction.isReady(playerName, true)) {
 						CuboidAction.emptyCuboid(playerName);
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "The cuboid is now empty");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -964,27 +910,19 @@ public class Main extends JavaPlugin {
 								blocID = etc.getDataSource().getItem(split[1]);
 							}
 							if (isValidBlockID(blocID)) {
-
-								if (!player.canIgnoreRestrictions()
-										&& isBlackListedBlockID(blocID)) {
-									player.sendMessage(Colors.Rose + blocID
-											+ " is a blacklisted block type !");
-									return true;
-								}
-
 								CuboidAction.fillCuboid(playerName, blocID);
-								player.sendMessage(Colors.Green
+								player.sendMessage(ChatColor.GREEN
 										+ "The cuboid has been filled");
 							} else {
-								player.sendMessage(Colors.Rose + blocID
+								player.sendMessage(ChatColor.RED +""+ blocID
 										+ " is not a valid block ID.");
 							}
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /cfill <block id|name>");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -1004,38 +942,31 @@ public class Main extends JavaPlugin {
 									replaceParams[i] = etc.getDataSource()
 											.getItem(split[i + 1]);
 									if (replaceParams[i] == 0) {
-										player.sendMessage(Colors.Rose
+										player.sendMessage(ChatColor.RED
 												+ split[i + 1]
 												+ " is not a valid block name.");
 										return true;
 									}
 								}
 								if (!isValidBlockID(replaceParams[i])) {
-									player.sendMessage(Colors.Rose
-											+ replaceParams[i]
+									player.sendMessage(ChatColor.RED
+											+""+ replaceParams[i]
 											+ " is not a valid block ID.");
 									return true;
 								}
 							}
 
 							int blockID = replaceParams[replaceParams.length - 1];
-							if (!player.canIgnoreRestrictions()
-									&& isBlackListedBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + blockID
-										+ " is a blacklisted block type !");
-								return true;
-							}
-
 							CuboidAction.replaceBlocks(playerName,
 									replaceParams);
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "The blocks have been replaced");
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /creplace <block id|name> <block id|name>");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -1048,9 +979,9 @@ public class Main extends JavaPlugin {
 				else if (split[0].equalsIgnoreCase("/cmove")) {
 					if (CuboidAction.isReady(playerName, true)) {
 						if (split.length < 3) {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /cmove <direction> <distance>");
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Direction : Up/Down/North/East/West/South");
 							return true;
 						}
@@ -1059,12 +990,12 @@ public class Main extends JavaPlugin {
 						try {
 							howFar = Integer.parseInt(split[2]);
 							if (howFar < 0) {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "Distance must be > 0 !");
 								return true;
 							}
 						} catch (NumberFormatException n) {
-							player.sendMessage(Colors.Rose + split[2]
+							player.sendMessage(ChatColor.RED + split[2]
 									+ " is not a valid distance.");
 							return true;
 						}
@@ -1073,7 +1004,7 @@ public class Main extends JavaPlugin {
 								.moveCuboidContent(player, split[1], howFar);
 
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -1095,12 +1026,12 @@ public class Main extends JavaPlugin {
 							try {
 								radius = Integer.parseInt(split[1]);
 							} catch (NumberFormatException n) {
-								player.sendMessage(Colors.Rose + split[1]
+								player.sendMessage(ChatColor.RED + split[1]
 										+ " is not a valid radius.");
 								return true;
 							}
 							if (radius < 1) {
-								player.sendMessage(Colors.Rose + split[1]
+								player.sendMessage(ChatColor.RED + split[1]
 										+ " is not a valid radius.");
 								return true;
 							}
@@ -1112,15 +1043,8 @@ public class Main extends JavaPlugin {
 							}
 
 							if (!isValidBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + split[2]
+								player.sendMessage(ChatColor.RED + split[2]
 										+ " is not a valid block ID.");
-								return true;
-							}
-
-							if (!player.canIgnoreRestrictions()
-									&& isBlackListedBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + blockID
-										+ " is a blacklisted block type !");
 								return true;
 							}
 
@@ -1128,7 +1052,7 @@ public class Main extends JavaPlugin {
 								try {
 									height = Integer.parseInt(split[3]);
 								} catch (NumberFormatException n) {
-									player.sendMessage(Colors.Rose + split[3]
+									player.sendMessage(ChatColor.RED + split[3]
 											+ " is not a valid height.");
 									return true;
 								}
@@ -1142,13 +1066,13 @@ public class Main extends JavaPlugin {
 							if (disc) {
 								CuboidAction.buildCircle(playerName, radius,
 										blockID, height, true);
-								player.sendMessage(Colors.Green + "The "
+								player.sendMessage(ChatColor.GREEN + "The "
 										+ ((height == 0) ? "disc" : "cylinder")
 										+ " has been build");
 							} else {
 								CuboidAction.buildCircle(playerName, radius,
 										blockID, height, false);
-								player.sendMessage(Colors.Green
+								player.sendMessage(ChatColor.GREEN
 										+ "The "
 										+ ((height == 0) ? "circle"
 												: "cylinder")
@@ -1157,15 +1081,15 @@ public class Main extends JavaPlugin {
 
 						} else {
 							if (disc) {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "Usage : /cdisc <radius> <block id|name> [height]");
 							} else {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "Usage : /ccircle <radius> <block id|name> [height]");
 							}
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No point has been selected");
 					}
 					return true;
@@ -1182,12 +1106,12 @@ public class Main extends JavaPlugin {
 							try {
 								radius = Integer.parseInt(split[1]);
 							} catch (NumberFormatException n) {
-								player.sendMessage(Colors.Rose + split[1]
+								player.sendMessage(ChatColor.RED + split[1]
 										+ " is not a valid radius.");
 								return true;
 							}
 							if (radius < 2) {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "The radius has to be greater than 1");
 								return true;
 							}
@@ -1198,41 +1122,34 @@ public class Main extends JavaPlugin {
 								blockID = etc.getDataSource().getItem(split[2]);
 							}
 							if (!isValidBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + split[2]
+								player.sendMessage(ChatColor.RED + split[2]
 										+ " is not a valid block ID.");
-								return true;
-							}
-
-							if (!player.canIgnoreRestrictions()
-									&& isBlackListedBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + blockID
-										+ " is a blacklisted block type !");
 								return true;
 							}
 
 							if (ball) {
 								CuboidAction.buildShpere(playerName, radius,
 										blockID, true);
-								player.sendMessage(Colors.Green
+								player.sendMessage(ChatColor.GREEN
 										+ "The ball has been built");
 							} else {
 								CuboidAction.buildShpere(playerName, radius,
 										blockID, false);
-								player.sendMessage(Colors.Green
+								player.sendMessage(ChatColor.GREEN
 										+ "The sphere has been built");
 							}
 
 						} else {
 							if (ball) {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "Usage : /cball <radius> <block id|name>");
 							} else {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "Usage : /csphere <radius> <block id|name>");
 							}
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No point has been selected");
 					}
 					return true;
@@ -1253,28 +1170,21 @@ public class Main extends JavaPlugin {
 							}
 
 							if (!isValidBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + split[1]
+								player.sendMessage(ChatColor.RED + split[1]
 										+ " is not a valid block ID.");
-								return true;
-							}
-
-							if (!player.canIgnoreRestrictions()
-									&& isBlackListedBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + blockID
-										+ " is a blacklisted block type !");
 								return true;
 							}
 
 							CuboidAction.buildCuboidFaces(playerName, blockID,
 									true);
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "The faces of the cuboid have been built");
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /cfaces <block id|name>");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -1291,28 +1201,21 @@ public class Main extends JavaPlugin {
 							}
 
 							if (!isValidBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + split[1]
+								player.sendMessage(ChatColor.RED + split[1]
 										+ " is not a valid block ID.");
-								return true;
-							}
-
-							if (!player.canIgnoreRestrictions()
-									&& isBlackListedBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + blockID
-										+ " is a blacklisted block type !");
 								return true;
 							}
 
 							CuboidAction.buildCuboidFaces(playerName, blockID,
 									false);
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "The walls have been built");
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /cwalls <block id|name>");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -1330,12 +1233,12 @@ public class Main extends JavaPlugin {
 							try {
 								radius = Integer.parseInt(split[1]);
 							} catch (NumberFormatException n) {
-								player.sendMessage(Colors.Rose + split[1]
+								player.sendMessage(ChatColor.RED + split[1]
 										+ " is not a valid radius.");
 								return true;
 							}
 							if (radius < 2) {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "The radius has to be greater than 1");
 								return true;
 							}
@@ -1346,14 +1249,8 @@ public class Main extends JavaPlugin {
 								blockID = etc.getDataSource().getItem(split[2]);
 							}
 							if (!isValidBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + split[2]
+								player.sendMessage(ChatColor.RED + split[2]
 										+ " is not a valid block ID.");
-								return true;
-							}
-							if (!player.canIgnoreRestrictions()
-									&& isBlackListedBlockID(blockID)) {
-								player.sendMessage(Colors.Rose + blockID
-										+ " is a blacklisted block type !");
 								return true;
 							}
 
@@ -1365,14 +1262,14 @@ public class Main extends JavaPlugin {
 
 							CuboidAction.buildPyramid(playerName, radius,
 									blockID, filled);
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "The pyramid has been built");
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /cpyramid <radius> <block id|name>");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No point has been selected");
 					}
 					return true;
@@ -1385,10 +1282,10 @@ public class Main extends JavaPlugin {
 				else if (split[0].equalsIgnoreCase("/undo")) {
 					if (CuboidAction.isUndoAble(playerName)) {
 						CuboidAction.undo(playerName);
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "Your last action has been undone !");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "Your last action is non-reversible.");
 					}
 					return true;
@@ -1397,10 +1294,10 @@ public class Main extends JavaPlugin {
 				else if (split[0].equalsIgnoreCase("/ccopy")) {
 					if (CuboidAction.isReady(playerName, true)) {
 						CuboidAction.copyCuboid(playerName, true);
-						player.sendMessage(Colors.Green
+						player.sendMessage(ChatColor.GREEN
 								+ "Selected cuboid is copied. Ready to paste !");
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No cuboid has been selected");
 					}
 					return true;
@@ -1410,14 +1307,14 @@ public class Main extends JavaPlugin {
 					if (CuboidAction.isReady(playerName, false)) {
 						byte returnCode = CuboidAction.paste(playerName);
 						if (returnCode == 0) {
-							player.sendMessage(Colors.Green
+							player.sendMessage(ChatColor.GREEN
 									+ "The cuboid has been placed.");
 						} else if (returnCode == 1) {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "Nothing to paste !");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "No point has been selected");
 					}
 					return true;
@@ -1437,26 +1334,26 @@ public class Main extends JavaPlugin {
 								byte returnCode = CuboidAction.saveCuboid(
 										playerName, cuboidName);
 								if (returnCode == 0) {
-									player.sendMessage(Colors.Green
+									player.sendMessage(ChatColor.GREEN
 											+ "Selected cuboid is saved with the name "
 											+ cuboidName);
 								} else if (returnCode == 1) {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "Could not create the target folder.");
 								} else if (returnCode == 2) {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "Error while writing the file.");
 								}
 							} else {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "No cuboid has been selected");
 							}
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "This cuboid name is already taken.");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "Usage : /csave <cuboid name>");
 					}
 					return true;
@@ -1470,28 +1367,28 @@ public class Main extends JavaPlugin {
 								byte returnCode = CuboidAction.loadCuboid(
 										playerName, cuboidName);
 								if (returnCode == 0) {
-									player.sendMessage(Colors.Green
+									player.sendMessage(ChatColor.GREEN
 											+ "The cuboid has been loaded.");
 								} else if (returnCode == 1) {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "Could not find the file.");
 								} else if (returnCode == 2) {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "Reading error while accessing the file.");
 								} else if (returnCode == 3) {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "The file seems to be corrupted");
 								}
 							} else {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "No point has been selected");
 							}
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "This cuboid does not exist.");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "Usage : /cload <cuboid name>");
 					}
 					return true;
@@ -1501,28 +1398,28 @@ public class Main extends JavaPlugin {
 					if (split.length == 1) {
 						String list = listPersonalCuboids(playerName);
 						if (list != null) {
-							player.sendMessage(Colors.Green
-									+ "Your saved cuboids :" + Colors.White
+							player.sendMessage(ChatColor.GREEN
+									+ "Your saved cuboids :" + ChatColor.WHITE
 									+ list);
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "You have no saved cuboid");
 						}
-					} else if (split.length == 2 && player.isAdmin()) {
+					} else if (split.length == 2 && player.isOp()) {
 						String list = listPersonalCuboids(split[1]);
 						if (list != null) {
-							player.sendMessage(Colors.Green + split[1]
-									+ "'s saved cuboids :" + Colors.White
+							player.sendMessage(ChatColor.GREEN + split[1]
+									+ "'s saved cuboids :" + ChatColor.WHITE
 									+ list);
 						} else {
-							player.sendMessage(Colors.Rose + split[1]
+							player.sendMessage(ChatColor.RED + split[1]
 									+ " has no saved cuboid");
 						}
 					} else {
-						if (player.isAdmin())
-							player.sendMessage(Colors.Rose
+						if (player.isOp())
+							player.sendMessage(ChatColor.RED
 									+ "Usage : /clist <player name>");
-						player.sendMessage(Colors.Rose + "Usage : /clist");
+						player.sendMessage(ChatColor.RED + "Usage : /clist");
 					}
 					return true;
 				}
@@ -1534,18 +1431,18 @@ public class Main extends JavaPlugin {
 							File toDelete = new File("cuboids/" + playerName
 									+ "/" + cuboidName + ".cuboid");
 							if (toDelete.delete()) {
-								player.sendMessage(Colors.Green
+								player.sendMessage(ChatColor.GREEN
 										+ "Cuboid sucessfuly deleted");
 							} else {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ "Error while deleting the cuboid file");
 							}
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "This cuboid does not exist.");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "Usage : /cremove <cuboid name>");
 					}
 					return true;
@@ -1561,7 +1458,7 @@ public class Main extends JavaPlugin {
 						if (targetPlayer != null) {
 							targetPlayerName = targetPlayer.getName();
 						} else {
-							player.sendMessage(Colors.Rose + "Player "
+							player.sendMessage(ChatColor.RED + "Player "
 									+ split[2] + " seems to be offline");
 							return true;
 						}
@@ -1576,7 +1473,7 @@ public class Main extends JavaPlugin {
 										ownerFolder.mkdir();
 									}
 								} catch (Exception e) {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "Error while creating targer folder");
 									return true;
 								}
@@ -1586,35 +1483,35 @@ public class Main extends JavaPlugin {
 										+ ".cuboid"), new File("cuboids/"
 										+ targetPlayerName + "/" + cuboidName
 										+ ".cuboid"))) {
-									player.sendMessage(Colors.Green
+									player.sendMessage(ChatColor.GREEN
 											+ "You shared " + cuboidName
 											+ " with " + targetPlayerName);
 									for (Player p : etc.getServer()
 											.getPlayerList()) {
 										if (p.getName()
 												.equals(targetPlayerName)) {
-											p.sendMessage(Colors.Green
+											p.sendMessage(ChatColor.GREEN
 													+ playerName + " shared "
 													+ cuboidName
 													+ ".cuboid with you");
 										}
 									}
 								} else {
-									player.sendMessage(Colors.Rose
+									player.sendMessage(ChatColor.RED
 											+ "Error while copying the the cuboid file");
 								}
 							} else {
-								player.sendMessage(Colors.Rose
+								player.sendMessage(ChatColor.RED
 										+ targetPlayerName
 										+ " already has a cuboid named "
 										+ cuboidName);
 							}
 						} else {
-							player.sendMessage(Colors.Rose
+							player.sendMessage(ChatColor.RED
 									+ "This cuboid does not exist.");
 						}
 					} else {
-						player.sendMessage(Colors.Rose
+						player.sendMessage(ChatColor.RED
 								+ "Usage : /cshare <cuboid name> <player name>");
 					}
 					return true;
@@ -1629,151 +1526,10 @@ public class Main extends JavaPlugin {
 			return false;
 		}
 
-		// //////////////////////////////
-		// // CUBOID SELECTION ////
-		// //////////////////////////////
-
-		public void onBlockRightClicked(Player player, Block blockClicked,
-				Item item) {
-			if (item.getItemId() == mainToolID
-					&& (player.canUseCommand("/protect") || player
-							.canUseCommand("/cuboid"))) {
-				boolean whichPoint = CuboidAction.setPoint(player.getName(),
-						blockClicked.getX(), blockClicked.getY(),
-						blockClicked.getZ());
-				player.sendMessage(Colors.Blue
-						+ ((whichPoint) ? "First" : "Second")
-						+ " point is set.");
-			} else if (item.getItemId() == checkToolID) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(
-						blockClicked.getX(), blockClicked.getY(),
-						blockClicked.getZ());
-				if (cuboid == null)
-					player.sendMessage(Colors.Yellow + "Not a cuboid area");
-				else
-					cuboid.printInfos(player, false, false);
-			}
-		}
-
-		// //////////////////////////////
-		// // BLOCKS PROTECTION ////
-		// //////////////////////////////
-
-		public boolean onItemUse(Player player, Block blockPlaced,
-				Block blockClicked, Item item) {
-			if (blockClicked != null && protectionSytem
-					&& !player.hasPermission("/ignoresOwnership")
-					&& isCreatorItem(item.getItemId())) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(
-						blockClicked.getX(), blockClicked.getY(),
-						blockClicked.getZ());
-				if (cuboid != null && cuboid.protection) {
-					boolean allowed = cuboid.isAllowed(player);
-					if (!allowed && protectionWarn) {
-						player.sendMessage(Colors.Rose
-								+ "This block is protected !");
-					}
-					return !allowed;
-				} else {
-					return isGloballyRestricted(player);
-				}
-			}
-			return false;
-		}
-
-		public boolean onBlockPlace(Player player, Block blockPlaced,
-				Block blockClicked, Item itemInHand) {
-			/*
-			 * if ( operableItems.contains(blockClicked.getType()) ){ return
-			 * false; // allows some items to be manipulated }
-			 */
-			if (protectionSytem && !player.canUseCommand("/ignoresOwnership")) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(blockPlaced.getX(),
-						blockPlaced.getY(), blockPlaced.getZ());
-				if (cuboid != null && cuboid.protection) {
-					boolean allowed = cuboid.isAllowed(player);
-					if (!allowed && protectionWarn) {
-						player.sendMessage(Colors.Rose
-								+ "This block is protected !");
-					}
-					return !allowed;
-				} else {
-					return isGloballyRestricted(player);
-				}
-			}
-			return false;
-		}
-
-		public boolean onBlockBreak(Player player, Block block) {
-			if (protectionSytem && !player.canUseCommand("/ignoresOwnership")) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
-						block.getY(), block.getZ());
-				if (cuboid != null && cuboid.protection) {
-					boolean allowed = cuboid.isAllowed(player);
-					if (!allowed && protectionWarn) {
-						player.sendMessage(Colors.Rose
-								+ "This block is protected !");
-					}
-					return !allowed;
-				} else {
-					return isGloballyRestricted(player);
-				}
-			}
-			return false;
-		}
-
-		// //////////////////////////////
-		// // PER-AREA FEATURES ////
-		// //////////////////////////////
-
-		public void onPlayerMove(Player player, Location from, Location to) {
-			if (onMoveFeatures) {
-				CuboidC arrival = CuboidAreas.findCuboidArea((int) to.x,
-						(int) to.y, (int) to.z);
-				if (arrival != null && arrival.restricted
-						&& !player.canUseCommand("/ignoresOwnership")
-						&& !arrival.isAllowed(player)) {
-					if (arrival.warning != null) {
-						player.sendMessage(Colors.Rose + arrival.warning);
-					}
-					notTeleport.add(player.getName());
-					player.teleportTo(from);
-					return;
-				}
-				CuboidAreas.movement(player, to);
-			}
-		}
-
-		public boolean onTeleport(Player player, Location from, Location to) {
-			if (onMoveFeatures) {
-				CuboidC arrival = CuboidAreas.findCuboidArea((int) to.x,
-						(int) to.y, (int) to.z);
-				if (arrival != null && arrival.restricted
-						&& !player.canUseCommand("/ignoresOwnership")
-						&& !arrival.isAllowed(player)) {
-					if (arrival.warning != null) {
-						player.sendMessage(Colors.Rose + arrival.warning);
-					}
-					return true;
-				}
-
-				if (notTeleport.contains(player.getName())) { // if he was
-																// teleported
-																// out of a
-																// restricted
-																// area
-					notTeleport.remove(player.getName());
-				} else {
-					CuboidAreas.movement(player, to);
-				}
-			}
-			return false;
-		}
-
 		public boolean onComplexBlockChange(Player player, ComplexBlock block) {
 			if (block instanceof Chest) {
 				if (chestProtection
-						&& !player.canUseCommand("/ignoresOwnership")) {
+						&& !player.hasPermission("/ignoresOwnership")) {
 					CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
 							block.getY(), block.getZ());
 					if (cuboid != null && cuboid.protection) {
@@ -1788,7 +1544,7 @@ public class Main extends JavaPlugin {
 		public boolean onSendComplexBlock(Player player, ComplexBlock block) {
 			if (block instanceof Chest) {
 				if (chestProtection
-						&& !player.canUseCommand("/ignoresOwnership")) {
+						&& !player.hasPermission("/ignoresOwnership")) {
 					CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
 							block.getY(), block.getZ());
 					if (cuboid != null && cuboid.protection) {
@@ -1825,26 +1581,7 @@ public class Main extends JavaPlugin {
 			return false;
 		}
 
-		public boolean onMobSpawn(Mob mob) { // Has never worked right ><
-			CuboidC cuboid = CuboidAreas.findCuboidArea((int) mob.getX(),
-					(int) mob.getY(), (int) mob.getZ());
-			if (cuboid != null) {
-				return cuboid.sanctuary;
-			}
-			return globalSanctuary;
-		}
-
-		public boolean onExplode(Block block) {
-			if (block.getStatus() == 2) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
-						block.getY(), block.getZ());
-				if (cuboid != null) {
-					return !cuboid.creeper;
-				}
-				return globalCreeperProt;
-			}
-			return false;
-		}
+		
 
 		public boolean onConsoleCommand(String[] split) {
 			if (split[0].equalsIgnoreCase("stop")) {
@@ -1853,21 +1590,7 @@ public class Main extends JavaPlugin {
 			return false;
 		}
 
-		public void onDisconnect(Player player) {
-			CuboidAreas.leaveAll(player);
-		}
-
-		public void onKick(Player player, String reason) {
-			CuboidAreas.leaveAll(player);
-		}
-
-		public void onBan(Player player, String reason) {
-			CuboidAreas.leaveAll(player);
-		}
-
-		public void onIpBan(Player player, String reason) {
-			CuboidAreas.leaveAll(player);
-		}
+		
 	} // end cuboidListener
 
 	public class WriteJob extends TimerTask {

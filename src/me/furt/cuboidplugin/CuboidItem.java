@@ -1,14 +1,14 @@
 package me.furt.cuboidplugin;
 import java.io.Serializable;
 
-import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("serial")
 public class CuboidItem implements Serializable{	
-	int itemId = 1, amount = 1, slot = -1;
-	public CuboidItem(Item item){
-		this.itemId = item.getItemId();
+	int itemId = 1, amount = 1, durability = 0;
+	public CuboidItem(ItemStack item){
+		this.itemId = item.getTypeId();
 		this.amount = item.getAmount();
-		this.slot = item.getSlot();
+		this.durability = item.getDurability();
 	}
 }

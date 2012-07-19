@@ -2,6 +2,7 @@ package me.furt.cuboidplugin;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -21,7 +22,9 @@ public class CuboidAction {
 	public CuboidAction(Main instance) {
 		this.plugin = instance;
 	}
-
+/*
+ * TODO Multiworld support needs to be added for the class to be finished
+ */
 	public static CuboidSelection getPlayerSelection(String playerName) {
 		if (!playerSelection.containsKey(playerName)) {
 			playerSelection.put(playerName, new CuboidSelection());
@@ -93,8 +96,9 @@ public class CuboidAction {
 			for (int j = 0; j < Ysize; ++j) {
 				tableaux[i][j] = new int[Zsize];
 				for (int k = 0; k < Zsize; ++k)
-					tableaux[i][j][k] = plugin.getServer().getWorld(arg0)
-							.getBlockIdAt(Xmin + i, Ymin + j, Zmin + k);
+					// TODO
+					tableaux[i][j][k] = plugin.getServer().getWorld("world")
+							.getBlockTypeIdAt(Xmin + i, Ymin + j, Zmin + k);
 			}
 		}
 
@@ -294,7 +298,7 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			Main.log.info(playerName + " emptied a cuboid");
+			plugin.getLogger().log(Level.INFO, playerName + " emptied a cuboid");
 	}
 
 	public static void fillCuboid(String playerName, int bloctype) {
@@ -313,7 +317,7 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			Main.log.info(playerName + " filled a cuboid");
+			plugin.getLogger().log(Level.INFO, playerName + " filled a cuboid");
 	}
 
 	public static void replaceBlocks(String playerName, int[] replaceParams) {
@@ -339,7 +343,7 @@ public class CuboidAction {
 				}
 			}
 			if (Main.logging)
-				Main.log.info(playerName + " replaced blocks inside a cuboid");
+				plugin.getLogger().log(Level.INFO, playerName + " replaced blocks inside a cuboid");
 		}
 	}
 
@@ -388,7 +392,7 @@ public class CuboidAction {
 				}
 			}
 			if (Main.logging)
-				Main.log.info(playerName + " built the "
+				plugin.getLogger().log(Level.INFO, playerName + " built the "
 						+ ((sixFaces) ? "faces" : "walls") + " of a cuboid");
 		}
 	}
@@ -412,7 +416,7 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			Main.log.info(playerName + "");
+			plugin.getLogger().log(Level.INFO, playerName + "");
 	}
 
 	public static void moveCuboidContent(Player player, String movementType,
@@ -594,7 +598,7 @@ public class CuboidAction {
 
 			player.sendMessage(ChatColor.GREEN + "Cuboid successfuly moved.");
 			if (Main.logging)
-				Main.log.info(playerName + " moved a cuboid : " + value
+				plugin.getLogger().log(Level.INFO, playerName + " moved a cuboid : " + value
 						+ " block(s) " + movementType);
 		}
 	}
@@ -632,7 +636,7 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			Main.log.info(playerName + " built a "
+			plugin.getLogger().log(Level.INFO, playerName + " built a "
 					+ ((height != 0) ? "cylinder" : "circle"));
 	}
 
@@ -667,7 +671,7 @@ public class CuboidAction {
 			}
 		}
 		if (Main.logging)
-			Main.log.info(playerName + " built a "
+			plugin.getLogger().log(Level.INFO, playerName + " built a "
 					+ ((fill) ? "ball" : "sphere"));
 	}
 
@@ -722,7 +726,7 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			Main.log.info(playerName + " built a " + ((fill) ? "filled " : "")
+			plugin.getLogger().log(Level.INFO, playerName + " built a " + ((fill) ? "filled " : "")
 					+ "pyramid.");
 	}
 

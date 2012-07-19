@@ -9,19 +9,19 @@ import org.bukkit.entity.Player;
 
 @SuppressWarnings("serial")
 public class CuboidC implements Serializable {
-	String name = "noname";
-	int[] coords = new int[6]; // int[]{firstX, firstY, firstZ, secondX,
+	public String name = "noname";
+	public int[] coords = new int[6]; // int[]{firstX, firstY, firstZ, secondX,
 								// secondY, secondZ}
 	public boolean protection = false;
 	public boolean restricted = false;
 	boolean trespassing = false;
 	public boolean PvP = true;
-	boolean heal = false;
+	public boolean heal = false;
 	public boolean creeper = true;
 	public boolean sanctuary = false;
 	ArrayList<String> allowedPlayers = new ArrayList<String>();
-	String welcomeMessage = null;
-	String farewellMessage = null;
+	public String welcomeMessage = null;
+	public String farewellMessage = null;
 	public String warning = null;
 	ArrayList<String> disallowedCommands = new ArrayList<String>();
 	private Main plugin;

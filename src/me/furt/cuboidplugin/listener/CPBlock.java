@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class CPBlock implements Listener {
 
@@ -22,25 +23,26 @@ public class CPBlock implements Listener {
 		this.plugin = instance;
 	}
 
-	public boolean onItemUse(Player player, Block blockPlaced,
-			Block blockClicked, Item item) {
+	// TODO needs moved to proper place
+	public void onItemUse(Player player, Block blockPlaced,
+			Block blockClicked, ItemStack item) {
 		if (blockClicked != null && Main.protectionSytem
 				&& !player.hasPermission("/ignoresOwnership")
-				&& isCreatorItem(item.getItemStack())) {
+				&& plugin.isCreatorItem(item)) {
 			CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getX(),
 					blockClicked.getY(), blockClicked.getZ());
 			if (cuboid != null && cuboid.protection) {
 				boolean allowed = cuboid.isAllowed(player);
-				if (!allowed && protectionWarn) {
+				if (!allowed && Main.protectionWarn) {
 					player.sendMessage(ChatColor.RED
 							+ "This block is protected !");
 				}
-				return !allowed;
+				//return !allowed;
 			} else {
-				return Main.isGloballyRestricted(player);
+				//return plugin.isGloballyRestricted(player);
 			}
 		}
-		return false;
+		//return false;
 	}
 
 	public boolean onBlockPlace(BlockPlaceEvent event) {

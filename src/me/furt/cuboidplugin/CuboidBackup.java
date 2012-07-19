@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.logging.Level;
 
 import org.bukkit.Server;
 
@@ -26,7 +27,7 @@ public class CuboidBackup implements Serializable {
 	private int[] coords;
 	private Main plugin;
 
-	CuboidBackup(Main instance, CuboidC cuboid, boolean store) {
+	public CuboidBackup(Main instance, CuboidC cuboid, boolean store) {
 		this.name = cuboid.name;
 		this.coords = cuboid.coords;
 		this.plugin = instance;
@@ -34,6 +35,9 @@ public class CuboidBackup implements Serializable {
 			storeCuboidData();
 	}
 
+	/*
+	 * TODO Multiworld support needs to be added for the class to be finished
+	 */
 	public int[][][] getData() {
 		return this.cuboidData;
 	}
@@ -106,7 +110,7 @@ public class CuboidBackup implements Serializable {
 			return 2;
 		}
 		if (Main.logging)
-			Main.log.info("New cuboidArea backup : " + this.name);
+			plugin.getLogger().log(Level.INFO, "New cuboidArea backup : " + this.name);
 		return 0;
 	}
 
@@ -133,7 +137,7 @@ public class CuboidBackup implements Serializable {
 		restoreCuboidData();
 
 		if (Main.logging)
-			Main.log.info("Loaded cuboidArea backup : " + this.name);
+			plugin.getLogger().log(Level.INFO, "Loaded cuboidArea backup : " + this.name);
 		return 0;
 	}
 

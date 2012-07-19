@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
+import java.util.logging.Level;
 
 /*
  * Serialization of selected cuboid (NOT a cuboid area)
@@ -23,8 +24,10 @@ public class CuboidContent implements Serializable {
 	private String name = "";
 	private int[][][] cuboidData;
 	public byte loadReturnCode;
+	private Main plugin;
 
-	CuboidContent(String owner, String name, int[][][] tableau) {
+	CuboidContent(Main instance, String owner, String name, int[][][] tableau) {
+		this.plugin = instance;
 		this.owner = owner;
 		this.name = name;
 		this.cuboidData = tableau;
@@ -71,7 +74,7 @@ public class CuboidContent implements Serializable {
 			e.printStackTrace();
 			return 2;
 		}
-		Main.log.info("New saved cuboid : " + this.name);
+		plugin.getLogger().log(Level.INFO, "New saved cuboid : " + this.name);
 		return 0;
 	}
 
@@ -94,7 +97,7 @@ public class CuboidContent implements Serializable {
 			e.printStackTrace();
 			return 2;
 		}
-		Main.log.info("Loaded cuboid : " + this.name);
+		plugin.getLogger().log(Level.INFO, "Loaded cuboid : " + this.name);
 		return 0;
 	}
 

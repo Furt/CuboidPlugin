@@ -4,38 +4,74 @@ import me.furt.cuboidplugin.CuboidAreas;
 import me.furt.cuboidplugin.CuboidC;
 import me.furt.cuboidplugin.Main;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class CPEntity implements Listener {
-	private Main plugin;
 
-	public CPEntity(Main instance) {
-		this.plugin = instance;
-	}
-	
-	public boolean onMobSpawn(CreatureSpawnEvent event) { // Has never worked right ><
+	@EventHandler
+	public void onMobSpawn(CreatureSpawnEvent event) {
 		Entity mob = event.getEntity();
 		Location loc = mob.getLocation();
 		CuboidC cuboid = CuboidAreas.findCuboidArea((int) loc.getX(),
 				(int) loc.getY(), (int) loc.getZ());
-		if (cuboid != null) {
-			return cuboid.sanctuary;
+		if (cuboid != null && cuboid.sanctuary) {
+			event.setCancelled(true);
+		} else if (Main.globalSanctuary) {
+			event.setCancelled(true);
 		}
-		return Main.globalSanctuary;
 	}
 
-	public boolean onExplode(Block block) {
-		if (block.getStatus() == 2) {
-			CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
-					block.getY(), block.getZ());
-			if (cuboid != null) {
-				return !cuboid.creeper;
-			}
-			return Main.globalCreeperProt;
+	@EventHandler
+	public void onExplode(EntityExplodeEvent event) {
+		CuboidC cuboid = CuboidAreas.findCuboidArea((int) event.getLocation()
+				.getX(), (int) event.getLocation().getY(), (int) event
+				.getLocation().getZ());
+		if (cuboid != null && !cuboid.creeper) {
+			event.setCancelled(true);
+		} else if (Main.globalCreeperProt) {
+			event.setCancelled(true);
 		}
-		return false;
+	}
+
+	@EventHandler
+	public void onDamage(EntityDamageEvent event) {
+		Entity defender = event.getEntity();
+		if (defender instanceof Player) {
+			EntityDamageEvent ede = defender.getLastDamageCause();
+			if (ede instanceof EntityDamageByEntityEvent
+					|| event instanceof LivingEntity) {
+				EntityDamageByEntityEvent subEvent = (EntityDamageByEntityEvent) ede;
+				Entity attacker = subEvent.getDamager();
+				if (attacker instanceof Player) {
+					Player target = (Player) attacker;
+					CuboidC cuboid = CuboidAreas.findCuboidArea((int) target
+							.getLocation().getX(), (int) target.getLocation()
+							.getY(), (int) target.getLocation().getZ());
+					if (cuboid != null && !cuboid.PvP) {
+						event.setCancelled(true);
+					} else if (Main.globalDisablePvP) {
+						event.setCancelled(true);
+					}
+				} else {
+					CuboidC cuboid = CuboidAreas.findCuboidArea((int) attacker
+							.getLocation().getX(), (int) attacker.getLocation()
+							.getY(), (int) attacker.getLocation().getZ());
+					if (cuboid != null && cuboid.sanctuary) {
+						event.setCancelled(true);
+					} else if (Main.globalSanctuary) {
+						event.setCancelled(true);
+					}
+				}
+
+			}
+		}
 	}
 }

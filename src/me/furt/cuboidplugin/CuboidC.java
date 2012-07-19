@@ -15,7 +15,7 @@ public class CuboidC implements Serializable {
 	public boolean protection = false;
 	public boolean restricted = false;
 	boolean trespassing = false;
-	boolean PvP = true;
+	public boolean PvP = true;
 	boolean heal = false;
 	public boolean creeper = true;
 	public boolean sanctuary = false;

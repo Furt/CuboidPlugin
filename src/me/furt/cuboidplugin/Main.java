@@ -16,11 +16,13 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
@@ -40,7 +42,7 @@ public class Main extends JavaPlugin {
 	public static boolean protectionWarn = false;
 	// worldwide area features
 	static String[] restrictedGroups;
-	static boolean globalDisablePvP = false;
+	public static boolean globalDisablePvP = false;
 	public static boolean globalCreeperProt = false;
 	public static boolean globalSanctuary = false;
 	// local area features default values
@@ -286,11 +288,11 @@ public class Main extends JavaPlugin {
 			return false;
 	}
 
-	private boolean isCreatorItem(int type) {
-		if (type == 259 || type == 290 || type == 291 || type == 292
-				|| type == 293 || type == 294 || type == 295 || type == 323
-				|| type == 324 || type == 325 || type == 326 || type == 327
-				|| type == 330 || type == 331 || type == 338) {
+	public boolean isCreatorItem(ItemStack itemStack) {
+		if (itemStack.getTypeId() == 259 || itemStack.getTypeId() == 290 || itemStack.getTypeId() == 291 || itemStack.getTypeId() == 292
+				|| itemStack.getTypeId() == 293 || itemStack.getTypeId() == 294 || itemStack.getTypeId() == 295 || itemStack.getTypeId() == 323
+				|| itemStack.getTypeId() == 324 || itemStack.getTypeId() == 325 || itemStack.getTypeId() == 326 || itemStack.getTypeId() == 327
+				|| itemStack.getTypeId() == 330 || itemStack.getTypeId() == 331 || itemStack.getTypeId() == 338) {
 			return true;
 		}
 		return false;
@@ -907,7 +909,8 @@ public class Main extends JavaPlugin {
 							try {
 								blocID = Integer.parseInt(split[1]);
 							} catch (NumberFormatException n) {
-								blocID = etc.getDataSource().getItem(split[1]);
+								blocID = Material.getMaterial(split[1]).getId();
+								//blocID = etc.getDataSource().getItem(split[1]);
 							}
 							if (isValidBlockID(blocID)) {
 								CuboidAction.fillCuboid(playerName, blocID);
@@ -939,8 +942,8 @@ public class Main extends JavaPlugin {
 									replaceParams[i] = Integer
 											.parseInt(split[i + 1]);
 								} catch (NumberFormatException n) {
-									replaceParams[i] = etc.getDataSource()
-											.getItem(split[i + 1]);
+									replaceParams[i] = Material.getMaterial(split[i + 1]).getId();
+									//replaceParams[i] = etc.getDataSource().getItem(split[i + 1]);
 									if (replaceParams[i] == 0) {
 										player.sendMessage(ChatColor.RED
 												+ split[i + 1]
@@ -1039,7 +1042,8 @@ public class Main extends JavaPlugin {
 							try {
 								blockID = Integer.parseInt(split[2]);
 							} catch (NumberFormatException n) {
-								blockID = etc.getDataSource().getItem(split[2]);
+								blockID = Material.getMaterial(split[2]).getId();
+								//blockID = etc.getDataSource().getItem(split[2]);
 							}
 
 							if (!isValidBlockID(blockID)) {
@@ -1119,7 +1123,8 @@ public class Main extends JavaPlugin {
 							try {
 								blockID = Integer.parseInt(split[2]);
 							} catch (NumberFormatException n) {
-								blockID = etc.getDataSource().getItem(split[2]);
+								blockID = Material.getMaterial(split[2]).getId();
+								// TODO blockID = etc.getDataSource().getItem(split[2]);
 							}
 							if (!isValidBlockID(blockID)) {
 								player.sendMessage(ChatColor.RED + split[2]
@@ -1166,7 +1171,8 @@ public class Main extends JavaPlugin {
 							try {
 								blockID = Integer.parseInt(split[1]);
 							} catch (NumberFormatException n) {
-								blockID = etc.getDataSource().getItem(split[1]);
+								blockID = Material.getMaterial(split[1]).getId();
+								//blockID = etc.getDataSource().getItem(split[1]);
 							}
 
 							if (!isValidBlockID(blockID)) {
@@ -1197,7 +1203,8 @@ public class Main extends JavaPlugin {
 							try {
 								blockID = Integer.parseInt(split[1]);
 							} catch (NumberFormatException n) {
-								blockID = etc.getDataSource().getItem(split[1]);
+								blockID = Material.getMaterial(split[1]).getId();
+								//blockID = etc.getDataSource().getItem(split[1]);
 							}
 
 							if (!isValidBlockID(blockID)) {
@@ -1246,7 +1253,8 @@ public class Main extends JavaPlugin {
 							try {
 								blockID = Integer.parseInt(split[2]);
 							} catch (NumberFormatException n) {
-								blockID = etc.getDataSource().getItem(split[2]);
+								blockID = Material.getMaterial(split[2]).getId();
+								//blockID = etc.getDataSource().getItem(split[2]);
 							}
 							if (!isValidBlockID(blockID)) {
 								player.sendMessage(ChatColor.RED + split[2]
@@ -1452,8 +1460,7 @@ public class Main extends JavaPlugin {
 					if (split.length > 2) {
 						String cuboidName = split[1].toLowerCase();
 						String targetPlayerName = "";
-						Player targetPlayer = etc.getServer().matchPlayer(
-								split[2]);
+						Player targetPlayer = etc.getServer().matchPlayer(split[2]);
 
 						if (targetPlayer != null) {
 							targetPlayerName = targetPlayer.getName();
@@ -1486,8 +1493,7 @@ public class Main extends JavaPlugin {
 									player.sendMessage(ChatColor.GREEN
 											+ "You shared " + cuboidName
 											+ " with " + targetPlayerName);
-									for (Player p : etc.getServer()
-											.getPlayerList()) {
+									for (Player p : etc.getServer().getPlayerList()) {
 										if (p.getName()
 												.equals(targetPlayerName)) {
 											p.sendMessage(ChatColor.GREEN
@@ -1556,30 +1562,7 @@ public class Main extends JavaPlugin {
 			return false;
 		}
 
-		public boolean onDamage(PluginLoader.DamageType type,
-				BaseEntity attacker, BaseEntity defender, int amount) {
-			if (type == PluginLoader.DamageType.ENTITY && defender.isPlayer()) {
-				Player target = defender.getPlayer();
-				if (attacker.isPlayer()) {
-					CuboidC cuboid = CuboidAreas.findCuboidArea(
-							(int) target.getX(), (int) target.getY(),
-							(int) target.getZ());
-					if (cuboid != null) {
-						return !cuboid.PvP;
-					}
-					return globalDisablePvP;
-				} else if (attacker.isMob()) {
-					CuboidC cuboid = CuboidAreas.findCuboidArea(
-							(int) target.getX(), (int) target.getY(),
-							(int) target.getZ());
-					if (cuboid != null) {
-						return cuboid.sanctuary;
-					}
-					return globalSanctuary;
-				}
-			}
-			return false;
-		}
+		
 
 		
 

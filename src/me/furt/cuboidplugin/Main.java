@@ -96,8 +96,9 @@ public class Main extends JavaPlugin {
 		if (globalCreeperProt || globalDisablePvP || globalSanctuary) {
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(
-						new FileOutputStream(new File(
-								"cuboids/globalFeatues.dat")));
+						new FileOutputStream(new File(getDataFolder()
+								+ File.separator + "cuboids" + File.separator
+								+ "globalFeatues.dat")));
 				oos.writeObject(globalDisablePvP);
 				oos.writeObject(globalCreeperProt);
 				oos.writeObject(globalSanctuary);
@@ -107,7 +108,8 @@ public class Main extends JavaPlugin {
 						"Error while writing the state of global features");
 			}
 		} else {
-			File globalFile = new File("cuboids/globalFeatues.dat");
+			File globalFile = new File(getDataFolder() + File.separator
+					+ "cuboids" + File.separator + "globalFeatues.dat");
 			if (globalFile.exists()) {
 				globalFile.delete();
 			}
@@ -203,7 +205,8 @@ public class Main extends JavaPlugin {
 			}
 
 			// reading state of global features if needed
-			File globalFile = new File("cuboids/globalFeatues.dat");
+			File globalFile = new File(getDataFolder() + File.separator
+					+ "cuboids" + File.separator + "globalFeatues.dat");
 			if (globalFile.exists()) {
 				try {
 					ObjectInputStream ois = new ObjectInputStream(
@@ -295,16 +298,19 @@ public class Main extends JavaPlugin {
 	}
 
 	public boolean cuboidExists(String playerName, String cuboidName) {
-		return new File("cuboids/" + playerName + "/" + cuboidName + ".cuboid")
-				.exists();
+		return new File(getDataFolder() + File.separator + "cuboids"
+				+ File.separator + playerName + File.separator + cuboidName
+				+ ".cuboid").exists();
 	}
 
 	public String listPersonalCuboids(String owner) {
-		if (!new File("cuboids").exists()
-				|| !new File("cuboids/" + owner).exists()) {
+		if (!new File(getDataFolder() + File.separator + "cuboids").exists()
+				|| !new File(getDataFolder() + File.separator + "cuboids"
+						+ File.separator + owner).exists()) {
 			return null;
 		}
-		String[] fileList = new File("cuboids/" + owner).list();
+		String[] fileList = new File(getDataFolder() + File.separator
+				+ "cuboids" + File.separator + owner).list();
 		String result = (fileList.length > 0) ? "" : null;
 
 		for (int i = 0; i < fileList.length; i++) {

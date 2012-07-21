@@ -269,7 +269,7 @@ public class CModCommand implements CommandExecutor {
 				}
 				if (args[3].startsWith("prot")) {
 					cuboidArea.protection = !cuboidArea.protection;
-					CuboidAction.updateChestsState(cuboidArea.coords[0],
+					CuboidAction.updateChestsState(playerName, cuboidArea.coords[0],
 							cuboidArea.coords[1], cuboidArea.coords[2],
 							cuboidArea.coords[3], cuboidArea.coords[4],
 							cuboidArea.coords[5]);
@@ -358,7 +358,7 @@ public class CModCommand implements CommandExecutor {
 			if ((Main.allowOwnersToBackup && cuboidArea.isOwner(player))
 					|| player.hasPermission("/protect")) {
 				byte returnCode = new CuboidBackup(null, cuboidArea, false)
-						.loadFromDisc();
+						.loadFromDisc(playerName);
 				if (returnCode == 0) {
 					player.sendMessage(ChatColor.GREEN
 							+ "Cuboid area successfuly restored");

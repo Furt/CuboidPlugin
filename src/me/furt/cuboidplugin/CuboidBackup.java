@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Level;
 
+import org.bukkit.Location;
 import org.bukkit.Server;
 
 /*
@@ -53,25 +54,33 @@ public class CuboidBackup implements Serializable {
 			for (int j = 0; j < Ysize; ++j) {
 				this.cuboidData[i][j] = new int[Zsize];
 				for (int k = 0; k < Zsize; ++k) {
-					this.cuboidData[i][j][k] = server.getWorld(arg0)
-							.getBlockIdAt(this.coords[0] + i,
+					this.cuboidData[i][j][k] = server.getWorld("world")
+							.getBlockTypeIdAt(this.coords[0] + i,
 									this.coords[1] + j, this.coords[2] + k);
 				}
 			}
 		}
 	}
 
-	private void restoreCuboidData() {
-		Server server = plugin.getServer();
+	private void restoreCuboidData(String playerName) {
 		int Xsize = cuboidData.length;
 		int Ysize = cuboidData[0].length;
 		int Zsize = cuboidData[0][0].length;
 		for (int i = 0; i < Xsize; i++) {
 			for (int j = 0; j < Ysize; ++j) {
 				for (int k = 0; k < Zsize; ++k) {
-					server.getWorld(arg0).setBlockAt(this.cuboidData[i][j][k],
-							this.coords[0] + i, this.coords[1] + j,
-							this.coords[2] + k);
+					plugin.getServer()
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockAt(
+									new Location(plugin.getServer()
+											.getPlayer(playerName).getWorld(),
+											this.coords[0] + i, this.coords[1]
+													+ j, this.coords[2] + k))
+							.setTypeId(this.cuboidData[i][j][k]);
+					// server.getWorld("world").setBlockAt(this.cuboidData[i][j][k],
+					// this.coords[0] + i, this.coords[1] + j,
+					// this.coords[2] + k);
 				}
 			}
 		}
@@ -110,11 +119,12 @@ public class CuboidBackup implements Serializable {
 			return 2;
 		}
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, "New cuboidArea backup : " + this.name);
+			plugin.getLogger().log(Level.INFO,
+					"New cuboidArea backup : " + this.name);
 		return 0;
 	}
 
-	public byte loadFromDisc() {
+	public byte loadFromDisc(String playerName) {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(
 					new BufferedInputStream(new FileInputStream(new File(
@@ -134,10 +144,11 @@ public class CuboidBackup implements Serializable {
 			return 2;
 		}
 
-		restoreCuboidData();
+		restoreCuboidData(playerName);
 
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, "Loaded cuboidArea backup : " + this.name);
+			plugin.getLogger().log(Level.INFO,
+					"Loaded cuboidArea backup : " + this.name);
 		return 0;
 	}
 

@@ -5,7 +5,9 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 /*
@@ -17,14 +19,12 @@ public class CuboidAction {
 	static Object lock = new Object();
 	static int[] blocksToBeQueued = { 37, 38, 39, 40, 50, 55, 63, 66, 69, 75,
 			76, 81, 83 };
-	static Main plugin;
+	public static Main plugin;
 
 	public CuboidAction(Main instance) {
-		this.plugin = instance;
+		CuboidAction.plugin = instance;
 	}
-/*
- * TODO Multiworld support needs to be added for the class to be finished
- */
+
 	public static CuboidSelection getPlayerSelection(String playerName) {
 		if (!playerSelection.containsKey(playerName)) {
 			playerSelection.put(playerName, new CuboidSelection());
@@ -70,11 +70,12 @@ public class CuboidAction {
 	}
 
 	public static void copyCuboid(String playerName, boolean manual) {
-		copyCuboid(getPlayerSelection(playerName), manual);
+		copyCuboid(playerName, getPlayerSelection(playerName), manual);
 	}
 
-	private static void copyCuboid(CuboidSelection selection, boolean manual) {
-		copyCuboid(selection, selection.firstCorner[0],
+	private static void copyCuboid(String playerName,
+			CuboidSelection selection, boolean manual) {
+		copyCuboid(playerName, selection, selection.firstCorner[0],
 				selection.secondCorner[0], selection.firstCorner[1],
 				selection.secondCorner[1], selection.firstCorner[2],
 				selection.secondCorner[2]);
@@ -84,8 +85,9 @@ public class CuboidAction {
 		}
 	}
 
-	private static void copyCuboid(CuboidSelection selection, int Xmin,
-			int Xmax, int Ymin, int Ymax, int Zmin, int Zmax) {
+	private static void copyCuboid(String playerName,
+			CuboidSelection selection, int Xmin, int Xmax, int Ymin, int Ymax,
+			int Zmin, int Zmax) {
 		int Xsize = Xmax - Xmin + 1;
 		int Ysize = Ymax - Ymin + 1;
 		int Zsize = Zmax - Zmin + 1;
@@ -96,8 +98,8 @@ public class CuboidAction {
 			for (int j = 0; j < Ysize; ++j) {
 				tableaux[i][j] = new int[Zsize];
 				for (int k = 0; k < Zsize; ++k)
-					// TODO
-					tableaux[i][j][k] = plugin.getServer().getWorld("world")
+					tableaux[i][j][k] = plugin.getServer()
+							.getPlayer(playerName).getWorld()
 							.getBlockTypeIdAt(Xmin + i, Ymin + j, Zmin + k);
 			}
 		}
@@ -142,17 +144,24 @@ public class CuboidAction {
 						curY = selection.pastePoint[1] + j;
 						curZ = selection.pastePoint[2] + k;
 						selection.lastSelectedCuboid[i][j][k] = plugin
-								.getServer().getWorld(arg0)
-								.getBlockIdAt(curX, curY, curZ);
+								.getServer().getPlayer(playerName).getWorld()
+								.getBlockTypeIdAt(curX, curY, curZ);
 						if (shoudBeQueued(selection.lastCopiedCuboid[i][j][k])) {
 							queuedBlocks.put(new int[] { curX, curY, curZ },
 									selection.lastCopiedCuboid[i][j][k]);
 						} else {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
-											selection.lastCopiedCuboid[i][j][k],
-											curX, curY, curZ);
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), curX, curY,
+													curZ))
+									.setTypeId(
+											selection.lastCopiedCuboid[i][j][k]);
+							// plugin.getServer().getWorld("world").setBlockAt(selection.lastCopiedCuboid[i][j][k],
+							// curX, curY, curZ);
 						}
 					}
 				}
@@ -160,11 +169,18 @@ public class CuboidAction {
 
 			for (Entry<int[], Integer> queuedBlock : queuedBlocks.entrySet()) {
 				plugin.getServer()
-						.getWorld(arg0)
-						.setBlockAt(queuedBlock.getValue(),
-								queuedBlock.getKey()[0],
-								queuedBlock.getKey()[1],
-								queuedBlock.getKey()[2]);
+						.getPlayer(playerName)
+						.getWorld()
+						.getBlockAt(
+								new Location(plugin.getServer()
+										.getPlayer(playerName).getWorld(),
+										queuedBlock.getKey()[0], queuedBlock
+												.getKey()[1], queuedBlock
+												.getKey()[2]))
+						.setTypeId(queuedBlock.getValue());
+				// plugin.getServer().getWorld("world").setBlockAt(queuedBlock.getValue(),
+				// queuedBlock.getKey()[0], queuedBlock.getKey()[1],
+				// queuedBlock.getKey()[2]);
 			}
 		}
 
@@ -194,11 +210,19 @@ public class CuboidAction {
 				for (int j = 0; j < Ysize; ++j) {
 					for (int k = 0; k < Zsize; ++k) {
 						plugin.getServer()
-								.getWorld(arg0)
-								.setBlockAt(toPaste[i][j][k],
-										selection.pastePoint[0] + i,
-										selection.pastePoint[1] + j,
-										selection.pastePoint[2] + k);
+								.getPlayer(playerName)
+								.getWorld()
+								.getBlockAt(
+										new Location(plugin.getServer()
+												.getPlayer(playerName)
+												.getWorld(),
+												selection.pastePoint[0] + i,
+												selection.pastePoint[1] + j,
+												selection.pastePoint[2] + k))
+								.setTypeId(toPaste[i][j][k]);
+						// plugin.getServer().getWorld("world").setBlockAt(toPaste[i][j][k],
+						// selection.pastePoint[0] + i, selection.pastePoint[1]
+						// + j, selection.pastePoint[2] + k);
 					}
 				}
 			}
@@ -224,14 +248,16 @@ public class CuboidAction {
 				for (int k = 0; k < Zsize; ++k)
 					tableaux[i][j][k] = plugin
 							.getServer()
-							.getWorld(arg0)
-							.getBlockIdAt(selection.firstCorner[0] + i,
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockTypeIdAt(selection.firstCorner[0] + i,
 									selection.firstCorner[1] + j,
 									selection.firstCorner[2] + k);
 			}
 		}
 
-		return new CuboidContent(playerName, cuboidName, tableaux).save();
+		return new CuboidContent(plugin, playerName, cuboidName, tableaux)
+				.save();
 	}
 
 	public static byte loadCuboid(String playerName, String cuboidName) {
@@ -245,7 +271,7 @@ public class CuboidAction {
 			int Ysize = tableau[0].length;
 			int Zsize = tableau[0][0].length;
 
-			copyCuboid(selection, selection.firstCorner[0],
+			copyCuboid(playerName, selection, selection.firstCorner[0],
 					selection.firstCorner[0] + Xsize, selection.firstCorner[1],
 					selection.firstCorner[1] + Ysize, selection.firstCorner[2],
 					selection.firstCorner[2] + Zsize);
@@ -253,13 +279,22 @@ public class CuboidAction {
 			synchronized (lock) {
 				for (int i = 0; i < Xsize; i++) {
 					for (int j = 0; j < Ysize; ++j) {
-						for (int k = 0; k < Zsize; ++k)
-							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(tableau[i][j][k],
-											selection.firstCorner[0] + i,
-											selection.firstCorner[1] + j,
-											selection.firstCorner[2] + k);
+						for (int k = 0; k < Zsize; ++k) {
+							Location loc = new Location(plugin.getServer()
+									.getPlayer(playerName).getWorld(),
+									selection.firstCorner[0] + i,
+									selection.firstCorner[1] + j,
+									selection.firstCorner[2] + k);
+							plugin.getServer().getPlayer(playerName).getWorld()
+									.getBlockAt(loc)
+									.setTypeId(tableau[i][j][k]);
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(tableau[i][j][k],
+							// selection.firstCorner[0] + i,
+							// selection.firstCorner[1] + j,
+							// selection.firstCorner[2] + k);
+						}
 					}
 				}
 			}
@@ -278,39 +313,53 @@ public class CuboidAction {
 
 	public static void emptyCuboid(String playerName) {
 		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(selection, false);
+		copyCuboid(playerName, selection, false);
 
 		synchronized (lock) {
 			for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
-						if (plugin.getServer().getWorld(arg0)
-								.getBlockIdAt(i, j, k) == 79) { // Hack to
-																// remove ice
-							plugin.getServer().getWorld(arg0)
-									.setBlockAt(20, i, j, k);
-						}
-						plugin.getServer().getWorld(arg0)
-								.setBlockAt(0, i, j, k);
+						/*
+						 * if
+						 * (plugin.getServer().getPlayer(playerName).getWorld()
+						 * .getBlockTypeIdAt(i, j, k) == 79) { // Hack to remove
+						 * ice plugin.getServer().getWorld("world")
+						 * .setBlockAt(20, i, j, k); }
+						 */
+						Location loc = new Location(plugin.getServer()
+								.getPlayer(playerName).getWorld(), i, j, k);
+						plugin.getServer().getPlayer(playerName).getWorld()
+								.getBlockAt(loc).setTypeId(0);
+						// plugin.getServer().getWorld("world")
+						// .setBlockAt(0, i, j, k);
 					}
 				}
 			}
 		}
 
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " emptied a cuboid");
+			plugin.getLogger()
+					.log(Level.INFO, playerName + " emptied a cuboid");
 	}
 
 	public static void fillCuboid(String playerName, int bloctype) {
 		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(selection, false);
+		copyCuboid(playerName, selection, false);
 
 		synchronized (lock) {
 			for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
-						plugin.getServer().getWorld(arg0)
-								.setBlockAt(bloctype, i, j, k);
+						plugin.getServer()
+								.getPlayer(playerName)
+								.getWorld()
+								.getBlockAt(
+										new Location(plugin.getServer()
+												.getPlayer(playerName)
+												.getWorld(), i, j, k))
+								.setTypeId(bloctype);
+						// plugin.getServer().getWorld("world").setBlockAt(bloctype,
+						// i, j, k);
 					}
 				}
 			}
@@ -322,7 +371,7 @@ public class CuboidAction {
 
 	public static void replaceBlocks(String playerName, int[] replaceParams) {
 		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(selection, false);
+		copyCuboid(playerName, selection, false);
 
 		synchronized (lock) {
 			int targetBlockIndex = replaceParams.length - 1;
@@ -330,76 +379,140 @@ public class CuboidAction {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
 						for (int l = 0; l < targetBlockIndex; l++) {
-							if (plugin.getServer().getWorld(arg0)
-									.getBlockIdAt(i, j, k) == replaceParams[l]) {
+							if (plugin.getServer().getPlayer(playerName)
+									.getWorld().getBlockTypeIdAt(i, j, k) == replaceParams[l]) {
 								plugin.getServer()
-										.getWorld(arg0)
-										.setBlockAt(
-												replaceParams[targetBlockIndex],
-												i, j, k);
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(
+												replaceParams[targetBlockIndex]);
+								// plugin.getServer()
+								// .getWorld("world")
+								// .setBlockAt(
+								// replaceParams[targetBlockIndex],
+								// i, j, k);
 							}
 						}
 					}
 				}
 			}
 			if (Main.logging)
-				plugin.getLogger().log(Level.INFO, playerName + " replaced blocks inside a cuboid");
+				plugin.getLogger().log(Level.INFO,
+						playerName + " replaced blocks inside a cuboid");
 		}
 	}
 
 	public static void buildCuboidFaces(String playerName, int bloctype,
 			boolean sixFaces) {
 		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(selection, false);
+		copyCuboid(playerName, selection, false);
 
 		synchronized (lock) {
 			for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					plugin.getServer()
-							.getWorld(arg0)
-							.setBlockAt(bloctype, i, j,
-									selection.firstCorner[2]);
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockAt(
+									new Location(plugin.getServer()
+											.getPlayer(playerName).getWorld(),
+											i, j, selection.firstCorner[2]))
+							.setTypeId(bloctype);
+					// plugin.getServer()
+					// .getWorld("world")
+					// .setBlockAt(bloctype, i, j,
+					// selection.firstCorner[2]);
 					plugin.getServer()
-							.getWorld(arg0)
-							.setBlockAt(bloctype, i, j,
-									selection.secondCorner[2]);
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockAt(
+									new Location(plugin.getServer()
+											.getPlayer(playerName).getWorld(),
+											i, j, selection.secondCorner[2]))
+							.setTypeId(bloctype);
+					// plugin.getServer()
+					// .getWorld("world")
+					// .setBlockAt(bloctype, i, j,
+					// selection.secondCorner[2]);
 				}
 			}
 			for (int i = selection.firstCorner[1]; i <= selection.secondCorner[1]; i++) {
 				for (int j = selection.firstCorner[2]; j <= selection.secondCorner[2]; j++) {
 					plugin.getServer()
-							.getWorld(arg0)
-							.setBlockAt(bloctype, selection.firstCorner[0], i,
-									j);
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockAt(
+									new Location(plugin.getServer()
+											.getPlayer(playerName).getWorld(),
+											selection.firstCorner[0], i, j))
+							.setTypeId(bloctype);
+					// plugin.getServer()
+					// .getWorld("world")
+					// .setBlockAt(bloctype, selection.firstCorner[0], i,
+					// j);
 					plugin.getServer()
-							.getWorld(arg0)
-							.setBlockAt(bloctype, selection.secondCorner[0], i,
-									j);
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockAt(
+									new Location(plugin.getServer()
+											.getPlayer(playerName).getWorld(),
+											selection.secondCorner[0], i, j))
+							.setTypeId(bloctype);
+					// plugin.getServer()
+					// .getWorld("world")
+					// .setBlockAt(bloctype, selection.secondCorner[0], i,
+					// j);
 				}
 			}
 			if (sixFaces) {
 				for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 					for (int j = selection.firstCorner[2]; j <= selection.secondCorner[2]; j++) {
 						plugin.getServer()
-								.getWorld(arg0)
-								.setBlockAt(bloctype, i,
-										selection.firstCorner[1], j);
+								.getPlayer(playerName)
+								.getWorld()
+								.getBlockAt(
+										new Location(plugin.getServer()
+												.getPlayer(playerName)
+												.getWorld(), i,
+												selection.firstCorner[1], j))
+								.setTypeId(bloctype);
+						// plugin.getServer()
+						// .getWorld("world")
+						// .setBlockAt(bloctype, i,
+						// selection.firstCorner[1], j);
 						plugin.getServer()
-								.getWorld(arg0)
-								.setBlockAt(bloctype, i,
-										selection.secondCorner[1], j);
+								.getPlayer(playerName)
+								.getWorld()
+								.getBlockAt(
+										new Location(plugin.getServer()
+												.getPlayer(playerName)
+												.getWorld(), i,
+												selection.secondCorner[1], j))
+								.setTypeId(bloctype);
+						// plugin.getServer()
+						// .getWorld("world")
+						// .setBlockAt(bloctype, i,
+						// selection.secondCorner[1], j);
 					}
 				}
 			}
 			if (Main.logging)
-				plugin.getLogger().log(Level.INFO, playerName + " built the "
-						+ ((sixFaces) ? "faces" : "walls") + " of a cuboid");
+				plugin.getLogger().log(
+						Level.INFO,
+						playerName + " built the "
+								+ ((sixFaces) ? "faces" : "walls")
+								+ " of a cuboid");
 		}
 	}
 
-	public static void rotateCuboidContent(String playerName, int rotationType) { // TODO
+	public static void rotateCuboidContent(String playerName, int rotationType) {
+		// TODO
 		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(selection, false);
+		copyCuboid(playerName, selection, false);
 
 		synchronized (lock) {
 			if (rotationType == 0) { // 90° clockwise
@@ -423,11 +536,11 @@ public class CuboidAction {
 			int value) {
 		String playerName = player.getName();
 		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(selection, false);
+		copyCuboid(playerName, selection, false);
 
 		synchronized (lock) {
 			if (movementType.equalsIgnoreCase("East")) {
-				copyCuboid(selection, selection.firstCorner[0],
+				copyCuboid(playerName, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1],
 						selection.secondCorner[1], selection.firstCorner[2]
 								- value, selection.secondCorner[2]);
@@ -436,16 +549,38 @@ public class CuboidAction {
 					for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 						for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i, j, k
+													- value))
+									.setTypeId(
 											selection.lastCopiedCuboid[i
 													- selection.firstCorner[0]][j
 													- selection.firstCorner[1]][k
 													- selection.firstCorner[2]
-													+ 1], i, j, k - value);
+													+ 1]);
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(
+							// selection.lastCopiedCuboid[i
+							// - selection.firstCorner[0]][j
+							// - selection.firstCorner[1]][k
+							// - selection.firstCorner[2]
+							// + 1], i, j, k - value);
 							if (deleteIterator < value) {
-								plugin.getServer().getWorld(arg0)
-										.setBlockAt(0, i, j, k);
+								plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(0);
+								// plugin.getServer().getWorld("world")
+								// .setBlockAt(0, i, j, k);
 							}
 						}
 					}
@@ -454,26 +589,49 @@ public class CuboidAction {
 				selection.firstCorner[2] -= value;
 				selection.secondCorner[2] -= value;
 			} else if (movementType.equalsIgnoreCase("North")) {
-				copyCuboid(selection, selection.firstCorner[0] - value,
-						selection.secondCorner[0], selection.firstCorner[1],
-						selection.secondCorner[1], selection.firstCorner[2],
-						selection.secondCorner[2]);
+				copyCuboid(playerName, selection, selection.firstCorner[0]
+						- value, selection.secondCorner[0],
+						selection.firstCorner[1], selection.secondCorner[1],
+						selection.firstCorner[2], selection.secondCorner[2]);
 				int deleteIterator = 0;
 				for (int i = selection.secondCorner[0]; i >= selection.firstCorner[0]; i--) {
 					for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 						for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i - value, j,
+													k))
+									.setTypeId(
 											selection.lastCopiedCuboid[i
 													- selection.firstCorner[0]
 													+ 1][j
 													- selection.firstCorner[1]][k
-													- selection.firstCorner[2]],
-											i - value, j, k);
+													- selection.firstCorner[2]]);
+
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(
+							// selection.lastCopiedCuboid[i
+							// - selection.firstCorner[0]
+							// + 1][j
+							// - selection.firstCorner[1]][k
+							// - selection.firstCorner[2]],
+							// i - value, j, k);
 							if (deleteIterator < value) {
-								plugin.getServer().getWorld(arg0)
-										.setBlockAt(0, i, j, k);
+								plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(0);
+								// plugin.getServer().getWorld("world")
+								// .setBlockAt(0, i, j, k);
 							}
 						}
 					}
@@ -482,7 +640,7 @@ public class CuboidAction {
 				selection.firstCorner[0] -= value;
 				selection.secondCorner[0] -= value;
 			} else if (movementType.equalsIgnoreCase("South")) {
-				copyCuboid(selection, selection.firstCorner[0],
+				copyCuboid(playerName, selection, selection.firstCorner[0],
 						selection.secondCorner[0] + value,
 						selection.firstCorner[1], selection.secondCorner[1],
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -491,16 +649,39 @@ public class CuboidAction {
 					for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 						for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i + value, j,
+													k))
+									.setTypeId(
 											selection.lastCopiedCuboid[i
 													- selection.firstCorner[0]][j
 													- selection.firstCorner[1]][k
-													- selection.firstCorner[2]],
-											i + value, j, k);
+													- selection.firstCorner[2]]);
+
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(
+							// selection.lastCopiedCuboid[i
+							// - selection.firstCorner[0]][j
+							// - selection.firstCorner[1]][k
+							// - selection.firstCorner[2]],
+							// i + value, j, k);
 							if (deleteIterator < value) {
-								plugin.getServer().getWorld(arg0)
-										.setBlockAt(0, i, j, k);
+								plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(0);
+
+								// plugin.getServer().getWorld("world")
+								// .setBlockAt(0, i, j, k);
 							}
 						}
 					}
@@ -509,7 +690,7 @@ public class CuboidAction {
 				selection.firstCorner[0] += value;
 				selection.secondCorner[0] += value;
 			} else if (movementType.equalsIgnoreCase("West")) {
-				copyCuboid(selection, selection.firstCorner[0],
+				copyCuboid(playerName, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1],
 						selection.secondCorner[1], selection.firstCorner[2],
 						selection.secondCorner[2] + value);
@@ -518,16 +699,39 @@ public class CuboidAction {
 					for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 						for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i, j, k
+													+ value))
+									.setTypeId(
 											selection.lastCopiedCuboid[i
 													- selection.firstCorner[0]][j
 													- selection.firstCorner[1]][k
-													- selection.firstCorner[2]],
-											i, j, k + value);
+													- selection.firstCorner[2]]);
+
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(
+							// selection.lastCopiedCuboid[i
+							// - selection.firstCorner[0]][j
+							// - selection.firstCorner[1]][k
+							// - selection.firstCorner[2]],
+							// i, j, k + value);
 							if (deleteIterator < value) {
-								plugin.getServer().getWorld(arg0)
-										.setBlockAt(0, i, j, k);
+								plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(0);
+
+								// plugin.getServer().getWorld("world")
+								// .setBlockAt(0, i, j, k);
 							}
 						}
 					}
@@ -536,7 +740,7 @@ public class CuboidAction {
 				selection.firstCorner[2] += value;
 				selection.secondCorner[2] += value;
 			} else if (movementType.equalsIgnoreCase("Up")) {
-				copyCuboid(selection, selection.firstCorner[0],
+				copyCuboid(playerName, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1],
 						selection.secondCorner[1] + value,
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -545,16 +749,39 @@ public class CuboidAction {
 					for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 						for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i, j + value,
+													k))
+									.setTypeId(
 											selection.lastCopiedCuboid[i
 													- selection.firstCorner[0]][j
 													- selection.firstCorner[1]][k
-													- selection.firstCorner[2]],
-											i, j + value, k);
+													- selection.firstCorner[2]]);
+
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(
+							// selection.lastCopiedCuboid[i
+							// - selection.firstCorner[0]][j
+							// - selection.firstCorner[1]][k
+							// - selection.firstCorner[2]],
+							// i, j + value, k);
 							if (deleteIterator < value) {
-								plugin.getServer().getWorld(arg0)
-										.setBlockAt(0, i, j, k);
+								plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(0);
+
+								// plugin.getServer().getWorld("world")
+								// .setBlockAt(0, i, j, k);
 							}
 						}
 					}
@@ -563,7 +790,7 @@ public class CuboidAction {
 				selection.firstCorner[1] += value;
 				selection.secondCorner[1] += value;
 			} else if (movementType.equalsIgnoreCase("Down")) {
-				copyCuboid(selection, selection.firstCorner[0],
+				copyCuboid(playerName, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1]
 								- value, selection.secondCorner[1],
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -572,17 +799,41 @@ public class CuboidAction {
 					for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 						for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
 							plugin.getServer()
-									.getWorld(arg0)
-									.setBlockAt(
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i, j - value,
+													k))
+									.setTypeId(
 											selection.lastCopiedCuboid[i
 													- selection.firstCorner[0]][j
 													- selection.firstCorner[1]
 													+ 1][k
-													- selection.firstCorner[2]],
-											i, j - value, k);
+													- selection.firstCorner[2]]);
+
+							// plugin.getServer()
+							// .getWorld("world")
+							// .setBlockAt(
+							// selection.lastCopiedCuboid[i
+							// - selection.firstCorner[0]][j
+							// - selection.firstCorner[1]
+							// + 1][k
+							// - selection.firstCorner[2]],
+							// i, j - value, k);
 							if (deleteIterator < value) {
-								plugin.getServer().getWorld(arg0)
-										.setBlockAt(0, i, j, k);
+								plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld()
+										.getBlockAt(
+												new Location(plugin.getServer()
+														.getPlayer(playerName)
+														.getWorld(), i, j, k))
+										.setTypeId(0);
+
+								// plugin.getServer().getWorld("world")
+								// .setBlockAt(0, i, j, k);
 							}
 						}
 					}
@@ -598,8 +849,10 @@ public class CuboidAction {
 
 			player.sendMessage(ChatColor.GREEN + "Cuboid successfuly moved.");
 			if (Main.logging)
-				plugin.getLogger().log(Level.INFO, playerName + " moved a cuboid : " + value
-						+ " block(s) " + movementType);
+				plugin.getLogger().log(
+						Level.INFO,
+						playerName + " moved a cuboid : " + value
+								+ " block(s) " + movementType);
 		}
 	}
 
@@ -617,7 +870,7 @@ public class CuboidAction {
 		int Ymin = (height + Ycenter >= Ycenter) ? Ycenter : height + Ycenter;
 		int Ymax = (height + Ycenter <= Ycenter) ? Ycenter : height + Ycenter;
 
-		copyCuboid(selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+		copyCuboid(playerName, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 
 		synchronized (lock) {
 			for (int i = Xmin; i <= Xmax; i++) {
@@ -627,8 +880,17 @@ public class CuboidAction {
 								+ Math.pow(k - Zcenter, 2.0D));
 						if (diff < radius + 0.5
 								&& (fill || (!fill && diff > radius - 0.5))) {
-							plugin.getServer().getWorld(arg0)
-									.setBlockAt(blocktype, i, j, k);
+							plugin.getServer()
+									.getPlayer(playerName)
+									.getWorld()
+									.getBlockAt(
+											new Location(plugin.getServer()
+													.getPlayer(playerName)
+													.getWorld(), i, j, k))
+									.setTypeId(blocktype);
+
+							// plugin.getServer().getWorld("world")
+							// .setBlockAt(blocktype, i, j, k);
 						}
 					}
 				}
@@ -636,8 +898,10 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " built a "
-					+ ((height != 0) ? "cylinder" : "circle"));
+			plugin.getLogger().log(
+					Level.INFO,
+					playerName + " built a "
+							+ ((height != 0) ? "cylinder" : "circle"));
 	}
 
 	public static void buildShpere(String playerName, int radius,
@@ -654,7 +918,7 @@ public class CuboidAction {
 		int Zmin = Zcenter - radius;
 		int Zmax = Zcenter + radius;
 
-		copyCuboid(selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+		copyCuboid(playerName, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 
 		for (int i = Xmin; i <= Xmax; i++) {
 			for (int j = Ymin; j <= Ymax; j++) {
@@ -664,15 +928,23 @@ public class CuboidAction {
 							+ Math.pow(k - Zcenter, 2.0D));
 					if (diff < radius + 0.5
 							&& (fill || (!fill && diff > radius - 0.5))) {
-						plugin.getServer().getWorld(arg0)
-								.setBlockAt(blocktype, i, j, k);
+						plugin.getServer()
+						.getPlayer(playerName)
+						.getWorld()
+						.getBlockAt(
+								new Location(plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld(), i, j, k))
+						.setTypeId(blocktype);
+						//plugin.getServer().getWorld("world")
+						//		.setBlockAt(blocktype, i, j, k);
 					}
 				}
 			}
 		}
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " built a "
-					+ ((fill) ? "ball" : "sphere"));
+			plugin.getLogger().log(Level.INFO,
+					playerName + " built a " + ((fill) ? "ball" : "sphere"));
 	}
 
 	public static void buildPyramid(String playerName, int radius,
@@ -689,13 +961,21 @@ public class CuboidAction {
 		int Ymin = Ycenter;
 		int Ymax = Ycenter + radius;
 
-		copyCuboid(selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+		copyCuboid(playerName, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 
 		for (int j = Ymin; j <= Ymax; j++) {
 			for (int i = Xmin; i <= Xmax; i++) {
 				for (int k = Zmin; k <= Zmax; k++) {
-					plugin.getServer().getWorld(arg0)
-							.setBlockAt(blockType, i, j, k);
+					plugin.getServer()
+					.getPlayer(playerName)
+					.getWorld()
+					.getBlockAt(
+							new Location(plugin.getServer()
+									.getPlayer(playerName)
+									.getWorld(), i, j, k))
+					.setTypeId(blockType);
+					//plugin.getServer().getWorld("world")
+					//		.setBlockAt(blockType, i, j, k);
 				}
 			}
 			Xmin += 1;
@@ -714,8 +994,16 @@ public class CuboidAction {
 			for (int j = Ymin; j <= Ymax; j++) {
 				for (int i = Xmin; i <= Xmax; i++) {
 					for (int k = Zmin; k <= Zmax; k++) {
-						plugin.getServer().getWorld(arg0)
-								.setBlockAt(0, i, j, k);
+						plugin.getServer()
+						.getPlayer(playerName)
+						.getWorld()
+						.getBlockAt(
+								new Location(plugin.getServer()
+										.getPlayer(playerName)
+										.getWorld(), i, j, k))
+						.setTypeId(0);
+						//plugin.getServer().getWorld("world")
+						//		.setBlockAt(0, i, j, k);
 					}
 				}
 				Xmin += 1;
@@ -726,12 +1014,14 @@ public class CuboidAction {
 		}
 
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " built a " + ((fill) ? "filled " : "")
-					+ "pyramid.");
+			plugin.getLogger().log(
+					Level.INFO,
+					playerName + " built a " + ((fill) ? "filled " : "")
+							+ "pyramid.");
 	}
 
-	public static void updateChestsState(int firstX, int firstY, int firstZ,
-			int secondX, int secondY, int secondZ) {
+	public static void updateChestsState(String playerName, int firstX,
+			int firstY, int firstZ, int secondX, int secondY, int secondZ) {
 		int startX = (firstX <= secondX) ? firstX : secondX;
 		int startY = (firstY <= secondY) ? firstY : secondY;
 		int startZ = (firstZ <= secondZ) ? firstZ : secondZ;
@@ -743,10 +1033,11 @@ public class CuboidAction {
 		for (int i = startX; i <= endX; i++) {
 			for (int j = startY; j <= endY; j++) {
 				for (int k = startZ; k <= endZ; k++) {
-					if (plugin.getServer().getWorld(arg0).getBlockIdAt(i, j, k) == 54
-							&& plugin.getServer().getWorld(arg0)
+					if (plugin.getServer().getPlayer(playerName).getWorld()
+							.getBlockTypeIdAt(i, j, k) == 54
+							&& plugin.getServer().getWorld("world")
 									.getComplexBlock(i, j, k) != null) {
-						plugin.getServer().getWorld(arg0)
+						plugin.getServer().getWorld("world")
 								.getComplexBlock(i, j, k).update();
 					}
 

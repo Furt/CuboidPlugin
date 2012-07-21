@@ -454,7 +454,7 @@ public class CuboidAreas {
 		newCuboid.protection = true;
 
 		listOfCuboids.add(newCuboid);
-		CuboidAction.updateChestsState(firstPoint[0], firstPoint[1],
+		CuboidAction.updateChestsState(playerName, firstPoint[0], firstPoint[1],
 				firstPoint[2], secondPoint[0], secondPoint[1], secondPoint[2]);
 
 		player.sendMessage(ChatColor.GREEN
@@ -472,7 +472,7 @@ public class CuboidAreas {
 		int[] secondPoint = CuboidAction.getPoint(playerName, true);
 
 		if (cuboid.protection)
-			CuboidAction.updateChestsState(cuboid.coords[0], cuboid.coords[1],
+			CuboidAction.updateChestsState(playerName, cuboid.coords[0], cuboid.coords[1],
 					cuboid.coords[2], cuboid.coords[3], cuboid.coords[4],
 					cuboid.coords[5]);
 
@@ -484,7 +484,7 @@ public class CuboidAreas {
 		cuboid.coords[5] = secondPoint[2];
 
 		if (cuboid.protection)
-			CuboidAction.updateChestsState(firstPoint[0], firstPoint[1],
+			CuboidAction.updateChestsState(playerName, firstPoint[0], firstPoint[1],
 					firstPoint[2], secondPoint[0], secondPoint[1],
 					secondPoint[2]);
 
@@ -502,7 +502,7 @@ public class CuboidAreas {
 		String playerName = player.getName();
 		listOfCuboids.remove(cuboid);
 		if (cuboid.protection)
-			CuboidAction.updateChestsState(cuboid.coords[0], cuboid.coords[1],
+			CuboidAction.updateChestsState(playerName, cuboid.coords[0], cuboid.coords[1],
 					cuboid.coords[2], cuboid.coords[3], cuboid.coords[4],
 					cuboid.coords[5]);
 

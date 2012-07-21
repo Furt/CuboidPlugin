@@ -48,7 +48,7 @@ public class CuboidAreas {
 	static int addedHeight = 0;
 	static boolean newestHavePriority = true;
 	static Main plugin;
-	
+
 	public CuboidAreas(Main instance) {
 		this.plugin = instance;
 	}
@@ -62,7 +62,8 @@ public class CuboidAreas {
 			if (new File("cuboids/protectedCuboids.txt").exists())
 				readFromTxtFile();
 			else
-				plugin.getLogger().log(Level.INFO, "CuboidPlugin : No datafile to load from (its fine)");
+				plugin.getLogger().log(Level.INFO,
+						"CuboidPlugin : No datafile to load from (its fine)");
 			return;
 		}
 		try {
@@ -78,18 +79,23 @@ public class CuboidAreas {
 								"cuboids/cuboidAreas.dat"))));
 				listOfCuboids = (ArrayList<CuboidC>) (ois.readObject());
 				ois.close();
-				plugin.getLogger().log(Level.INFO, "CuboidPlugin : cuboidAreas.dat (format "
-						+ currentDataVersion + ") loaded");
+				plugin.getLogger().log(
+						Level.INFO,
+						"CuboidPlugin : cuboidAreas.dat (format "
+								+ currentDataVersion + ") loaded");
 			} else {
 				readFromOldFormat(dataVersion);
 			}
 		} catch (Exception e) {
-			plugin.getLogger().log(Level.SEVERE, "Cuboid plugin : Error while reading cuboidAreas.dat");
+			plugin.getLogger().log(Level.SEVERE,
+					"Cuboid plugin : Error while reading cuboidAreas.dat");
 		}
 	}
 
 	public static void readFromTxtFile() {
-		plugin.getLogger().log(Level.INFO, "CuboidPlugin : protectedCuboids.txt found, initializing conversion...");
+		plugin.getLogger()
+				.log(Level.INFO,
+						"CuboidPlugin : protectedCuboids.txt found, initializing conversion...");
 		File dataSource = new File("cuboids/protectedCuboids.txt");
 		try {
 			Scanner scanner = new Scanner(dataSource);
@@ -128,10 +134,13 @@ public class CuboidAreas {
 				listOfCuboids.add(newArea);
 			}
 			scanner.close();
-			plugin.getLogger().log(Level.INFO, "CuboidPlugin : Conversion to new format successful.");
-			plugin.getLogger().log(Level.INFO, "CuboidPlugin : cuboids areas loaded.");
+			plugin.getLogger().log(Level.INFO,
+					"CuboidPlugin : Conversion to new format successful.");
+			plugin.getLogger().log(Level.INFO,
+					"CuboidPlugin : cuboids areas loaded.");
 		} catch (Exception e) {
-			plugin.getLogger().log(Level.SEVERE, "Cuboid plugin : Error while reading protectedCuboids.txt");
+			plugin.getLogger().log(Level.SEVERE,
+					"Cuboid plugin : Error while reading protectedCuboids.txt");
 		}
 	}
 
@@ -147,7 +156,8 @@ public class CuboidAreas {
 				ois.close();
 			} catch (Exception e) {
 				oldCuboids = new ArrayList<Cuboid>();
-				plugin.getLogger().log(Level.SEVERE, "Cuboid plugin : Error while reading cuboidAreas.dat");
+				plugin.getLogger().log(Level.SEVERE,
+						"Cuboid plugin : Error while reading cuboidAreas.dat");
 			}
 
 			listOfCuboids = new ArrayList<CuboidC>();
@@ -165,8 +175,11 @@ public class CuboidAreas {
 				listOfCuboids.add(newCuboid);
 			}
 
-			plugin.getLogger().log(Level.INFO, "CuboidPlugin : conversion of cuboidAreas.dat from f.A to f.B sucessful");
-			plugin.getLogger().log(Level.INFO, "CuboidPlugin : cuboidAreas.dat loaded.");
+			plugin.getLogger()
+					.log(Level.INFO,
+							"CuboidPlugin : conversion of cuboidAreas.dat from f.A to f.B sucessful");
+			plugin.getLogger().log(Level.INFO,
+					"CuboidPlugin : cuboidAreas.dat loaded.");
 		} else if (dataVersion.equalsIgnoreCase("B")) {
 			ArrayList<CuboidB> oldCuboids;
 			try {
@@ -177,7 +190,8 @@ public class CuboidAreas {
 				ois.close();
 			} catch (Exception e) {
 				oldCuboids = new ArrayList<CuboidB>();
-				plugin.getLogger().log(Level.SEVERE, "Cuboid plugin : Error while reading cuboidAreas.dat");
+				plugin.getLogger().log(Level.SEVERE,
+						"Cuboid plugin : Error while reading cuboidAreas.dat");
 			}
 
 			listOfCuboids = new ArrayList<CuboidC>();
@@ -195,10 +209,14 @@ public class CuboidAreas {
 				listOfCuboids.add(newCuboid);
 			}
 
-			plugin.getLogger().log(Level.INFO, "CuboidPlugin : conversion of cuboidAreas.dat from f.B to f.C sucessful");
-			plugin.getLogger().log(Level.INFO, "CuboidPlugin : cuboidAreas.dat loaded.");
+			plugin.getLogger()
+					.log(Level.INFO,
+							"CuboidPlugin : conversion of cuboidAreas.dat from f.B to f.C sucessful");
+			plugin.getLogger().log(Level.INFO,
+					"CuboidPlugin : cuboidAreas.dat loaded.");
 		} else {
-			plugin.getLogger().log(Level.SEVERE, "CuboidPlugin : unsupported data version");
+			plugin.getLogger().log(Level.SEVERE,
+					"CuboidPlugin : unsupported data version");
 			listOfCuboids = new ArrayList<CuboidC>();
 		}
 	}
@@ -209,7 +227,8 @@ public class CuboidAreas {
 		 * 
 		 * return; }
 		 */
-		plugin.getLogger().log(Level.INFO, "CuboidPlugin : Saving data to hard drive...");
+		plugin.getLogger().log(Level.INFO,
+				"CuboidPlugin : Saving data to hard drive...");
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
 					new BufferedOutputStream(new FileOutputStream(new File(
@@ -220,7 +239,8 @@ public class CuboidAreas {
 			writer.write(currentDataVersion);
 			writer.close();
 		} catch (IOException e1) {
-			plugin.getLogger().log(Level.SEVERE, "CuboidPlugin : Error while writing data");
+			plugin.getLogger().log(Level.SEVERE,
+					"CuboidPlugin : Error while writing data");
 		}
 		plugin.getLogger().log(Level.INFO, "CuboidPlugin : Done.");
 	}
@@ -261,7 +281,8 @@ public class CuboidAreas {
 			// playersINVs
 			ps.executeUpdate();
 		} catch (SQLException ex) {
-			plugin.getLogger().log(Level.SEVERE, "Unable to log alert into SQL");
+			plugin.getLogger()
+					.log(Level.SEVERE, "Unable to log alert into SQL");
 		} finally {
 			try {
 				if (ps != null)
@@ -316,8 +337,10 @@ public class CuboidAreas {
 			if (cuboid.contains(loc) && !presence.contains(cuboid)) {
 				cuboid.playerEnters(player);
 				if (cuboid.heal && healPower > 0 && player.getHealth() > 0) {
-					healTimer.schedule(new CuboidHealJob(plugin, player.getName(),
-							cuboid), healDelay);
+					healTimer
+							.schedule(
+									new CuboidHealJob(plugin, player.getName(),
+											cuboid), healDelay);
 				}
 				presence.add(cuboid);
 			} else if (!cuboid.contains(loc) && presence.contains(cuboid)) {
@@ -378,9 +401,10 @@ public class CuboidAreas {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
 			if (Main.logging)
-				plugin.getLogger().log(Level.INFO, playerName
-						+ " failed to create a cuboid area named " + cuboidName
-						+ " (aleady used)");
+				plugin.getLogger().log(
+						Level.INFO,
+						playerName + " failed to create a cuboid area named "
+								+ cuboidName + " (aleady used)");
 			return false;
 		}
 		int[] firstPoint = CuboidAction.getPoint(playerName, false);
@@ -415,8 +439,10 @@ public class CuboidAreas {
 
 		player.sendMessage(ChatColor.GREEN + "Cuboid area successfuly created");
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " created a new cuboid area named "
-					+ cuboidName);
+			plugin.getLogger().log(
+					Level.INFO,
+					playerName + " created a new cuboid area named "
+							+ cuboidName);
 		return true;
 	}
 
@@ -427,9 +453,11 @@ public class CuboidAreas {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
 			if (Main.logging)
-				plugin.getLogger().log(Level.INFO, playerName
-						+ " failed to create a protected area named "
-						+ cuboidName + " (aleady used)");
+				plugin.getLogger().log(
+						Level.INFO,
+						playerName
+								+ " failed to create a protected area named "
+								+ cuboidName + " (aleady used)");
 			return false;
 		}
 
@@ -438,7 +466,8 @@ public class CuboidAreas {
 		int[] secondPoint = CuboidAction.getPoint(playerName, true);
 		if (highProtect) {
 			firstPoint[1] = 0;
-			secondPoint[1] = 128;
+			// increased height for newest mc
+			secondPoint[1] = 255;
 		} else if (firstPoint[1] == secondPoint[1]) {
 			firstPoint[1] -= addedHeight;
 			secondPoint[1] += addedHeight;
@@ -454,14 +483,17 @@ public class CuboidAreas {
 		newCuboid.protection = true;
 
 		listOfCuboids.add(newCuboid);
-		CuboidAction.updateChestsState(playerName, firstPoint[0], firstPoint[1],
-				firstPoint[2], secondPoint[0], secondPoint[1], secondPoint[2]);
+		CuboidAction.updateChestsState(playerName, firstPoint[0],
+				firstPoint[1], firstPoint[2], secondPoint[0], secondPoint[1],
+				secondPoint[2]);
 
 		player.sendMessage(ChatColor.GREEN
 				+ "Protected area successfuly created");
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " created a new protected area named "
-					+ cuboidName);
+			plugin.getLogger().log(
+					Level.INFO,
+					playerName + " created a new protected area named "
+							+ cuboidName);
 
 		return true;
 	}
@@ -472,9 +504,9 @@ public class CuboidAreas {
 		int[] secondPoint = CuboidAction.getPoint(playerName, true);
 
 		if (cuboid.protection)
-			CuboidAction.updateChestsState(playerName, cuboid.coords[0], cuboid.coords[1],
-					cuboid.coords[2], cuboid.coords[3], cuboid.coords[4],
-					cuboid.coords[5]);
+			CuboidAction.updateChestsState(playerName, cuboid.coords[0],
+					cuboid.coords[1], cuboid.coords[2], cuboid.coords[3],
+					cuboid.coords[4], cuboid.coords[5]);
 
 		cuboid.coords[0] = firstPoint[0];
 		cuboid.coords[1] = firstPoint[1];
@@ -484,9 +516,9 @@ public class CuboidAreas {
 		cuboid.coords[5] = secondPoint[2];
 
 		if (cuboid.protection)
-			CuboidAction.updateChestsState(playerName, firstPoint[0], firstPoint[1],
-					firstPoint[2], secondPoint[0], secondPoint[1],
-					secondPoint[2]);
+			CuboidAction.updateChestsState(playerName, firstPoint[0],
+					firstPoint[1], firstPoint[2], secondPoint[0],
+					secondPoint[1], secondPoint[2]);
 
 		byte returnCode = new CuboidBackup(plugin, cuboid, true).writeToDisk();
 		player.sendMessage(ChatColor.GREEN + "return code of backup : "
@@ -494,29 +526,33 @@ public class CuboidAreas {
 
 		player.sendMessage(ChatColor.GREEN + "Cuboid area successfuly moved");
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " moved a cuboid area named "
-					+ cuboid.name);
+			plugin.getLogger().log(Level.INFO,
+					playerName + " moved a cuboid area named " + cuboid.name);
 	}
 
 	public static void removeCuboidArea(Player player, CuboidC cuboid) {
 		String playerName = player.getName();
 		listOfCuboids.remove(cuboid);
 		if (cuboid.protection)
-			CuboidAction.updateChestsState(playerName, cuboid.coords[0], cuboid.coords[1],
-					cuboid.coords[2], cuboid.coords[3], cuboid.coords[4],
-					cuboid.coords[5]);
+			CuboidAction.updateChestsState(playerName, cuboid.coords[0],
+					cuboid.coords[1], cuboid.coords[2], cuboid.coords[3],
+					cuboid.coords[4], cuboid.coords[5]);
 
 		if (new CuboidBackup(plugin, cuboid, false).deleteFromDisc()) {
 			player.sendMessage(ChatColor.GREEN
 					+ "Cuboid area successfuly removed");
 			if (Main.logging)
-				plugin.getLogger().log(Level.INFO, playerName + " removed a cuboid area named "
-						+ cuboid.name);
+				plugin.getLogger().log(
+						Level.INFO,
+						playerName + " removed a cuboid area named "
+								+ cuboid.name);
 		} else {
 			player.sendMessage(ChatColor.YELLOW
 					+ "Cuboid area removed, but unable to remove the backup file.");
-			plugin.getLogger().log(Level.INFO, "Unable to delete a backup file when removing a cuboid area ("
-					+ cuboid.name + ")");
+			plugin.getLogger().log(
+					Level.INFO,
+					"Unable to delete a backup file when removing a cuboid area ("
+							+ cuboid.name + ")");
 		}
 	}
 

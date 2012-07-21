@@ -10,8 +10,7 @@ import org.bukkit.entity.Player;
 @SuppressWarnings("serial")
 public class CuboidC implements Serializable {
 	public String name = "noname";
-	public int[] coords = new int[6]; // int[]{firstX, firstY, firstZ, secondX,
-								// secondY, secondZ}
+	public int[] coords = new int[6];
 	public boolean protection = false;
 	public boolean restricted = false;
 	boolean trespassing = false;

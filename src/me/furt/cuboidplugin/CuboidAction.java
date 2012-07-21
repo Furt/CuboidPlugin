@@ -510,7 +510,6 @@ public class CuboidAction {
 	}
 
 	public static void rotateCuboidContent(String playerName, int rotationType) {
-		// TODO
 		CuboidSelection selection = getPlayerSelection(playerName);
 		copyCuboid(playerName, selection, false);
 

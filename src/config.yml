@@ -1,0 +1,56 @@
+#The selection tool, default : 269 =  wooden shovel
+mainToolID: 269
+#The information tool, default : 268 =  wooden sword
+checkToolID: 268
+#Should players be able to spawn blacklisted blocks with cuboid?
+allowBlacklistedBlocks: false
+#Should every cuboid action be logged?
+fullLogging: false
+# Delay betweed two auto-save of the cuboids to the hard drive.
+autoSaveDelay: 30
+#Which cuboid areas have priority? Newest or oldest?
+newestHavePriority: true
+#Do you want to allow areas to be protected?
+protectionSytem: true
+#Do you want the chests protected too?
+chestProtection: true
+#List of block id that are activable in protected areas
+operableItemIDs: [64, 69, 77, 84]
+#Display a warning when touching a protected block?
+protectionWarning: false
+#List of groups that are forbiden to build on the entire world.
+#Delimiter is a coma. Leave blank if none
+restrictedGroups: none
+# Is protection by default in a newly created area?
+protectionOnDefault: false
+# Is restricted access by default in a newly created area?
+restrictedOnDefault: false
+# Is mob damage protection by default in a newly created area ?
+sanctuaryOnDefault: false
+# Is creeper explosion disabled by default in a newly created area?
+creeperDisabledOnDefault: false
+# Is pvp disabled by default in a newly created area?
+pvpDisabledOnDefault: false
+# Is healing by default in a newly created area?
+healOnDefault: false
+# All the below allowances will define if an owner is able to switch features on/off by himself
+# Do you want owners to be able to prevent PvP in their area ?
+allowNoPvpZones: true
+# Do you want owners to be able to prevent Creeper explosions in their area?
+allowNoCreeperZones: true
+# Do you want owners to be able to restrict the access to their area?
+allowRestrictedZones: false
+# Do you want owners to be able to mob spawn & mob damage in their area?
+allowSanctuaries: true
+# How much are the player healed by tick in the healing areas?
+# 0 -> disable feature; 1 -> minimum; Max health is 20 for players
+healPower: 1
+# How often are players healed in a healing area? (seconds, minimum 1)
+healDelay: 1
+#Do you want to allow areas to be restricted, have welcome, farwell messages & heal?
+onMoveFeatures: true
+#Do you want players of a zone to be able to backup/restore areas they own? (beware : duplication possible) 
+allowOwnersToBackup: false
+#Height and depth added to cuboid areas
+#(only when a flat area is selected to be protected)
+minProtectedHeight: 0

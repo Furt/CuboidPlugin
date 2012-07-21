@@ -7,6 +7,7 @@ import me.furt.cuboidplugin.Main;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -24,8 +25,8 @@ public class CPBlock implements Listener {
 	}
 
 	// TODO needs moved to proper place
-	public void onItemUse(Player player, Block blockPlaced,
-			Block blockClicked, ItemStack item) {
+	public void onItemUse(Player player, Block blockPlaced, Block blockClicked,
+			ItemStack item) {
 		if (blockClicked != null && Main.protectionSytem
 				&& !player.hasPermission("/ignoresOwnership")
 				&& plugin.isCreatorItem(item)) {
@@ -37,12 +38,42 @@ public class CPBlock implements Listener {
 					player.sendMessage(ChatColor.RED
 							+ "This block is protected !");
 				}
-				//return !allowed;
+				// return !allowed;
 			} else {
-				//return plugin.isGloballyRestricted(player);
+				// return plugin.isGloballyRestricted(player);
 			}
 		}
-		//return false;
+		// return false;
+	}
+
+	public void onComplexBlockChange(Player player, Block block) {
+		if (block instanceof Chest) {
+			if (Main.chestProtection
+					&& !player.hasPermission("/ignoresOwnership")) {
+				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
+						block.getY(), block.getZ());
+				if (cuboid != null && cuboid.protection) {
+					// return !cuboid.isAllowed(player);
+				}
+			}
+			// return plugin.isGloballyRestricted(player);
+		}
+		// return false;
+	}
+
+	public void onSendComplexBlock(Player player, Block block) {
+		if (block instanceof Chest) {
+			if (Main.chestProtection
+					&& !player.hasPermission("/ignoresOwnership")) {
+				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
+						block.getY(), block.getZ());
+				if (cuboid != null && cuboid.protection) {
+					// return !cuboid.isAllowed(player);
+				}
+			}
+			// return plugin.isGloballyRestricted(player);
+		}
+		// return false;
 	}
 
 	public boolean onBlockPlace(BlockPlaceEvent event) {

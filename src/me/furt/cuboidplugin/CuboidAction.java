@@ -929,15 +929,15 @@ public class CuboidAction {
 					if (diff < radius + 0.5
 							&& (fill || (!fill && diff > radius - 0.5))) {
 						plugin.getServer()
-						.getPlayer(playerName)
-						.getWorld()
-						.getBlockAt(
-								new Location(plugin.getServer()
-										.getPlayer(playerName)
-										.getWorld(), i, j, k))
-						.setTypeId(blocktype);
-						//plugin.getServer().getWorld("world")
-						//		.setBlockAt(blocktype, i, j, k);
+								.getPlayer(playerName)
+								.getWorld()
+								.getBlockAt(
+										new Location(plugin.getServer()
+												.getPlayer(playerName)
+												.getWorld(), i, j, k))
+								.setTypeId(blocktype);
+						// plugin.getServer().getWorld("world")
+						// .setBlockAt(blocktype, i, j, k);
 					}
 				}
 			}
@@ -967,15 +967,14 @@ public class CuboidAction {
 			for (int i = Xmin; i <= Xmax; i++) {
 				for (int k = Zmin; k <= Zmax; k++) {
 					plugin.getServer()
-					.getPlayer(playerName)
-					.getWorld()
-					.getBlockAt(
-							new Location(plugin.getServer()
-									.getPlayer(playerName)
-									.getWorld(), i, j, k))
-					.setTypeId(blockType);
-					//plugin.getServer().getWorld("world")
-					//		.setBlockAt(blockType, i, j, k);
+							.getPlayer(playerName)
+							.getWorld()
+							.getBlockAt(
+									new Location(plugin.getServer()
+											.getPlayer(playerName).getWorld(),
+											i, j, k)).setTypeId(blockType);
+					// plugin.getServer().getWorld("world")
+					// .setBlockAt(blockType, i, j, k);
 				}
 			}
 			Xmin += 1;
@@ -995,15 +994,15 @@ public class CuboidAction {
 				for (int i = Xmin; i <= Xmax; i++) {
 					for (int k = Zmin; k <= Zmax; k++) {
 						plugin.getServer()
-						.getPlayer(playerName)
-						.getWorld()
-						.getBlockAt(
-								new Location(plugin.getServer()
-										.getPlayer(playerName)
-										.getWorld(), i, j, k))
-						.setTypeId(0);
-						//plugin.getServer().getWorld("world")
-						//		.setBlockAt(0, i, j, k);
+								.getPlayer(playerName)
+								.getWorld()
+								.getBlockAt(
+										new Location(plugin.getServer()
+												.getPlayer(playerName)
+												.getWorld(), i, j, k))
+								.setTypeId(0);
+						// plugin.getServer().getWorld("world")
+						// .setBlockAt(0, i, j, k);
 					}
 				}
 				Xmin += 1;

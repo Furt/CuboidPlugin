@@ -48,7 +48,7 @@ public class HighProtectCommand implements CommandExecutor {
 				}
 				String cuboidName = args[paramSize - 1].trim().toLowerCase();
 				
-				// TODO word around for now
+				// TODO work around for now
 				CuboidAreas.protectCuboidArea(player, ownersList, cuboidName,
 						true);
 			} else {

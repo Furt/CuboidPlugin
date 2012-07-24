@@ -15,7 +15,7 @@ protectionSytem: true
 #Do you want the chests protected too?
 chestProtection: true
 #List of block id that are activable in protected areas
-operableItemIDs: [64, 69, 77, 84]
+operableItemIDs: 64,69,77,84
 #Display a warning when touching a protected block?
 protectionWarning: false
 #List of groups that are forbiden to build on the entire world.

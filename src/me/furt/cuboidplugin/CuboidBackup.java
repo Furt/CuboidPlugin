@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
-import org.bukkit.Server;
 
 /*
  * Serializing the content of a cuboid area
@@ -27,24 +26,22 @@ public class CuboidBackup implements Serializable {
 	private int[][][] cuboidData;
 	private int[] coords;
 	private Main plugin;
+	private String world;
 
 	public CuboidBackup(Main instance, CuboidC cuboid, boolean store) {
 		this.name = cuboid.name;
+		this.world = cuboid.world;
 		this.coords = cuboid.coords;
 		this.plugin = instance;
 		if (store)
 			storeCuboidData();
 	}
 
-	/*
-	 * TODO Multiworld support needs to be added for the class to be finished
-	 */
 	public int[][][] getData() {
 		return this.cuboidData;
 	}
 
 	private void storeCuboidData() {
-		Server server = plugin.getServer();
 		int Xsize = this.coords[3] - this.coords[0] + 1;
 		int Ysize = this.coords[4] - this.coords[1] + 1;
 		int Zsize = this.coords[5] - this.coords[2] + 1;
@@ -54,7 +51,9 @@ public class CuboidBackup implements Serializable {
 			for (int j = 0; j < Ysize; ++j) {
 				this.cuboidData[i][j] = new int[Zsize];
 				for (int k = 0; k < Zsize; ++k) {
-					this.cuboidData[i][j][k] = server.getWorld("world")
+					this.cuboidData[i][j][k] = plugin
+							.getServer()
+							.getWorld(world)
 							.getBlockTypeIdAt(this.coords[0] + i,
 									this.coords[1] + j, this.coords[2] + k);
 				}
@@ -70,17 +69,13 @@ public class CuboidBackup implements Serializable {
 			for (int j = 0; j < Ysize; ++j) {
 				for (int k = 0; k < Zsize; ++k) {
 					plugin.getServer()
-							.getPlayer(playerName)
-							.getWorld()
+							.getWorld(world)
 							.getBlockAt(
-									new Location(plugin.getServer()
-											.getPlayer(playerName).getWorld(),
-											this.coords[0] + i, this.coords[1]
-													+ j, this.coords[2] + k))
+									new Location(plugin.getServer().getWorld(
+											world), this.coords[0] + i,
+											this.coords[1] + j, this.coords[2]
+													+ k))
 							.setTypeId(this.cuboidData[i][j][k]);
-					// server.getWorld("world").setBlockAt(this.cuboidData[i][j][k],
-					// this.coords[0] + i, this.coords[1] + j,
-					// this.coords[2] + k);
 				}
 			}
 		}
@@ -88,12 +83,14 @@ public class CuboidBackup implements Serializable {
 
 	public byte writeToDisk() {
 		// checking folders
-		File cuboidFolder = new File("cuboids");
+		File cuboidFolder = new File(plugin.getDataFolder() + File.separator
+				+ "backups");
 		try {
 			if (!cuboidFolder.exists()) {
 				cuboidFolder.mkdir();
 			}
-			File subFolder = new File("cuboids/areaBackups");
+			File subFolder = new File(plugin.getDataFolder() + File.separator
+					+ "backups" + File.separator + world);
 			try {
 				if (!subFolder.exists()) {
 					subFolder.mkdir();
@@ -111,7 +108,9 @@ public class CuboidBackup implements Serializable {
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
 					new BufferedOutputStream(new FileOutputStream(new File(
-							"cuboids/areaBackups/" + this.name + ".cuboid"))));
+							plugin.getDataFolder() + File.separator + "backups"
+									+ File.separator + world, this.name
+									+ ".cuboid"))));
 			oos.writeObject(this.cuboidData);
 			oos.close();
 		} catch (IOException e) {
@@ -119,8 +118,10 @@ public class CuboidBackup implements Serializable {
 			return 2;
 		}
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO,
-					"New cuboidArea backup : " + this.name);
+			plugin.getLogger().log(
+					Level.INFO,
+					"New cuboidArea backup : " + this.name + " on world: "
+							+ world);
 		return 0;
 	}
 
@@ -128,7 +129,9 @@ public class CuboidBackup implements Serializable {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(
 					new BufferedInputStream(new FileInputStream(new File(
-							"cuboids/areaBackups/" + this.name + ".cuboid"))));
+							plugin.getDataFolder() + File.separator + "backups"
+									+ File.separator + world, this.name
+									+ ".cuboid"))));
 			try {
 				this.cuboidData = (int[][][]) (ois.readObject());
 			} catch (Exception e) {
@@ -147,14 +150,16 @@ public class CuboidBackup implements Serializable {
 		restoreCuboidData(playerName);
 
 		if (Main.logging)
-			plugin.getLogger().log(Level.INFO,
-					"Loaded cuboidArea backup : " + this.name);
+			plugin.getLogger().log(
+					Level.INFO,
+					"Loaded cuboidArea backup : " + this.name + " on world: "
+							+ world);
 		return 0;
 	}
 
 	public boolean deleteFromDisc() {
-		File fileToDelete = new File("cuboids/areaBackups/" + this.name
-				+ ".cuboid");
+		File fileToDelete = new File(plugin.getDataFolder() + File.separator
+				+ "backups" + File.separator + world, this.name + ".cuboid");
 		if (fileToDelete.exists()) {
 			return fileToDelete.delete();
 		}

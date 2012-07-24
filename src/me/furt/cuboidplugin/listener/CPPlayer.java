@@ -8,19 +8,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class CPPlayer implements Listener {
 
-	private Main player;
-
-	public CPPlayer(Main instance) {
-		this.player = instance;
-	}
-	
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
@@ -56,18 +49,15 @@ public class CPPlayer implements Listener {
 				return;
 			}
 
-			if (Main.notTeleport.contains(player.getName())) { // if he was
-															// teleported
-															// out of a
-															// restricted
-															// area
+			// if he was teleported out of a restricted area
+			if (Main.notTeleport.contains(player.getName())) {
 				Main.notTeleport.remove(player.getName());
 			} else {
 				CuboidAreas.movement(player, to);
 			}
 		}
 	}
-	
+
 	public void onDisconnect(PlayerQuitEvent event) {
 		CuboidAreas.leaveAll(event.getPlayer());
 	}

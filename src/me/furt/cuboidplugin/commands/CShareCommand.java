@@ -38,7 +38,7 @@ public class CShareCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (args.length > 2) {
 			String cuboidName = args[1].toLowerCase();
 			String targetPlayerName = "";
@@ -47,16 +47,15 @@ public class CShareCommand implements CommandExecutor {
 			if (targetPlayer != null) {
 				targetPlayerName = targetPlayer.getName();
 			} else {
-				player.sendMessage(ChatColor.RED + "Player "
-						+ args[2] + " seems to be offline");
+				player.sendMessage(ChatColor.RED + "Player " + args[2]
+						+ " seems to be offline");
 				return true;
 			}
 
 			if (plugin.cuboidExists(playerName, cuboidName)) {
 				if (!plugin.cuboidExists(targetPlayerName, cuboidName)) {
 
-					File ownerFolder = new File("cuboids/"
-							+ targetPlayerName);
+					File ownerFolder = new File("cuboids/" + targetPlayerName);
 					try {
 						if (!ownerFolder.exists()) {
 							ownerFolder.mkdir();
@@ -67,20 +66,16 @@ public class CShareCommand implements CommandExecutor {
 						return true;
 					}
 
-					if (CuboidContent.copyFile(new File("cuboids/"
-							+ playerName + "/" + cuboidName
-							+ ".cuboid"), new File("cuboids/"
-							+ targetPlayerName + "/" + cuboidName
-							+ ".cuboid"))) {
-						player.sendMessage(ChatColor.GREEN
-								+ "You shared " + cuboidName
-								+ " with " + targetPlayerName);
+					if (CuboidContent.copyFile(new File("cuboids/" + playerName
+							+ "/" + cuboidName + ".cuboid"), new File(
+							"cuboids/" + targetPlayerName + "/" + cuboidName
+									+ ".cuboid"))) {
+						player.sendMessage(ChatColor.GREEN + "You shared "
+								+ cuboidName + " with " + targetPlayerName);
 						for (Player p : plugin.getServer().getOnlinePlayers()) {
-							if (p.getName()
-									.equals(targetPlayerName)) {
-								p.sendMessage(ChatColor.GREEN
-										+ playerName + " shared "
-										+ cuboidName
+							if (p.getName().equals(targetPlayerName)) {
+								p.sendMessage(ChatColor.GREEN + playerName
+										+ " shared " + cuboidName
 										+ ".cuboid with you");
 							}
 						}
@@ -89,10 +84,8 @@ public class CShareCommand implements CommandExecutor {
 								+ "Error while copying the the cuboid file");
 					}
 				} else {
-					player.sendMessage(ChatColor.RED
-							+ targetPlayerName
-							+ " already has a cuboid named "
-							+ cuboidName);
+					player.sendMessage(ChatColor.RED + targetPlayerName
+							+ " already has a cuboid named " + cuboidName);
 				}
 			} else {
 				player.sendMessage(ChatColor.RED

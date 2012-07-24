@@ -36,15 +36,14 @@ public class CSaveCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (args.length > 1) {
 			String cuboidName = args[1].toLowerCase();
 			if (!plugin.cuboidExists(playerName, cuboidName)
-					|| args.length == 3
-					&& args[2].startsWith("over")) {
+					|| args.length == 3 && args[2].startsWith("over")) {
 				if (CuboidAction.isReady(playerName, true)) {
-					byte returnCode = CuboidAction.saveCuboid(
-							playerName, cuboidName);
+					byte returnCode = CuboidAction.saveCuboid(playerName,
+							cuboidName);
 					if (returnCode == 0) {
 						player.sendMessage(ChatColor.GREEN
 								+ "Selected cuboid is saved with the name "
@@ -65,8 +64,7 @@ public class CSaveCommand implements CommandExecutor {
 						+ "This cuboid name is already taken.");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "Usage : /csave <cuboid name>");
+			player.sendMessage(ChatColor.RED + "Usage : /csave <cuboid name>");
 		}
 
 		return false;

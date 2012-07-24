@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public class Cuboid implements Serializable {
 	// old data format, kept here for retro-compatibility
 	String name;
-	int[] coords; // int[]{firstX, firstY, firstZ, secondX, secondY, secondZ}
+	int[] coords;
 	boolean protection;
 	boolean restricted;
 	boolean inventories;
@@ -25,9 +24,11 @@ public class Cuboid implements Serializable {
 	ArrayList<String> presentPlayers;
 	ArrayList<String> disallowedCommands;
 	HashMap<String, CuboidInventory> playerInventories;
+	String world;
 
 	public Cuboid() {
 		this.name = "noname";
+		this.world = "world";
 		this.coords = new int[6];
 		this.allowedPlayers = new ArrayList<String>();
 		this.protection = false;

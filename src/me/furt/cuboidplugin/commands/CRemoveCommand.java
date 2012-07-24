@@ -37,12 +37,12 @@ public class CRemoveCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (args.length > 1) {
 			String cuboidName = args[1].toLowerCase();
 			if (plugin.cuboidExists(playerName, cuboidName)) {
-				File toDelete = new File("cuboids/" + playerName
-						+ "/" + cuboidName + ".cuboid");
+				File toDelete = new File("cuboids/" + playerName + "/"
+						+ cuboidName + ".cuboid");
 				if (toDelete.delete()) {
 					player.sendMessage(ChatColor.GREEN
 							+ "Cuboid sucessfuly deleted");
@@ -55,8 +55,7 @@ public class CRemoveCommand implements CommandExecutor {
 						+ "This cuboid does not exist.");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "Usage : /cremove <cuboid name>");
+			player.sendMessage(ChatColor.RED + "Usage : /cremove <cuboid name>");
 		}
 
 		return false;

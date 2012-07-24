@@ -37,7 +37,7 @@ public class CReplaceCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, true)) {
 
 			int paramSize = args.length - 1;
@@ -45,29 +45,28 @@ public class CReplaceCommand implements CommandExecutor {
 				int[] replaceParams = new int[paramSize];
 				for (int i = 0; i < paramSize; i++) {
 					try {
-						replaceParams[i] = Integer
-								.parseInt(args[i + 1]);
+						replaceParams[i] = Integer.parseInt(args[i + 1]);
 					} catch (NumberFormatException n) {
-						replaceParams[i] = Material.getMaterial(args[i + 1]).getId();
-						//replaceParams[i] = etc.getDataSource().getItem(args[i + 1]);
+						replaceParams[i] = Material.getMaterial(args[i + 1])
+								.getId();
+						// replaceParams[i] = etc.getDataSource().getItem(args[i
+						// + 1]);
 						if (replaceParams[i] == 0) {
-							player.sendMessage(ChatColor.RED
-									+ args[i + 1]
+							player.sendMessage(ChatColor.RED + args[i + 1]
 									+ " is not a valid block name.");
 							return true;
 						}
 					}
 					if (!plugin.isValidBlockID(replaceParams[i])) {
-						player.sendMessage(ChatColor.RED
-								+""+ replaceParams[i]
+						player.sendMessage(ChatColor.RED + ""
+								+ replaceParams[i]
 								+ " is not a valid block ID.");
 						return true;
 					}
 				}
 
-				int blockID = replaceParams[replaceParams.length - 1];
-				CuboidAction.replaceBlocks(playerName,
-						replaceParams);
+				// int blockID = replaceParams[replaceParams.length - 1];
+				CuboidAction.replaceBlocks(playerName, replaceParams);
 				player.sendMessage(ChatColor.GREEN
 						+ "The blocks have been replaced");
 			} else {
@@ -75,8 +74,7 @@ public class CReplaceCommand implements CommandExecutor {
 						+ "Usage : /creplace <block id|name> <block id|name>");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No cuboid has been selected");
+			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
 
 		return false;

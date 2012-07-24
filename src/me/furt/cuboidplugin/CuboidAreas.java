@@ -50,16 +50,16 @@ public class CuboidAreas {
 	static Main plugin;
 
 	public CuboidAreas(Main instance) {
-		this.plugin = instance;
+		CuboidAreas.plugin = instance;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static void loadCuboidAreas() {
 		listOfCuboids = new ArrayList<CuboidC>();
 
-		File dataSource = new File("cuboids/cuboidAreas.dat");
+		File dataSource = new File(plugin.getDataFolder(), "cuboidAreas.dat");
 		if (!dataSource.exists()) {
-			if (new File("cuboids/protectedCuboids.txt").exists())
+			if (new File(plugin.getDataFolder(), "protectedCuboids.txt").exists())
 				readFromTxtFile();
 			else
 				plugin.getLogger().log(Level.INFO,
@@ -67,7 +67,7 @@ public class CuboidAreas {
 			return;
 		}
 		try {
-			File versionFile = new File("cuboids/cuboidAreas.version");
+			File versionFile = new File(plugin.getDataFolder(), "cuboidAreas.version");
 			if (!versionFile.exists()) {
 				readFromOldFormat(null);
 				return;
@@ -76,7 +76,7 @@ public class CuboidAreas {
 			if (dataVersion.equalsIgnoreCase(currentDataVersion)) {
 				ObjectInputStream ois = new ObjectInputStream(
 						new BufferedInputStream(new FileInputStream(new File(
-								"cuboids/cuboidAreas.dat"))));
+								plugin.getDataFolder(), "cuboidAreas.dat"))));
 				listOfCuboids = (ArrayList<CuboidC>) (ois.readObject());
 				ois.close();
 				plugin.getLogger().log(
@@ -96,7 +96,7 @@ public class CuboidAreas {
 		plugin.getLogger()
 				.log(Level.INFO,
 						"CuboidPlugin : protectedCuboids.txt found, initializing conversion...");
-		File dataSource = new File("cuboids/protectedCuboids.txt");
+		File dataSource = new File(plugin.getDataFolder(), "protectedCuboids.txt");
 		try {
 			Scanner scanner = new Scanner(dataSource);
 			while (scanner.hasNextLine()) {
@@ -151,7 +151,7 @@ public class CuboidAreas {
 			try {
 				ObjectInputStream ois = new ObjectInputStream(
 						new BufferedInputStream(new FileInputStream(new File(
-								"cuboids/cuboidAreas.dat"))));
+								plugin.getDataFolder(), "cuboidAreas.dat"))));
 				oldCuboids = (ArrayList<Cuboid>) (ois.readObject());
 				ois.close();
 			} catch (Exception e) {
@@ -185,7 +185,7 @@ public class CuboidAreas {
 			try {
 				ObjectInputStream ois = new ObjectInputStream(
 						new BufferedInputStream(new FileInputStream(new File(
-								"cuboids/cuboidAreas.dat"))));
+								plugin.getDataFolder(), "cuboidAreas.dat"))));
 				oldCuboids = (ArrayList<CuboidB>) (ois.readObject());
 				ois.close();
 			} catch (Exception e) {
@@ -198,6 +198,7 @@ public class CuboidAreas {
 			for (CuboidB oldCuboid : oldCuboids) {
 				CuboidC newCuboid = new CuboidC(plugin);
 				newCuboid.name = oldCuboid.name;
+				newCuboid.world = oldCuboid.world;
 				newCuboid.coords = oldCuboid.coords;
 				newCuboid.allowedPlayers = oldCuboid.allowedPlayers;
 				newCuboid.protection = oldCuboid.protection;
@@ -231,11 +232,10 @@ public class CuboidAreas {
 				"CuboidPlugin : Saving data to hard drive...");
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
-					new BufferedOutputStream(new FileOutputStream(new File(
-							"cuboids/cuboidAreas.dat"))));
+					new BufferedOutputStream(new FileOutputStream(new File(plugin.getDataFolder(), "cuboidAreas.dat"))));
 			oos.writeObject(listOfCuboids);
 			oos.close();
-			FileWriter writer = new FileWriter("cuboids/cuboidAreas.version");
+			FileWriter writer = new FileWriter(plugin.getDataFolder() + File.separator + "cuboidAreas.version");
 			writer.write(currentDataVersion);
 			writer.close();
 		} catch (IOException e1) {
@@ -254,28 +254,29 @@ public class CuboidAreas {
 			conn = DriverManager.getConnection(SQLdb, SQLusername, SQLpassword);
 			ps = conn
 					.prepareStatement(
-							"INSERT INTO cuboidAreas (name, X1, Y1, Z1, X2, Y2, Z2, protection, restriction,"
+							"INSERT INTO cuboidAreas (name, world,  X1, Y1, Z1, X2, Y2, Z2, protection, restriction,"
 									+ " trespassing, pvp, heal, creeper, sanctuary, welcome, farewell, warning, owners, present"
 									+ "cmdblacklist, playersINVs)"
-									+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+									+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, cuboid.name);
-			ps.setInt(2, cuboid.coords[0]);
-			ps.setInt(3, cuboid.coords[1]);
-			ps.setInt(4, cuboid.coords[2]);
-			ps.setInt(5, cuboid.coords[3]);
-			ps.setInt(6, cuboid.coords[4]);
-			ps.setInt(7, cuboid.coords[5]);
-			ps.setBoolean(8, cuboid.protection);
-			ps.setBoolean(9, cuboid.restricted);
-			ps.setBoolean(10, cuboid.trespassing);
-			ps.setBoolean(11, cuboid.PvP);
-			ps.setBoolean(12, cuboid.heal);
-			ps.setBoolean(13, cuboid.creeper);
-			ps.setBoolean(14, cuboid.sanctuary);
-			ps.setString(15, cuboid.welcomeMessage);
-			ps.setString(16, cuboid.farewellMessage);
-			ps.setString(17, cuboid.warning);
+			ps.setString(2, cuboid.world);
+			ps.setInt(3, cuboid.coords[0]);
+			ps.setInt(4, cuboid.coords[1]);
+			ps.setInt(5, cuboid.coords[2]);
+			ps.setInt(6, cuboid.coords[3]);
+			ps.setInt(7, cuboid.coords[4]);
+			ps.setInt(8, cuboid.coords[5]);
+			ps.setBoolean(9, cuboid.protection);
+			ps.setBoolean(10, cuboid.restricted);
+			ps.setBoolean(11, cuboid.trespassing);
+			ps.setBoolean(12, cuboid.PvP);
+			ps.setBoolean(13, cuboid.heal);
+			ps.setBoolean(14, cuboid.creeper);
+			ps.setBoolean(15, cuboid.sanctuary);
+			ps.setString(16, cuboid.welcomeMessage);
+			ps.setString(17, cuboid.farewellMessage);
+			ps.setString(18, cuboid.warning);
 			// owners
 			// cmdblacklist
 			// playersINVs
@@ -348,8 +349,6 @@ public class CuboidAreas {
 				presence.remove(cuboid);
 			}
 		}
-		// DEBUG player.sendMessage("DB : " + (int)loc.x + "/" + (int)loc.y +
-		// "/" + (int)loc.z + " --> " + presence.size());
 	}
 
 	public static void leaveAll(Player player) {
@@ -397,6 +396,7 @@ public class CuboidAreas {
 
 	public static boolean createCuboidArea(Player player, String cuboidName) {
 		String playerName = player.getName();
+		String worldName = player.getWorld().getName();
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
@@ -417,6 +417,7 @@ public class CuboidAreas {
 			newCuboid.coords[i + 3] = secondPoint[i];
 		newCuboid.allowedPlayers.add("o:" + playerName);
 		newCuboid.name = cuboidName;
+		newCuboid.world = worldName;
 		if (Main.protectionOnDefault) {
 			newCuboid.protection = true;
 		}
@@ -449,6 +450,7 @@ public class CuboidAreas {
 	public static boolean protectCuboidArea(Player player,
 			ArrayList<String> ownersList, String cuboidName, boolean highProtect) {
 		String playerName = player.getName();
+		String worldName = player.getWorld().getName();
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
@@ -480,12 +482,13 @@ public class CuboidAreas {
 			newCuboid.coords[i + 3] = secondPoint[i];
 		newCuboid.allowedPlayers = ownersList;
 		newCuboid.name = cuboidName;
+		newCuboid.world = worldName;
 		newCuboid.protection = true;
 
 		listOfCuboids.add(newCuboid);
-		CuboidAction.updateChestsState(playerName, firstPoint[0],
+		/*CuboidAction.updateChestsState(playerName, firstPoint[0],
 				firstPoint[1], firstPoint[2], secondPoint[0], secondPoint[1],
-				secondPoint[2]);
+				secondPoint[2]);*/
 
 		player.sendMessage(ChatColor.GREEN
 				+ "Protected area successfuly created");
@@ -503,10 +506,10 @@ public class CuboidAreas {
 		int[] firstPoint = CuboidAction.getPoint(playerName, false);
 		int[] secondPoint = CuboidAction.getPoint(playerName, true);
 
-		if (cuboid.protection)
+		/*if (cuboid.protection)
 			CuboidAction.updateChestsState(playerName, cuboid.coords[0],
 					cuboid.coords[1], cuboid.coords[2], cuboid.coords[3],
-					cuboid.coords[4], cuboid.coords[5]);
+					cuboid.coords[4], cuboid.coords[5]);*/
 
 		cuboid.coords[0] = firstPoint[0];
 		cuboid.coords[1] = firstPoint[1];
@@ -515,10 +518,10 @@ public class CuboidAreas {
 		cuboid.coords[4] = secondPoint[1];
 		cuboid.coords[5] = secondPoint[2];
 
-		if (cuboid.protection)
+		/*if (cuboid.protection)
 			CuboidAction.updateChestsState(playerName, firstPoint[0],
 					firstPoint[1], firstPoint[2], secondPoint[0],
-					secondPoint[1], secondPoint[2]);
+					secondPoint[1], secondPoint[2]);*/
 
 		byte returnCode = new CuboidBackup(plugin, cuboid, true).writeToDisk();
 		player.sendMessage(ChatColor.GREEN + "return code of backup : "
@@ -533,10 +536,10 @@ public class CuboidAreas {
 	public static void removeCuboidArea(Player player, CuboidC cuboid) {
 		String playerName = player.getName();
 		listOfCuboids.remove(cuboid);
-		if (cuboid.protection)
+		/*if (cuboid.protection)
 			CuboidAction.updateChestsState(playerName, cuboid.coords[0],
 					cuboid.coords[1], cuboid.coords[2], cuboid.coords[3],
-					cuboid.coords[4], cuboid.coords[5]);
+					cuboid.coords[4], cuboid.coords[5]);*/
 
 		if (new CuboidBackup(plugin, cuboid, false).deleteFromDisc()) {
 			player.sendMessage(ChatColor.GREEN

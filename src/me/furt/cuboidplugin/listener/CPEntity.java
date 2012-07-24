@@ -16,12 +16,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class CPEntity implements Listener {
 
-	private Main plugin;
-
-	public CPEntity(Main instance) {
-		this.plugin = instance;
-	}
-
 	@EventHandler
 	public void onMobSpawn(CreatureSpawnEvent event) {
 		Entity mob = event.getEntity();

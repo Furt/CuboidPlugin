@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +11,8 @@ import org.bukkit.inventory.ItemStack;
 @SuppressWarnings("serial")
 public class CuboidB implements Serializable{	
 	String name= "noname";
-	int[] coords = new int[6];	//	int[]{firstX, firstY, firstZ, secondX, secondY, secondZ}	
+	String world = "world";
+	int[] coords = new int[6];
 	boolean protection = false;
 	boolean restricted = false;
 	boolean inventories = false;

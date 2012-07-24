@@ -3,8 +3,6 @@ package me.furt.cuboidplugin.commands;
 import me.furt.cuboidplugin.CuboidAction;
 import me.furt.cuboidplugin.CuboidAreas;
 import me.furt.cuboidplugin.CuboidC;
-import me.furt.cuboidplugin.Main;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,11 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CMoveCommand implements CommandExecutor {
-	private Main plugin;
-
-	public CMoveCommand(Main instance) {
-		this.plugin = instance;
-	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -36,7 +29,7 @@ public class CMoveCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, true)) {
 			if (args.length < 3) {
 				player.sendMessage(ChatColor.RED
@@ -50,8 +43,7 @@ public class CMoveCommand implements CommandExecutor {
 			try {
 				howFar = Integer.parseInt(args[2]);
 				if (howFar < 0) {
-					player.sendMessage(ChatColor.RED
-							+ "Distance must be > 0 !");
+					player.sendMessage(ChatColor.RED + "Distance must be > 0 !");
 					return true;
 				}
 			} catch (NumberFormatException n) {
@@ -60,12 +52,10 @@ public class CMoveCommand implements CommandExecutor {
 				return true;
 			}
 
-			CuboidAction
-					.moveCuboidContent(player, args[1], howFar);
+			CuboidAction.moveCuboidContent(player, args[1], howFar);
 
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No cuboid has been selected");
+			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
 
 		return false;

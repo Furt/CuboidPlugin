@@ -36,13 +36,13 @@ public class CLoadCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (args.length > 1) {
 			String cuboidName = args[1].toLowerCase();
 			if (plugin.cuboidExists(playerName, cuboidName)) {
 				if (CuboidAction.isReady(playerName, false)) {
-					byte returnCode = CuboidAction.loadCuboid(
-							playerName, cuboidName);
+					byte returnCode = CuboidAction.loadCuboid(playerName,
+							cuboidName);
 					if (returnCode == 0) {
 						player.sendMessage(ChatColor.GREEN
 								+ "The cuboid has been loaded.");
@@ -65,8 +65,7 @@ public class CLoadCommand implements CommandExecutor {
 						+ "This cuboid does not exist.");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "Usage : /cload <cuboid name>");
+			player.sendMessage(ChatColor.RED + "Usage : /cload <cuboid name>");
 		}
 
 		return false;

@@ -37,10 +37,9 @@ public class CSphereCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, false)) {
-			boolean ball = (args[0].equalsIgnoreCase("/cball")) ? true
-					: false;
+			boolean ball = (args[0].equalsIgnoreCase("/cball")) ? true : false;
 			int radius = 0;
 			int blockID = 4;
 			if (args.length > 2) {
@@ -70,13 +69,12 @@ public class CSphereCommand implements CommandExecutor {
 				}
 
 				if (ball) {
-					CuboidAction.buildShpere(playerName, radius,
-							blockID, true);
+					CuboidAction.buildShpere(playerName, radius, blockID, true);
 					player.sendMessage(ChatColor.GREEN
 							+ "The ball has been built");
 				} else {
-					CuboidAction.buildShpere(playerName, radius,
-							blockID, false);
+					CuboidAction
+							.buildShpere(playerName, radius, blockID, false);
 					player.sendMessage(ChatColor.GREEN
 							+ "The sphere has been built");
 				}
@@ -91,8 +89,7 @@ public class CSphereCommand implements CommandExecutor {
 				}
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No point has been selected");
+			player.sendMessage(ChatColor.RED + "No point has been selected");
 		}
 
 		return false;

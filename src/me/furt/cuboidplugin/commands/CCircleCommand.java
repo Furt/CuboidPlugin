@@ -37,10 +37,9 @@ public class CCircleCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, false)) {
-			boolean disc = args[0].equalsIgnoreCase("/cdisc") ? true
-					: false;
+			boolean disc = args[0].equalsIgnoreCase("/cdisc") ? true : false;
 			int radius = 0;
 			int blockID = 4;
 			int height = 0;
@@ -62,7 +61,7 @@ public class CCircleCommand implements CommandExecutor {
 					blockID = Integer.parseInt(args[2]);
 				} catch (NumberFormatException n) {
 					blockID = Material.getMaterial(args[2]).getId();
-					//blockID = etc.getDataSource().getItem(args[2]);
+					// blockID = etc.getDataSource().getItem(args[2]);
 				}
 
 				if (!plugin.isValidBlockID(blockID)) {
@@ -87,18 +86,16 @@ public class CCircleCommand implements CommandExecutor {
 				}
 
 				if (disc) {
-					CuboidAction.buildCircle(playerName, radius,
-							blockID, height, true);
+					CuboidAction.buildCircle(playerName, radius, blockID,
+							height, true);
 					player.sendMessage(ChatColor.GREEN + "The "
 							+ ((height == 0) ? "disc" : "cylinder")
 							+ " has been build");
 				} else {
-					CuboidAction.buildCircle(playerName, radius,
-							blockID, height, false);
-					player.sendMessage(ChatColor.GREEN
-							+ "The "
-							+ ((height == 0) ? "circle"
-									: "cylinder")
+					CuboidAction.buildCircle(playerName, radius, blockID,
+							height, false);
+					player.sendMessage(ChatColor.GREEN + "The "
+							+ ((height == 0) ? "circle" : "cylinder")
 							+ " has been build");
 				}
 
@@ -112,8 +109,7 @@ public class CCircleCommand implements CommandExecutor {
 				}
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No point has been selected");
+			player.sendMessage(ChatColor.RED + "No point has been selected");
 		}
 
 		return false;

@@ -37,7 +37,7 @@ public class CFillCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, true)) {
 			if (args.length > 1) {
 				int blocID = 0;
@@ -45,14 +45,14 @@ public class CFillCommand implements CommandExecutor {
 					blocID = Integer.parseInt(args[1]);
 				} catch (NumberFormatException n) {
 					blocID = Material.getMaterial(args[1]).getId();
-					//blocID = etc.getDataSource().getItem(args[1]);
+					// blocID = etc.getDataSource().getItem(args[1]);
 				}
 				if (plugin.isValidBlockID(blocID)) {
 					CuboidAction.fillCuboid(playerName, blocID);
 					player.sendMessage(ChatColor.GREEN
 							+ "The cuboid has been filled");
 				} else {
-					player.sendMessage(ChatColor.RED +""+ blocID
+					player.sendMessage(ChatColor.RED + "" + blocID
 							+ " is not a valid block ID.");
 				}
 			} else {
@@ -60,8 +60,7 @@ public class CFillCommand implements CommandExecutor {
 						+ "Usage : /cfill <block id|name>");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No cuboid has been selected");
+			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
 
 		return false;

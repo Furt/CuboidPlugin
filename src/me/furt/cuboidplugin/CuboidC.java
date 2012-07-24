@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 @SuppressWarnings("serial")
 public class CuboidC implements Serializable {
 	public String name = "noname";
+	String world = "world";
 	public int[] coords = new int[6];
 	public boolean protection = false;
 	public boolean restricted = false;
@@ -215,5 +216,9 @@ public class CuboidC implements Serializable {
 		}
 		player.sendMessage(ChatColor.YELLOW + "Disallowed commands :"
 				+ ChatColor.WHITE + list);
+	}
+
+	public String getWorld() {
+		return world;
 	}
 }

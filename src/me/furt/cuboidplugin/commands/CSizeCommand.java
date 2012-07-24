@@ -3,8 +3,6 @@ package me.furt.cuboidplugin.commands;
 import me.furt.cuboidplugin.CuboidAction;
 import me.furt.cuboidplugin.CuboidAreas;
 import me.furt.cuboidplugin.CuboidC;
-import me.furt.cuboidplugin.Main;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,11 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CSizeCommand implements CommandExecutor {
-	private Main plugin;
-
-	public CSizeCommand(Main instance) {
-		this.plugin = instance;
-	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -36,15 +29,13 @@ public class CSizeCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, true)) {
 			player.sendMessage(ChatColor.GREEN
 					+ "The selected cuboid size is : "
-					+ CuboidAction.blocksCount(playerName)
-					+ " blocks");
+					+ CuboidAction.blocksCount(playerName) + " blocks");
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No cuboid has been selected");
+			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
 		return true;
 	}

@@ -3,8 +3,6 @@ package me.furt.cuboidplugin.commands;
 import me.furt.cuboidplugin.CuboidAction;
 import me.furt.cuboidplugin.CuboidAreas;
 import me.furt.cuboidplugin.CuboidC;
-import me.furt.cuboidplugin.Main;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,11 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CPasteCommand implements CommandExecutor {
-	private Main plugin;
-
-	public CPasteCommand(Main instance) {
-		this.plugin = instance;
-	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -36,19 +29,17 @@ public class CPasteCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, false)) {
 			byte returnCode = CuboidAction.paste(playerName);
 			if (returnCode == 0) {
 				player.sendMessage(ChatColor.GREEN
 						+ "The cuboid has been placed.");
 			} else if (returnCode == 1) {
-				player.sendMessage(ChatColor.RED
-						+ "Nothing to paste !");
+				player.sendMessage(ChatColor.RED + "Nothing to paste !");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No point has been selected");
+			player.sendMessage(ChatColor.RED + "No point has been selected");
 		}
 		return false;
 	}

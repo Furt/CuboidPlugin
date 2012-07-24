@@ -45,12 +45,12 @@ public class CuboidContent implements Serializable {
 
 	public byte save() {
 
-		File cuboidFolder = new File("cuboids");
+		File cuboidFolder = plugin.getDataFolder();
 		try {
 			if (!cuboidFolder.exists()) {
 				cuboidFolder.mkdir();
 			}
-			File ownerFolder = new File("cuboids/" + owner);
+			File ownerFolder = new File(cuboidFolder + File.separator + owner);
 			try {
 				if (!ownerFolder.exists()) {
 					ownerFolder.mkdir();
@@ -67,7 +67,8 @@ public class CuboidContent implements Serializable {
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
 					new BufferedOutputStream(new FileOutputStream(new File(
-							"cuboids/" + owner + "/" + this.name + ".cuboid"))));
+							cuboidFolder + File.separator + owner
+									+ File.separator, this.name + ".cuboid"))));
 			oos.writeObject(this.cuboidData);
 			oos.close();
 		} catch (IOException e) {
@@ -82,7 +83,8 @@ public class CuboidContent implements Serializable {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(
 					new BufferedInputStream(new FileInputStream(new File(
-							"cuboids/" + owner + "/" + this.name + ".cuboid"))));
+							plugin.getDataFolder() + File.separator + owner,
+							this.name + ".cuboid"))));
 			try {
 				this.cuboidData = (int[][][]) (ois.readObject());
 			} catch (Exception e) {

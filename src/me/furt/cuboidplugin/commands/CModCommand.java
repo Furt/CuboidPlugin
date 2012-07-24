@@ -39,12 +39,12 @@ public class CModCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (args.length == 1) {
 			plugin.printCuboidHelp(player);
 			return true;
 		}
-		
+
 		if (args.length == 2) {
 			if (args[1].equalsIgnoreCase("list")) {
 				player.sendMessage(ChatColor.YELLOW + "Cuboid areas"
@@ -269,10 +269,10 @@ public class CModCommand implements CommandExecutor {
 				}
 				if (args[3].startsWith("prot")) {
 					cuboidArea.protection = !cuboidArea.protection;
-					CuboidAction.updateChestsState(playerName, cuboidArea.coords[0],
-							cuboidArea.coords[1], cuboidArea.coords[2],
-							cuboidArea.coords[3], cuboidArea.coords[4],
-							cuboidArea.coords[5]);
+					/*CuboidAction.updateChestsState(playerName,
+							cuboidArea.coords[0], cuboidArea.coords[1],
+							cuboidArea.coords[2], cuboidArea.coords[3],
+							cuboidArea.coords[4], cuboidArea.coords[5]);*/
 					player.sendMessage(ChatColor.GREEN + "Protection : "
 							+ (cuboidArea.protection ? "enabled" : "disabled"));
 				} else if (args[3].startsWith("restric")) {

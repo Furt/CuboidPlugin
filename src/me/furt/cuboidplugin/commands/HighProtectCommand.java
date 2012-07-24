@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import me.furt.cuboidplugin.CuboidAction;
 import me.furt.cuboidplugin.CuboidAreas;
 import me.furt.cuboidplugin.CuboidC;
-import me.furt.cuboidplugin.Main;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,11 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class HighProtectCommand implements CommandExecutor {
-	private Main plugin;
-
-	public HighProtectCommand(Main instance) {
-		this.plugin = instance;
-	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -47,8 +40,8 @@ public class HighProtectCommand implements CommandExecutor {
 					ownersList.add(args[i]);
 				}
 				String cuboidName = args[paramSize - 1].trim().toLowerCase();
-				
-				// TODO work around for now
+
+				// TODO
 				CuboidAreas.protectCuboidArea(player, ownersList, cuboidName,
 						true);
 			} else {

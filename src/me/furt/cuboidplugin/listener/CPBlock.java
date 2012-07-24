@@ -6,10 +6,11 @@ import me.furt.cuboidplugin.CuboidC;
 import me.furt.cuboidplugin.Main;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -75,11 +76,12 @@ public class CPBlock implements Listener {
 		}
 		// return false;
 	}
-
-	public boolean onBlockPlace(BlockPlaceEvent event) {
+	
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block blockPlaced = event.getBlockPlaced();
-		if (Main.protectionSytem && !player.hasPermission("/ignoresOwnership")) {
+		if (Main.protectionSytem && !player.hasPermission("cuboidplugin.ignoresownership")) {
 			CuboidC cuboid = CuboidAreas.findCuboidArea(blockPlaced.getX(),
 					blockPlaced.getY(), blockPlaced.getZ());
 			if (cuboid != null && cuboid.protection) {
@@ -87,19 +89,20 @@ public class CPBlock implements Listener {
 				if (!allowed && Main.protectionWarn) {
 					player.sendMessage(ChatColor.RED
 							+ "This block is protected !");
+					event.setCancelled(true);
 				}
-				return !allowed;
-			} else {
-				return plugin.isGloballyRestricted(player);
+					
+			} else if(plugin.isGloballyRestricted(player)){
+				event.setCancelled(true);
 			}
 		}
-		return false;
 	}
 
-	public boolean onBlockBreak(BlockBreakEvent event) {
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
-		if (Main.protectionSytem && !player.hasPermission("/ignoresOwnership")) {
+		if (Main.protectionSytem && !player.hasPermission("cuboidplugin.ignoresownership")) {
 			CuboidC cuboid = CuboidAreas.findCuboidArea(block.getX(),
 					block.getY(), block.getZ());
 			if (cuboid != null && cuboid.protection) {
@@ -107,21 +110,22 @@ public class CPBlock implements Listener {
 				if (!allowed && Main.protectionWarn) {
 					player.sendMessage(ChatColor.RED
 							+ "This block is protected !");
+					event.setCancelled(true);
 				}
-				return !allowed;
-			} else {
-				return plugin.isGloballyRestricted(player);
+					
+			} else if(plugin.isGloballyRestricted(player)){
+				event.setCancelled(true);
 			}
 		}
-		return false;
 	}
-
+	
+	@EventHandler
 	public void onBlockRightClicked(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block blockClicked = event.getClickedBlock();
-		if (player.getItemInHand().getTypeId() == Main.mainToolID
-				&& (player.hasPermission("/protect") || player
-						.hasPermission("/cuboid"))) {
+		if (player.getItemInHand().getType() == Material.getMaterial(Main.mainToolID)
+				&& (player.hasPermission("cuboidplugin.protect") || player
+						.hasPermission("cuboidplugin.cuboid"))) {
 			boolean whichPoint = CuboidAction.setPoint(player.getName(),
 					blockClicked.getX(), blockClicked.getY(),
 					blockClicked.getZ());

@@ -37,7 +37,7 @@ public class CPyramidCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, false)) {
 			int radius = 0;
 			int blockID = 4;
@@ -59,7 +59,7 @@ public class CPyramidCommand implements CommandExecutor {
 					blockID = Integer.parseInt(args[2]);
 				} catch (NumberFormatException n) {
 					blockID = Material.getMaterial(args[2]).getId();
-					//blockID = etc.getDataSource().getItem(args[2]);
+					// blockID = etc.getDataSource().getItem(args[2]);
 				}
 				if (!plugin.isValidBlockID(blockID)) {
 					player.sendMessage(ChatColor.RED + args[2]
@@ -68,13 +68,11 @@ public class CPyramidCommand implements CommandExecutor {
 				}
 
 				boolean filled = true;
-				if (args.length == 4
-						&& args[3].equalsIgnoreCase("empty")) {
+				if (args.length == 4 && args[3].equalsIgnoreCase("empty")) {
 					filled = false;
 				}
 
-				CuboidAction.buildPyramid(playerName, radius,
-						blockID, filled);
+				CuboidAction.buildPyramid(playerName, radius, blockID, filled);
 				player.sendMessage(ChatColor.GREEN
 						+ "The pyramid has been built");
 			} else {
@@ -82,8 +80,7 @@ public class CPyramidCommand implements CommandExecutor {
 						+ "Usage : /cpyramid <radius> <block id|name>");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No point has been selected");
+			player.sendMessage(ChatColor.RED + "No point has been selected");
 		}
 
 		return false;

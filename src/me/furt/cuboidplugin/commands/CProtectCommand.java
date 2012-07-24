@@ -1,23 +1,18 @@
 package me.furt.cuboidplugin.commands;
 
+import java.util.ArrayList;
+
 import me.furt.cuboidplugin.CuboidAction;
 import me.furt.cuboidplugin.CuboidAreas;
 import me.furt.cuboidplugin.CuboidC;
-import me.furt.cuboidplugin.Main;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CFacesCommand implements CommandExecutor {
-	private Main plugin;
-
-	public CFacesCommand(Main instance) {
-		this.plugin = instance;
-	}
+public class CProtectCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -39,33 +34,24 @@ public class CFacesCommand implements CommandExecutor {
 		}
 
 		if (CuboidAction.isReady(playerName, true)) {
-			int blockID = 4;
-			if (args.length > 1) {
-				try {
-					blockID = Integer.parseInt(args[1]);
-				} catch (NumberFormatException n) {
-					blockID = Material.getMaterial(args[1]).getId();
-					// blockID = etc.getDataSource().getItem(args[1]);
+			ArrayList<String> ownersList = new ArrayList<String>();
+			int paramSize = args.length;
+			if (paramSize > 2) {
+				for (short i = 1; i < paramSize - 1; i++) {
+					ownersList.add(args[i]);
 				}
+				String cuboidName = args[paramSize - 1].trim().toLowerCase();
 
-				if (!plugin.isValidBlockID(blockID)) {
-					player.sendMessage(ChatColor.RED + args[1]
-							+ " is not a valid block ID.");
-					return true;
-				}
-
-				CuboidAction.buildCuboidFaces(playerName, blockID, true);
-				player.sendMessage(ChatColor.GREEN
-						+ "The faces of the cuboid have been built");
+				// TODO
+				CuboidAreas.protectCuboidArea(player, ownersList, cuboidName,
+						false);
 			} else {
-				player.sendMessage(ChatColor.RED
-						+ "Usage : /cfaces <block id|name>");
+				player.sendMessage(ChatColor.YELLOW
+						+ "You need to specify at least one player or group, and a name.");
 			}
 		} else {
 			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
-
 		return false;
 	}
-
 }

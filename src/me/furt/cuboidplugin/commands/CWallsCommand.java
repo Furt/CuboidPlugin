@@ -37,7 +37,7 @@ public class CWallsCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (CuboidAction.isReady(playerName, true)) {
 			int blockID = 4;
 			if (args.length > 1) {
@@ -45,7 +45,7 @@ public class CWallsCommand implements CommandExecutor {
 					blockID = Integer.parseInt(args[1]);
 				} catch (NumberFormatException n) {
 					blockID = Material.getMaterial(args[1]).getId();
-					//blockID = etc.getDataSource().getItem(args[1]);
+					// blockID = etc.getDataSource().getItem(args[1]);
 				}
 
 				if (!plugin.isValidBlockID(blockID)) {
@@ -54,8 +54,7 @@ public class CWallsCommand implements CommandExecutor {
 					return true;
 				}
 
-				CuboidAction.buildCuboidFaces(playerName, blockID,
-						false);
+				CuboidAction.buildCuboidFaces(playerName, blockID, false);
 				player.sendMessage(ChatColor.GREEN
 						+ "The walls have been built");
 			} else {
@@ -63,8 +62,7 @@ public class CWallsCommand implements CommandExecutor {
 						+ "Usage : /cwalls <block id|name>");
 			}
 		} else {
-			player.sendMessage(ChatColor.RED
-					+ "No cuboid has been selected");
+			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
 
 		return false;

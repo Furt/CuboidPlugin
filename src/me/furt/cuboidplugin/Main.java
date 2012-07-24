@@ -61,8 +61,8 @@ public class Main extends JavaPlugin {
 	static Timer writeTimer = new Timer();
 	// Listeners
 	public CPBlock cpb = new CPBlock(this);
-	public CPPlayer cpp = new CPPlayer(this);
-	public CPEntity cpe = new CPEntity(this);
+	public CPPlayer cpp = new CPPlayer();
+	public CPEntity cpe = new CPEntity();
 
 	@Override
 	public void onEnable() {
@@ -96,9 +96,7 @@ public class Main extends JavaPlugin {
 		if (globalCreeperProt || globalDisablePvP || globalSanctuary) {
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(
-						new FileOutputStream(new File(getDataFolder()
-								+ File.separator + "cuboids" + File.separator
-								+ "globalFeatues.dat")));
+						new FileOutputStream(new File(getDataFolder(), "globalFeatues.dat")));
 				oos.writeObject(globalDisablePvP);
 				oos.writeObject(globalCreeperProt);
 				oos.writeObject(globalSanctuary);
@@ -108,8 +106,7 @@ public class Main extends JavaPlugin {
 						"Error while writing the state of global features");
 			}
 		} else {
-			File globalFile = new File(getDataFolder() + File.separator
-					+ "cuboids" + File.separator + "globalFeatues.dat");
+			File globalFile = new File(getDataFolder(), "globalFeatues.dat");
 			if (globalFile.exists()) {
 				globalFile.delete();
 			}
@@ -122,19 +119,22 @@ public class Main extends JavaPlugin {
 
 	// TODO finish adding them all
 	private void setupCommands() {
-		getCommand("ccircle").setExecutor(new CCircleCommand(null));
+		//getCommand("ccircle").setExecutor(new CCircleCommand(this));
+		//getCommand("ccopy").setExecutor(new CCopyCommand());
+		getCommand("cmod").setExecutor(new CModCommand(this));
+		getCommand("undo").setExecutor(new UndoCommand());
+		getCommand("protect").setExecutor(new CProtectCommand());
 	}
 
 	/*
 	 * Ensures the existence of the full directory
 	 */
 	private void checkFolder() {
-		if (!this.getDataFolder().exists())
-			this.getDataFolder().mkdir();
-
-		if (!new File(getDataFolder() + File.separator + "cuboids")
-				.isDirectory())
-			new File(getDataFolder() + File.separator + "cuboids").mkdir();
+		if (!getDataFolder().exists())
+			getDataFolder().mkdir();
+		
+		if (!new File(getDataFolder(), "config.yml").exists())
+			saveDefaultConfig();
 	}
 
 	public void loadProperties() {
@@ -181,7 +181,7 @@ public class Main extends JavaPlugin {
 			}
 			CuboidAreas.healPower = healPower;
 			long healDelay = (long) Math.ceil(getConfig()
-					.getInt("healDelay", 1));
+					.getInt("healDelay"));
 			if (healDelay < 1) {
 				healDelay = 1;
 			}
@@ -189,8 +189,7 @@ public class Main extends JavaPlugin {
 
 			// generating list of operable items within protected areas
 			operableItems = new ArrayList<Integer>();
-			String[] operableString = getConfig().getString("operableItemIDs",
-					"").split(",");
+			String[] operableString = getConfig().getString("operableItemIDs").split(",");
 			for (String operableItem : operableString) {
 				if (operableItem == null || operableItem.equalsIgnoreCase("")) {
 					continue;
@@ -205,8 +204,7 @@ public class Main extends JavaPlugin {
 			}
 
 			// reading state of global features if needed
-			File globalFile = new File(getDataFolder() + File.separator
-					+ "cuboids" + File.separator + "globalFeatues.dat");
+			File globalFile = new File(getDataFolder(), "globalFeatues.dat");
 			if (globalFile.exists()) {
 				try {
 					ObjectInputStream ois = new ObjectInputStream(
@@ -298,19 +296,14 @@ public class Main extends JavaPlugin {
 	}
 
 	public boolean cuboidExists(String playerName, String cuboidName) {
-		return new File(getDataFolder() + File.separator + "cuboids"
-				+ File.separator + playerName + File.separator + cuboidName
-				+ ".cuboid").exists();
+		return new File(getDataFolder() + File.separator + playerName, cuboidName + ".cuboid").exists();
 	}
 
 	public String listPersonalCuboids(String owner) {
-		if (!new File(getDataFolder() + File.separator + "cuboids").exists()
-				|| !new File(getDataFolder() + File.separator + "cuboids"
-						+ File.separator + owner).exists()) {
+		if (!new File(getDataFolder() + File.separator + owner).exists()) {
 			return null;
 		}
-		String[] fileList = new File(getDataFolder() + File.separator
-				+ "cuboids" + File.separator + owner).list();
+		String[] fileList = new File(getDataFolder() + File.separator + owner).list();
 		String result = (fileList.length > 0) ? "" : null;
 
 		for (int i = 0; i < fileList.length; i++) {
@@ -347,7 +340,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public boolean isGloballyRestricted(Player player) {
-		if (player.hasPermission("cuboidplugin.globalretrict"))
+		if (player.hasPermission("cuboidplugin.globalrestrict"))
 			return true;
 
 		return false;

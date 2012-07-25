@@ -25,9 +25,10 @@ public class CListCommand implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		String playerName = player.getName();
-		CuboidC playersArea = CuboidAreas.findCuboidArea((int) player
-				.getLocation().getX(), (int) player.getLocation().getY(),
-				(int) player.getLocation().getZ());
+		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation()
+				.getWorld().getName(), (int) player.getLocation().getX(),
+				(int) player.getLocation().getY(), (int) player.getLocation()
+						.getZ());
 		if (playersArea != null && !playersArea.isAllowed(args[0])
 				&& !playersArea.isOwner(player)
 				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
@@ -35,23 +36,20 @@ public class CListCommand implements CommandExecutor {
 					+ "This command is disallowed in this area");
 			return true;
 		}
-		
+
 		if (args.length == 1) {
 			String list = plugin.listPersonalCuboids(playerName);
 			if (list != null) {
-				player.sendMessage(ChatColor.GREEN
-						+ "Your saved cuboids :" + ChatColor.WHITE
-						+ list);
+				player.sendMessage(ChatColor.GREEN + "Your saved cuboids :"
+						+ ChatColor.WHITE + list);
 			} else {
-				player.sendMessage(ChatColor.RED
-						+ "You have no saved cuboid");
+				player.sendMessage(ChatColor.RED + "You have no saved cuboid");
 			}
 		} else if (args.length == 2 && player.isOp()) {
 			String list = plugin.listPersonalCuboids(args[1]);
 			if (list != null) {
 				player.sendMessage(ChatColor.GREEN + args[1]
-						+ "'s saved cuboids :" + ChatColor.WHITE
-						+ list);
+						+ "'s saved cuboids :" + ChatColor.WHITE + list);
 			} else {
 				player.sendMessage(ChatColor.RED + args[1]
 						+ " has no saved cuboid");

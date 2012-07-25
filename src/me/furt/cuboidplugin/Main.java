@@ -130,9 +130,9 @@ public class Main extends JavaPlugin {
 	private void setupCommands() {
 		// getCommand("ccircle").setExecutor(new CCircleCommand(this));
 		// getCommand("ccopy").setExecutor(new CCopyCommand());
-		// getCommand("cmod").setExecutor(new CModCommand(this));
-		// getCommand("undo").setExecutor(new UndoCommand());
-		// getCommand("protect").setExecutor(new CProtectCommand());
+		getCommand("cmod").setExecutor(new CModCommand(this));
+		getCommand("undo").setExecutor(new UndoCommand());
+		getCommand("protect").setExecutor(new CProtectCommand());
 	}
 
 	/*

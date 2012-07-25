@@ -26,22 +26,36 @@ public class CuboidC implements Serializable {
 	ArrayList<String> disallowedCommands = new ArrayList<String>();
 	private Main plugin;
 
-	public CuboidC() {}
+	public CuboidC() {
+	}
 
-	public boolean contains(int X, int Y, int Z) {
-		if (X >= coords[0] && X <= coords[3] && Z >= coords[2]
-				&& Z <= coords[5] && Y >= coords[1] && Y <= coords[4])
+	public boolean contains(String worldName, int X, int Y, int Z) {
+		if (worldName.equalsIgnoreCase(world) && X >= coords[0] && X <= coords[3]
+				&& Z >= coords[2] && Z <= coords[5] && Y >= coords[1]
+				&& Y <= coords[4])
 			return true;
+
 		return false;
 	}
 
 	public boolean contains(Location l) {
-		return contains((int) l.getX(), (int) l.getY(), (int) l.getZ());
+		return contains(l.getWorld().getName(), (int) l.getX(), (int) l.getY(),
+				(int) l.getZ());
 	}
 
 	// TODO come back to later
 	public boolean isAllowed(Player player) {
-		return true;
+		String playerName = player.getName().toLowerCase();
+		for (String allowedPlayer : allowedPlayers) {
+			if (allowedPlayer.equalsIgnoreCase(playerName)
+					|| allowedPlayer.equalsIgnoreCase("o:" + playerName)) {
+				return true;
+			}
+			if (allowedPlayer.startsWith("g:")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isAllowed(String command) {
@@ -188,8 +202,9 @@ public class CuboidC implements Serializable {
 	public void printPresentPlayers(Player player) {
 		String list = "";
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			if (this.contains((int) p.getLocation().getX(), (int) p
-					.getLocation().getY(), (int) p.getLocation().getZ())) {
+			if (this.contains(p.getLocation().getWorld().getName(), (int) p
+					.getLocation().getX(), (int) p.getLocation().getY(),
+					(int) p.getLocation().getZ())) {
 				list += " " + p.getName();
 			}
 		}

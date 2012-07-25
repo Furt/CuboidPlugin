@@ -18,8 +18,9 @@ public class CPPlayer implements Listener {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
 		if (Main.onMoveFeatures) {
-			CuboidC arrival = CuboidAreas.findCuboidArea((int) to.getX(),
-					(int) to.getY(), (int) to.getZ());
+			CuboidC arrival = CuboidAreas.findCuboidArea(to.getWorld()
+					.getName(), (int) to.getX(), (int) to.getY(), (int) to
+					.getZ());
 			if (arrival != null && arrival.restricted
 					&& !player.hasPermission("/ignoresOwnership")
 					&& !arrival.isAllowed(player)) {
@@ -38,8 +39,9 @@ public class CPPlayer implements Listener {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
 		if (Main.onMoveFeatures) {
-			CuboidC arrival = CuboidAreas.findCuboidArea((int) to.getX(),
-					(int) to.getY(), (int) to.getZ());
+			CuboidC arrival = CuboidAreas.findCuboidArea(to.getWorld()
+					.getName(), (int) to.getX(), (int) to.getY(), (int) to
+					.getZ());
 			if (arrival != null && arrival.restricted
 					&& !player.hasPermission("/ignoresOwnership")
 					&& !arrival.isAllowed(player)) {

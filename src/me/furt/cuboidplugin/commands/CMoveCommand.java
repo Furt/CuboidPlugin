@@ -19,7 +19,7 @@ public class CMoveCommand implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		String playerName = player.getName();
-		CuboidC playersArea = CuboidAreas.findCuboidArea((int) player
+		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation().getWorld().getName(), (int) player
 				.getLocation().getX(), (int) player.getLocation().getY(),
 				(int) player.getLocation().getZ());
 		if (playersArea != null && !playersArea.isAllowed(args[0])

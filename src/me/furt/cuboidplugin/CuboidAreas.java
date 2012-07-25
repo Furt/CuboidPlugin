@@ -296,10 +296,10 @@ public class CuboidAreas {
 	// // DATA SENDING ////
 	// //////////////////////////
 
-	public static CuboidC findCuboidArea(int X, int Y, int Z) {
+	public static CuboidC findCuboidArea(String world, int X, int Y, int Z) {
 		CuboidC lastEntry = null;
 		for (CuboidC cuboid : listOfCuboids) {
-			if (cuboid.contains(X, Y, Z)) {
+			if (cuboid.contains(world, X, Y, Z)) {
 				if (newestHavePriority) {
 					lastEntry = cuboid;
 				} else {

@@ -20,8 +20,8 @@ public class CPEntity implements Listener {
 	public void onMobSpawn(CreatureSpawnEvent event) {
 		Entity mob = event.getEntity();
 		Location loc = mob.getLocation();
-		CuboidC cuboid = CuboidAreas.findCuboidArea((int) loc.getX(),
-				(int) loc.getY(), (int) loc.getZ());
+		CuboidC cuboid = CuboidAreas.findCuboidArea(loc.getWorld().getName(),
+				(int) loc.getX(), (int) loc.getY(), (int) loc.getZ());
 		if (cuboid != null && cuboid.sanctuary) {
 			event.setCancelled(true);
 		} else if (Main.globalSanctuary) {
@@ -31,9 +31,10 @@ public class CPEntity implements Listener {
 
 	@EventHandler
 	public void onExplode(EntityExplodeEvent event) {
-		CuboidC cuboid = CuboidAreas.findCuboidArea((int) event.getLocation()
-				.getX(), (int) event.getLocation().getY(), (int) event
-				.getLocation().getZ());
+		CuboidC cuboid = CuboidAreas.findCuboidArea(event.getLocation()
+				.getWorld().getName(), (int) event.getLocation().getX(),
+				(int) event.getLocation().getY(), (int) event.getLocation()
+						.getZ());
 		if (cuboid != null && !cuboid.creeper) {
 			event.setCancelled(true);
 		} else if (Main.globalCreeperProt) {
@@ -52,7 +53,8 @@ public class CPEntity implements Listener {
 				Entity attacker = subEvent.getDamager();
 				if (attacker instanceof Player) {
 					Player target = (Player) attacker;
-					CuboidC cuboid = CuboidAreas.findCuboidArea((int) target
+					CuboidC cuboid = CuboidAreas.findCuboidArea(target
+							.getLocation().getWorld().getName(), (int) target
 							.getLocation().getX(), (int) target.getLocation()
 							.getY(), (int) target.getLocation().getZ());
 					if (cuboid != null && !cuboid.PvP) {
@@ -61,7 +63,8 @@ public class CPEntity implements Listener {
 						event.setCancelled(true);
 					}
 				} else {
-					CuboidC cuboid = CuboidAreas.findCuboidArea((int) attacker
+					CuboidC cuboid = CuboidAreas.findCuboidArea(attacker
+							.getLocation().getWorld().getName(), (int) attacker
 							.getLocation().getX(), (int) attacker.getLocation()
 							.getY(), (int) attacker.getLocation().getZ());
 					if (cuboid != null && cuboid.sanctuary) {

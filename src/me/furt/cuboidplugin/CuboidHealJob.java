@@ -17,7 +17,7 @@ public class CuboidHealJob extends TimerTask {
 	public void run() {
 		Player player = plugin.playerMatch(this.playerName);
 		if (player != null
-				&& this.cuboid.contains((int) player.getLocation().getX(),
+				&& this.cuboid.contains(player.getLocation().getWorld().getName(), (int) player.getLocation().getX(),
 						(int) player.getLocation().getY(), (int) player
 								.getLocation().getZ())) {
 			if (player.getHealth() > 0) {

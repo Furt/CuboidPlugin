@@ -22,9 +22,10 @@ public class CProtectCommand implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		String playerName = player.getName();
-		CuboidC playersArea = CuboidAreas.findCuboidArea((int) player
-				.getLocation().getX(), (int) player.getLocation().getY(),
-				(int) player.getLocation().getZ());
+		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation()
+				.getWorld().getName(), (int) player.getLocation().getX(),
+				(int) player.getLocation().getY(), (int) player.getLocation()
+						.getZ());
 		if (playersArea != null && !playersArea.isAllowed(args[0])
 				&& !playersArea.isOwner(player)
 				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
@@ -36,7 +37,7 @@ public class CProtectCommand implements CommandExecutor {
 		if (CuboidAction.isReady(playerName, true)) {
 			ArrayList<String> ownersList = new ArrayList<String>();
 			int paramSize = args.length;
-			if (paramSize > 2) {
+			if (paramSize > 1) {
 				for (short i = 1; i < paramSize - 1; i++) {
 					ownersList.add(args[i]);
 				}
@@ -45,13 +46,15 @@ public class CProtectCommand implements CommandExecutor {
 				// TODO
 				CuboidAreas.protectCuboidArea(player, ownersList, cuboidName,
 						false);
+				return true;
 			} else {
 				player.sendMessage(ChatColor.YELLOW
 						+ "You need to specify at least one player or group, and a name.");
+				return true;
 			}
 		} else {
 			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
+			return true;
 		}
-		return false;
 	}
 }

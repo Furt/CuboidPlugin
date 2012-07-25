@@ -63,16 +63,21 @@ public class Main extends JavaPlugin {
 	public CPBlock cpb = new CPBlock(this);
 	public CPPlayer cpp = new CPPlayer();
 	public CPEntity cpe = new CPEntity();
+	public static File data;
+	public static Main plugin;
 
 	@Override
 	public void onEnable() {
+		data = this.getDataFolder();
+		plugin = this;
 		checkFolder();
 		loadProperties();
+		CuboidAreas.loadCuboidAreas();
 		getServer().getPluginManager().registerEvents(cpb, this);
 		getServer().getPluginManager().registerEvents(cpp, this);
 		getServer().getPluginManager().registerEvents(cpe, this);
 		setupCommands();
-		CuboidAreas.loadCuboidAreas();
+
 		notTeleport = new ArrayList<String>();
 		if (writeDelay > 0) {
 			writeTimer.schedule(new WriteJob(), writeDelay);
@@ -96,7 +101,8 @@ public class Main extends JavaPlugin {
 		if (globalCreeperProt || globalDisablePvP || globalSanctuary) {
 			try {
 				ObjectOutputStream oos = new ObjectOutputStream(
-						new FileOutputStream(new File(getDataFolder(), "globalFeatues.dat")));
+						new FileOutputStream(new File(getDataFolder(),
+								"globalFeatues.dat")));
 				oos.writeObject(globalDisablePvP);
 				oos.writeObject(globalCreeperProt);
 				oos.writeObject(globalSanctuary);
@@ -117,13 +123,16 @@ public class Main extends JavaPlugin {
 		CuboidAreas.healTimer = new Timer();
 	}
 
+	public static void log(Level level, String msg) {
+		plugin.getLogger().log(level, msg);
+	}
 	// TODO finish adding them all
 	private void setupCommands() {
-		//getCommand("ccircle").setExecutor(new CCircleCommand(this));
-		//getCommand("ccopy").setExecutor(new CCopyCommand());
-		getCommand("cmod").setExecutor(new CModCommand(this));
-		getCommand("undo").setExecutor(new UndoCommand());
-		getCommand("protect").setExecutor(new CProtectCommand());
+		// getCommand("ccircle").setExecutor(new CCircleCommand(this));
+		// getCommand("ccopy").setExecutor(new CCopyCommand());
+		// getCommand("cmod").setExecutor(new CModCommand(this));
+		// getCommand("undo").setExecutor(new UndoCommand());
+		// getCommand("protect").setExecutor(new CProtectCommand());
 	}
 
 	/*
@@ -132,14 +141,19 @@ public class Main extends JavaPlugin {
 	private void checkFolder() {
 		if (!getDataFolder().exists())
 			getDataFolder().mkdir();
-		
+
 		if (!new File(getDataFolder(), "config.yml").exists())
 			saveDefaultConfig();
+		if (!new File(getDataFolder(), "cuboidAreas.dat").exists()) {
+			try {
+				new File(getDataFolder(), "cuboidAreas.dat").createNewFile();
+			} catch (Exception e) {
+
+			}
+		}
 	}
 
 	public void loadProperties() {
-
-		// TODO save config to disk
 		try {
 			// Protection properties
 			CuboidAreas.addedHeight = getConfig().getInt("minProtectedHeight");
@@ -180,8 +194,7 @@ public class Main extends JavaPlugin {
 				healPower = 0;
 			}
 			CuboidAreas.healPower = healPower;
-			long healDelay = (long) Math.ceil(getConfig()
-					.getInt("healDelay"));
+			long healDelay = (long) Math.ceil(getConfig().getInt("healDelay"));
 			if (healDelay < 1) {
 				healDelay = 1;
 			}
@@ -189,14 +202,14 @@ public class Main extends JavaPlugin {
 
 			// generating list of operable items within protected areas
 			operableItems = new ArrayList<Integer>();
-			String[] operableString = getConfig().getString("operableItemIDs").split(",");
+			String[] operableString = getConfig().getString("operableItemIDs")
+					.split(",");
 			for (String operableItem : operableString) {
 				if (operableItem == null || operableItem.equalsIgnoreCase("")) {
 					continue;
 				}
 				try {
-					int operableItemID = Integer.parseInt(operableItem);
-					operableItems.add(operableItemID);
+					operableItems.add(Integer.parseInt(operableItem));
 				} catch (NumberFormatException e) {
 					getLogger().log(Level.INFO,
 							"Invalid item ID skipped : " + operableItem);
@@ -204,7 +217,8 @@ public class Main extends JavaPlugin {
 			}
 
 			// reading state of global features if needed
-			File globalFile = new File(getDataFolder(), "globalFeatues.dat");
+			File globalFile = new File(getDataFolder() + File.separator
+					+ "globalFeatues.dat");
 			if (globalFile.exists()) {
 				try {
 					ObjectInputStream ois = new ObjectInputStream(
@@ -296,14 +310,16 @@ public class Main extends JavaPlugin {
 	}
 
 	public boolean cuboidExists(String playerName, String cuboidName) {
-		return new File(getDataFolder() + File.separator + playerName, cuboidName + ".cuboid").exists();
+		return new File(getDataFolder() + File.separator + playerName,
+				cuboidName + ".cuboid").exists();
 	}
 
 	public String listPersonalCuboids(String owner) {
 		if (!new File(getDataFolder() + File.separator + owner).exists()) {
 			return null;
 		}
-		String[] fileList = new File(getDataFolder() + File.separator + owner).list();
+		String[] fileList = new File(getDataFolder() + File.separator + owner)
+				.list();
 		String result = (fileList.length > 0) ? "" : null;
 
 		for (int i = 0; i < fileList.length; i++) {

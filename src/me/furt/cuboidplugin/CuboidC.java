@@ -26,9 +26,7 @@ public class CuboidC implements Serializable {
 	ArrayList<String> disallowedCommands = new ArrayList<String>();
 	private Main plugin;
 
-	public CuboidC(Main instance) {
-		this.plugin = instance;
-	}
+	public CuboidC() {}
 
 	public boolean contains(int X, int Y, int Z) {
 		if (X >= coords[0] && X <= coords[3] && Z >= coords[2]

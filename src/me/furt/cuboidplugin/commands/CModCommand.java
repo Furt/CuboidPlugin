@@ -337,7 +337,7 @@ public class CModCommand implements CommandExecutor {
 			}
 		} else if (args[2].equalsIgnoreCase("backup")) {
 			if (cuboidArea.isOwner(player) || player.hasPermission("/protect")) {
-				byte returnCode = new CuboidBackup(null, cuboidArea, true)
+				byte returnCode = new CuboidBackup(cuboidArea, true)
 						.writeToDisk();
 				if (returnCode == 0) {
 					player.sendMessage(ChatColor.GREEN
@@ -357,7 +357,7 @@ public class CModCommand implements CommandExecutor {
 		} else if (args[2].equalsIgnoreCase("restore")) {
 			if ((Main.allowOwnersToBackup && cuboidArea.isOwner(player))
 					|| player.hasPermission("/protect")) {
-				byte returnCode = new CuboidBackup(null, cuboidArea, false)
+				byte returnCode = new CuboidBackup(cuboidArea, false)
 						.loadFromDisc(playerName);
 				if (returnCode == 0) {
 					player.sendMessage(ChatColor.GREEN

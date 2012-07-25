@@ -28,11 +28,10 @@ public class CuboidBackup implements Serializable {
 	private Main plugin;
 	private String world;
 
-	public CuboidBackup(Main instance, CuboidC cuboid, boolean store) {
+	public CuboidBackup(CuboidC cuboid, boolean store) {
 		this.name = cuboid.name;
 		this.world = cuboid.world;
 		this.coords = cuboid.coords;
-		this.plugin = instance;
 		if (store)
 			storeCuboidData();
 	}

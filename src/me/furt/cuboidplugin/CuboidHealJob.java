@@ -9,10 +9,9 @@ public class CuboidHealJob extends TimerTask {
 	CuboidC cuboid;
 	private Main plugin;
 
-	public CuboidHealJob(Main instance, String playerName, CuboidC cuboid) {
+	public CuboidHealJob(String playerName, CuboidC cuboid) {
 		this.playerName = playerName;
 		this.cuboid = cuboid;
-		this.plugin = instance;
 	}
 
 	public void run() {
@@ -25,8 +24,7 @@ public class CuboidHealJob extends TimerTask {
 				player.setHealth(player.getHealth() + CuboidAreas.healPower);
 			}
 			if (player.getHealth() < 20) {
-				CuboidAreas.healTimer.schedule(new CuboidHealJob(plugin,
-						this.playerName, this.cuboid), CuboidAreas.healDelay);
+				CuboidAreas.healTimer.schedule(new CuboidHealJob(this.playerName, this.cuboid), CuboidAreas.healDelay);
 			}
 		}
 

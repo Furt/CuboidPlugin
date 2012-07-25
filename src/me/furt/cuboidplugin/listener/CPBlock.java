@@ -12,6 +12,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -128,6 +129,9 @@ public class CPBlock implements Listener {
 
 	@EventHandler
 	public void onBlockRightClicked(PlayerInteractEvent event) {
+		if (event.getAction() != Action.LEFT_CLICK_BLOCK
+				&& event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
 		Player player = event.getPlayer();
 		Block blockClicked = event.getClickedBlock();
 		if (player.getItemInHand().getType() == Material

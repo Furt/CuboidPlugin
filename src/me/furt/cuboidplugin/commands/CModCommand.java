@@ -134,10 +134,10 @@ public class CModCommand implements CommandExecutor {
 				if (args[1].equalsIgnoreCase("pvp")) {
 					Main.globalDisablePvP = !Main.globalDisablePvP;
 					if (Main.globalDisablePvP) {
-						plugin.broadcast(ChatColor.LIGHT_PURPLE
+						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "PvP is now allowed only in specific areas");
 					} else {
-						plugin.broadcast(ChatColor.LIGHT_PURPLE
+						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "PvP is now allowed anywhere");
 					}
 
@@ -145,20 +145,20 @@ public class CModCommand implements CommandExecutor {
 						|| args[1].equalsIgnoreCase("creepers")) {
 					Main.globalCreeperProt = !Main.globalCreeperProt;
 					if (Main.globalCreeperProt) {
-						plugin.broadcast(ChatColor.LIGHT_PURPLE
+						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "Creepers now explode only in specific areas");
 					} else {
-						plugin.broadcast(ChatColor.LIGHT_PURPLE
+						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "Creepers now explode anywhere");
 					}
 				} else if (args[1].equalsIgnoreCase("sanctuary")
 						|| args[1].equalsIgnoreCase("sanctuaries")) {
 					Main.globalSanctuary = !Main.globalSanctuary;
 					if (Main.globalSanctuary) {
-						plugin.broadcast(ChatColor.LIGHT_PURPLE
+						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "Monsters now hurt only in specific areas");
 					} else {
-						plugin.broadcast(ChatColor.LIGHT_PURPLE
+						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "Monsters now hurt anywhere");
 					}
 				} else {
@@ -432,6 +432,7 @@ public class CModCommand implements CommandExecutor {
 					cuboidArea.farewellMessage = message.trim();
 					player.sendMessage(ChatColor.GREEN
 							+ "Farewell message successfuly changed.");
+					return true;
 				} else {
 					player.sendMessage(ChatColor.RED
 							+ "You are not an owner of this cuboid area.");

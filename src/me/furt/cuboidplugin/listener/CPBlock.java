@@ -129,28 +129,30 @@ public class CPBlock implements Listener {
 
 	@EventHandler
 	public void onBlockRightClicked(PlayerInteractEvent event) {
-		if (event.getAction() != Action.LEFT_CLICK_BLOCK
-				&& event.getAction() != Action.RIGHT_CLICK_BLOCK)
-			return;
-		Player player = event.getPlayer();
-		Block blockClicked = event.getClickedBlock();
-		if (player.getItemInHand().getType() == Material
-				.getMaterial(Main.mainToolID)
-				&& (player.hasPermission("cuboidplugin.protect") || player
-						.hasPermission("cuboidplugin.cuboid"))) {
-			boolean whichPoint = CuboidAction.setPoint(player.getName(),
-					blockClicked.getX(), blockClicked.getY(),
-					blockClicked.getZ());
-			player.sendMessage(ChatColor.BLUE
-					+ ((whichPoint) ? "First" : "Second") + " point is set.");
-		} else if (player.getItemInHand().getTypeId() == Main.checkToolID) {
-			CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getWorld()
-					.getName(), blockClicked.getX(), blockClicked.getY(),
-					blockClicked.getZ());
-			if (cuboid == null)
-				player.sendMessage(ChatColor.YELLOW + "Not a cuboid area");
-			else
-				cuboid.printInfos(player, false, false);
+		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
+				|| event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			Player player = event.getPlayer();
+			Block blockClicked = event.getClickedBlock();
+			if (player.getItemInHand().getType()
+					.equals(Material.getMaterial(Main.mainToolID))
+					&& (player.hasPermission("cuboidplugin.protect") || player
+							.hasPermission("cuboidplugin.cuboid"))) {
+				boolean whichPoint = CuboidAction.setPoint(player.getName(),
+						blockClicked.getX(), blockClicked.getY(),
+						blockClicked.getZ());
+				player.sendMessage(ChatColor.BLUE
+						+ ((whichPoint) ? "First" : "Second")
+						+ " point is set.");
+			} else if (player.getItemInHand().getType()
+					.equals(Material.getMaterial(Main.checkToolID))) {
+				CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked
+						.getWorld().getName(), blockClicked.getX(),
+						blockClicked.getY(), blockClicked.getZ());
+				if (cuboid == null)
+					player.sendMessage(ChatColor.YELLOW + "Not a cuboid area");
+				else
+					cuboid.printInfos(player, false, false);
+			}
 		}
 	}
 }

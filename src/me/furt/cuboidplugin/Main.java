@@ -362,12 +362,6 @@ public class Main extends JavaPlugin {
 		return false;
 	}
 
-	public void broadcast(String message) {
-		for (Player p : getServer().getOnlinePlayers()) {
-			p.sendMessage(message);
-		}
-	}
-
 	public class WriteJob extends TimerTask {
 		public void run() {
 			CuboidAreas.writeCuboidAreas();

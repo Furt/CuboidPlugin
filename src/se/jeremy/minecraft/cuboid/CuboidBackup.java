@@ -25,7 +25,7 @@ public class CuboidBackup implements Serializable {
 	private String name;
 	private int[][][] cuboidData;
 	private int[] coords;
-	private Main plugin;
+	private Cuboid plugin;
 	private String world;
 
 	public CuboidBackup(CuboidC cuboid, boolean store) {
@@ -116,7 +116,7 @@ public class CuboidBackup implements Serializable {
 			e.printStackTrace();
 			return 2;
 		}
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(
 					Level.INFO,
 					"New cuboidArea backup : " + this.name + " on world: "
@@ -148,7 +148,7 @@ public class CuboidBackup implements Serializable {
 
 		restoreCuboidData(playerName);
 
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(
 					Level.INFO,
 					"Loaded cuboidArea backup : " + this.name + " on world: "

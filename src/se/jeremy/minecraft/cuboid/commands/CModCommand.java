@@ -8,16 +8,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import se.jeremy.minecraft.cuboid.Cuboid;
 import se.jeremy.minecraft.cuboid.CuboidAction;
 import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidBackup;
 import se.jeremy.minecraft.cuboid.CuboidC;
-import se.jeremy.minecraft.cuboid.Main;
 
 public class CModCommand implements CommandExecutor {
-	private Main plugin;
+	private Cuboid plugin;
 
-	public CModCommand(Main instance) {
+	public CModCommand(Cuboid instance) {
 		this.plugin = instance;
 	}
 
@@ -41,7 +41,7 @@ public class CModCommand implements CommandExecutor {
 						+ ChatColor.YELLOW + " : "
 						+ CuboidAreas.displayCuboidsList());
 			} else if (args[0].equalsIgnoreCase("who")) {
-				if (!Main.onMoveFeatures) {
+				if (!Cuboid.onMoveFeatures) {
 					player.sendMessage(ChatColor.YELLOW
 							+ "onMove functions are disabled. So are area playerlists");
 				} else {
@@ -58,7 +58,7 @@ public class CModCommand implements CommandExecutor {
 				CuboidAreas.displayOwnedList(player);
 			} else if (args[0].startsWith("global")) {
 				String message = "";
-				for (String group : Main.restrictedGroups) {
+				for (String group : Cuboid.restrictedGroups) {
 					message += " " + group;
 				}
 				if (!message.equalsIgnoreCase("")) {
@@ -68,14 +68,14 @@ public class CModCommand implements CommandExecutor {
 				} else {
 					player.sendMessage(ChatColor.YELLOW + "No restricted group");
 				}
-				if (Main.globalDisablePvP) {
+				if (Cuboid.globalDisablePvP) {
 					player.sendMessage(ChatColor.YELLOW + "PvP : "
 							+ ChatColor.YELLOW + "disabled");
 				} else {
 					player.sendMessage(ChatColor.YELLOW + "PvP : "
 							+ ChatColor.YELLOW + "allowed");
 				}
-				if (Main.globalCreeperProt) {
+				if (Cuboid.globalCreeperProt) {
 					player.sendMessage(ChatColor.YELLOW
 							+ "Creeper explosions :" + ChatColor.YELLOW
 							+ " disabled");
@@ -84,7 +84,7 @@ public class CModCommand implements CommandExecutor {
 							+ "Creeper explosions :" + ChatColor.YELLOW
 							+ " enabled");
 				}
-				if (Main.globalSanctuary) {
+				if (Cuboid.globalSanctuary) {
 					player.sendMessage(ChatColor.YELLOW + "Monsters :"
 							+ ChatColor.YELLOW + " harmless");
 				} else {
@@ -132,8 +132,8 @@ public class CModCommand implements CommandExecutor {
 			
 			if (args[0].equalsIgnoreCase("globaltoggle") && player.isOp()) {
 				if (args[1].equalsIgnoreCase("pvp")) {
-					Main.globalDisablePvP = !Main.globalDisablePvP;
-					if (Main.globalDisablePvP) {
+					Cuboid.globalDisablePvP = !Cuboid.globalDisablePvP;
+					if (Cuboid.globalDisablePvP) {
 						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "PvP is now allowed only in specific areas");
 					} else {
@@ -143,8 +143,8 @@ public class CModCommand implements CommandExecutor {
 
 				} else if (args[1].equalsIgnoreCase("creeper")
 						|| args[1].equalsIgnoreCase("creepers")) {
-					Main.globalCreeperProt = !Main.globalCreeperProt;
-					if (Main.globalCreeperProt) {
+					Cuboid.globalCreeperProt = !Cuboid.globalCreeperProt;
+					if (Cuboid.globalCreeperProt) {
 						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "Creepers now explode only in specific areas");
 					} else {
@@ -153,8 +153,8 @@ public class CModCommand implements CommandExecutor {
 					}
 				} else if (args[1].equalsIgnoreCase("sanctuary")
 						|| args[1].equalsIgnoreCase("sanctuaries")) {
-					Main.globalSanctuary = !Main.globalSanctuary;
-					if (Main.globalSanctuary) {
+					Cuboid.globalSanctuary = !Cuboid.globalSanctuary;
+					if (Cuboid.globalSanctuary) {
 						plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE
 								+ "Monsters now hurt only in specific areas");
 					} else {
@@ -288,7 +288,7 @@ public class CModCommand implements CommandExecutor {
 										: "disabled"));
 					} else if (args[2].startsWith("restric")) {
 						if (!player.hasPermission("/cuboidAreas")
-								&& !Main.allowRestrictedZones) {
+								&& !Cuboid.allowRestrictedZones) {
 							player.sendMessage(ChatColor.YELLOW
 									+ "Restricted areas switching is disabled");
 							return true;
@@ -300,7 +300,7 @@ public class CModCommand implements CommandExecutor {
 										: "disabled"));
 					} else if (args[2].equalsIgnoreCase("pvp")) {
 						if (!player.hasPermission("/cuboidAreas")
-								&& !Main.allowNoPvpZones) {
+								&& !Cuboid.allowNoPvpZones) {
 							player.sendMessage(ChatColor.YELLOW
 									+ "No-PvP areas switching is disabled");
 							return true;
@@ -321,7 +321,7 @@ public class CModCommand implements CommandExecutor {
 								+ (cuboidArea.heal ? "enabled" : "disabled"));
 					} else if (args[2].equalsIgnoreCase("sanctuary")) {
 						if (!player.hasPermission("/cuboidAreas")
-								&& !Main.allowSanctuaries) {
+								&& !Cuboid.allowSanctuaries) {
 							player.sendMessage(ChatColor.YELLOW
 									+ "Sanctuaries switching is disabled");
 							return true;
@@ -333,7 +333,7 @@ public class CModCommand implements CommandExecutor {
 										: "disabled"));
 					} else if (args[2].equalsIgnoreCase("creeper")) {
 						if (!player.hasPermission("/cuboidAreas")
-								&& !Main.allowNoCreeperZones) {
+								&& !Cuboid.allowNoCreeperZones) {
 							player.sendMessage(ChatColor.YELLOW
 									+ "No-Creeper areas switching is disabled");
 							return true;
@@ -372,7 +372,7 @@ public class CModCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args[1].equalsIgnoreCase("restore")) {
-				if ((Main.allowOwnersToBackup && cuboidArea.isOwner(player))
+				if ((Cuboid.allowOwnersToBackup && cuboidArea.isOwner(player))
 						|| player.hasPermission("cuboidplugin.protect")) {
 					byte returnCode = new CuboidBackup(cuboidArea, false)
 							.loadFromDisc(playerName);

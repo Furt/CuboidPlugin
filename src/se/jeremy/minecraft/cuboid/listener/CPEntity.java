@@ -11,9 +11,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
+import se.jeremy.minecraft.cuboid.Cuboid;
 import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
-import se.jeremy.minecraft.cuboid.Main;
 
 public class CPEntity implements Listener {
 
@@ -25,7 +25,7 @@ public class CPEntity implements Listener {
 				(int) loc.getX(), (int) loc.getY(), (int) loc.getZ());
 		if (cuboid != null && cuboid.sanctuary) {
 			event.setCancelled(true);
-		} else if (Main.globalSanctuary) {
+		} else if (Cuboid.globalSanctuary) {
 			event.setCancelled(true);
 		}
 	}
@@ -38,7 +38,7 @@ public class CPEntity implements Listener {
 						.getZ());
 		if (cuboid != null && !cuboid.creeper) {
 			event.setCancelled(true);
-		} else if (Main.globalCreeperProt) {
+		} else if (Cuboid.globalCreeperProt) {
 			event.setCancelled(true);
 		}
 	}
@@ -60,7 +60,7 @@ public class CPEntity implements Listener {
 							.getY(), (int) target.getLocation().getZ());
 					if (cuboid != null && !cuboid.PvP) {
 						event.setCancelled(true);
-					} else if (Main.globalDisablePvP) {
+					} else if (Cuboid.globalDisablePvP) {
 						event.setCancelled(true);
 					}
 				} else {
@@ -70,7 +70,7 @@ public class CPEntity implements Listener {
 							.getY(), (int) attacker.getLocation().getZ());
 					if (cuboid != null && cuboid.sanctuary) {
 						event.setCancelled(true);
-					} else if (Main.globalSanctuary) {
+					} else if (Cuboid.globalSanctuary) {
 						event.setCancelled(true);
 					}
 				}

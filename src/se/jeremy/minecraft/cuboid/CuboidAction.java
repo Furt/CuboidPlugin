@@ -17,9 +17,9 @@ public class CuboidAction {
 	static Object lock = new Object();
 	static int[] blocksToBeQueued = { 37, 38, 39, 40, 50, 55, 63, 66, 69, 75,
 			76, 81, 83 };
-	public static Main plugin;
+	public static Cuboid plugin;
 
-	public CuboidAction(Main instance) {
+	public CuboidAction(Cuboid instance) {
 		CuboidAction.plugin = instance;
 	}
 
@@ -322,7 +322,7 @@ public class CuboidAction {
 			}
 		}
 
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger()
 					.log(Level.INFO, playerName + " emptied a cuboid");
 	}
@@ -350,7 +350,7 @@ public class CuboidAction {
 			}
 		}
 
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(Level.INFO, playerName + " filled a cuboid");
 	}
 
@@ -385,7 +385,7 @@ public class CuboidAction {
 					}
 				}
 			}
-			if (Main.logging)
+			if (Cuboid.logging)
 				plugin.getLogger().log(Level.INFO,
 						playerName + " replaced blocks inside a cuboid");
 		}
@@ -464,7 +464,7 @@ public class CuboidAction {
 					}
 				}
 			}
-			if (Main.logging)
+			if (Cuboid.logging)
 				plugin.getLogger().log(
 						Level.INFO,
 						playerName + " built the "
@@ -491,7 +491,7 @@ public class CuboidAction {
 			}
 		}
 
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(Level.INFO, playerName + "");
 	}
 
@@ -746,7 +746,7 @@ public class CuboidAction {
 			}
 
 			player.sendMessage(ChatColor.GREEN + "Cuboid successfuly moved.");
-			if (Main.logging)
+			if (Cuboid.logging)
 				plugin.getLogger().log(
 						Level.INFO,
 						playerName + " moved a cuboid : " + value
@@ -792,7 +792,7 @@ public class CuboidAction {
 			}
 		}
 
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(
 					Level.INFO,
 					playerName + " built a "
@@ -835,7 +835,7 @@ public class CuboidAction {
 				}
 			}
 		}
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(Level.INFO,
 					playerName + " built a " + ((fill) ? "ball" : "sphere"));
 	}
@@ -901,7 +901,7 @@ public class CuboidAction {
 			}
 		}
 
-		if (Main.logging)
+		if (Cuboid.logging)
 			plugin.getLogger().log(
 					Level.INFO,
 					playerName + " built a " + ((fill) ? "filled " : "")

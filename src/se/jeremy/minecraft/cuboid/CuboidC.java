@@ -3,6 +3,7 @@ package se.jeremy.minecraft.cuboid;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class CuboidC implements Serializable {
 	public String farewellMessage = null;
 	public String warning = null;
 	ArrayList<String> disallowedCommands = new ArrayList<String>();
-	private Main plugin;
+	private Cuboid plugin;
 
 	public CuboidC() {
 	}
@@ -201,7 +202,7 @@ public class CuboidC implements Serializable {
 
 	public void printPresentPlayers(Player player) {
 		String list = "";
-		for (Player p : plugin.getServer().getOnlinePlayers()) {
+		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (this.contains(p.getLocation().getWorld().getName(), (int) p
 					.getLocation().getX(), (int) p.getLocation().getY(),
 					(int) p.getLocation().getZ())) {

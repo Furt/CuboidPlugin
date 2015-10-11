@@ -24,9 +24,9 @@ public class CuboidContent implements Serializable {
 	private String name = "";
 	private int[][][] cuboidData;
 	public byte loadReturnCode;
-	private Main plugin;
+	private Cuboid plugin;
 
-	CuboidContent(Main instance, String owner, String name, int[][][] tableau) {
+	CuboidContent(Cuboid instance, String owner, String name, int[][][] tableau) {
 		this.plugin = instance;
 		this.owner = owner;
 		this.name = name;

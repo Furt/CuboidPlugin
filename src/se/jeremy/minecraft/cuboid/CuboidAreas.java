@@ -52,17 +52,17 @@ public class CuboidAreas {
 	public static void loadCuboidAreas() {
 		listOfCuboids = new ArrayList<CuboidC>();
 
-		File dataSource = new File(Main.data, "cuboidAreas.dat");
+		File dataSource = new File(Cuboid.data, "cuboidAreas.dat");
 		if (!dataSource.exists()) {
-			if (new File(Main.data, "protectedCuboids.txt").exists())
+			if (new File(Cuboid.data, "protectedCuboids.txt").exists())
 				readFromTxtFile();
 			else
-				Main.log(Level.INFO,
+				Cuboid.log(Level.INFO,
 						"CuboidPlugin : No datafile to load from (its fine)");
 			return;
 		}
 		try {
-			File versionFile = new File(Main.data, "cuboidAreas.version");
+			File versionFile = new File(Cuboid.data, "cuboidAreas.version");
 			if (!versionFile.exists()) {
 				readFromOldFormat(null);
 				return;
@@ -71,10 +71,10 @@ public class CuboidAreas {
 			if (dataVersion.equalsIgnoreCase(currentDataVersion)) {
 				ObjectInputStream ois = new ObjectInputStream(
 						new BufferedInputStream(new FileInputStream(new File(
-								Main.data, "cuboidAreas.dat"))));
+								Cuboid.data, "cuboidAreas.dat"))));
 				listOfCuboids = (ArrayList<CuboidC>) (ois.readObject());
 				ois.close();
-				Main.log(
+				Cuboid.log(
 						Level.INFO,
 						"CuboidPlugin : cuboidAreas.dat (format "
 								+ currentDataVersion + ") loaded");
@@ -82,16 +82,16 @@ public class CuboidAreas {
 				readFromOldFormat(dataVersion);
 			}
 		} catch (Exception e) {
-			Main.log(Level.SEVERE,
+			Cuboid.log(Level.SEVERE,
 					"Cuboid plugin : Error while reading cuboidAreas.dat");
 		}
 	}
 
 	public static void readFromTxtFile() {
-		Main
+		Cuboid
 				.log(Level.INFO,
 						"CuboidPlugin : protectedCuboids.txt found, initializing conversion...");
-		File dataSource = new File(Main.data, "protectedCuboids.txt");
+		File dataSource = new File(Cuboid.data, "protectedCuboids.txt");
 		try {
 			Scanner scanner = new Scanner(dataSource);
 			while (scanner.hasNextLine()) {
@@ -129,12 +129,12 @@ public class CuboidAreas {
 				listOfCuboids.add(newArea);
 			}
 			scanner.close();
-			Main.log(Level.INFO,
+			Cuboid.log(Level.INFO,
 					"CuboidPlugin : Conversion to new format successful.");
-			Main.log(Level.INFO,
+			Cuboid.log(Level.INFO,
 					"CuboidPlugin : cuboids areas loaded.");
 		} catch (Exception e) {
-			Main.log(Level.SEVERE,
+			Cuboid.log(Level.SEVERE,
 					"Cuboid plugin : Error while reading protectedCuboids.txt");
 		}
 	}
@@ -142,21 +142,21 @@ public class CuboidAreas {
 	@SuppressWarnings("unchecked")
 	public static void readFromOldFormat(String dataVersion) {
 		if (dataVersion == null) {
-			ArrayList<Cuboid> oldCuboids;
+			ArrayList<CuboidMain> oldCuboids;
 			try {
 				ObjectInputStream ois = new ObjectInputStream(
 						new BufferedInputStream(new FileInputStream(new File(
-								Main.data, "cuboidAreas.dat"))));
-				oldCuboids = (ArrayList<Cuboid>) (ois.readObject());
+								Cuboid.data, "cuboidAreas.dat"))));
+				oldCuboids = (ArrayList<CuboidMain>) (ois.readObject());
 				ois.close();
 			} catch (Exception e) {
-				oldCuboids = new ArrayList<Cuboid>();
-				Main.log(Level.SEVERE,
+				oldCuboids = new ArrayList<CuboidMain>();
+				Cuboid.log(Level.SEVERE,
 						"Cuboid plugin : Error while reading cuboidAreas.dat");
 			}
 
 			listOfCuboids = new ArrayList<CuboidC>();
-			for (Cuboid oldCuboid : oldCuboids) {
+			for (CuboidMain oldCuboid : oldCuboids) {
 				CuboidC newCuboid = new CuboidC();
 				newCuboid.name = oldCuboid.name;
 				newCuboid.coords = oldCuboid.coords;
@@ -170,22 +170,22 @@ public class CuboidAreas {
 				listOfCuboids.add(newCuboid);
 			}
 
-			Main
+			Cuboid
 					.log(Level.INFO,
 							"CuboidPlugin : conversion of cuboidAreas.dat from f.A to f.B sucessful");
-			Main.log(Level.INFO,
+			Cuboid.log(Level.INFO,
 					"CuboidPlugin : cuboidAreas.dat loaded.");
 		} else if (dataVersion.equalsIgnoreCase("B")) {
 			ArrayList<CuboidB> oldCuboids;
 			try {
 				ObjectInputStream ois = new ObjectInputStream(
 						new BufferedInputStream(new FileInputStream(new File(
-								Main.data, "cuboidAreas.dat"))));
+								Cuboid.data, "cuboidAreas.dat"))));
 				oldCuboids = (ArrayList<CuboidB>) (ois.readObject());
 				ois.close();
 			} catch (Exception e) {
 				oldCuboids = new ArrayList<CuboidB>();
-				Main.log(Level.SEVERE,
+				Cuboid.log(Level.SEVERE,
 						"Cuboid plugin : Error while reading cuboidAreas.dat");
 			}
 
@@ -205,13 +205,13 @@ public class CuboidAreas {
 				listOfCuboids.add(newCuboid);
 			}
 
-			Main
+			Cuboid
 					.log(Level.INFO,
 							"CuboidPlugin : conversion of cuboidAreas.dat from f.B to f.C sucessful");
-			Main.log(Level.INFO,
+			Cuboid.log(Level.INFO,
 					"CuboidPlugin : cuboidAreas.dat loaded.");
 		} else {
-			Main.log(Level.SEVERE,
+			Cuboid.log(Level.SEVERE,
 					"CuboidPlugin : unsupported data version");
 			listOfCuboids = new ArrayList<CuboidC>();
 		}
@@ -223,21 +223,21 @@ public class CuboidAreas {
 		 * 
 		 * return; }
 		 */
-		Main.log(Level.INFO,
+		Cuboid.log(Level.INFO,
 				"CuboidPlugin : Saving data to hard drive...");
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
-					new BufferedOutputStream(new FileOutputStream(new File(Main.data, "cuboidAreas.dat"))));
+					new BufferedOutputStream(new FileOutputStream(new File(Cuboid.data, "cuboidAreas.dat"))));
 			oos.writeObject(listOfCuboids);
 			oos.close();
-			FileWriter writer = new FileWriter(Main.data + File.separator + "cuboidAreas.version");
+			FileWriter writer = new FileWriter(Cuboid.data + File.separator + "cuboidAreas.version");
 			writer.write(currentDataVersion);
 			writer.close();
 		} catch (IOException e1) {
-			Main.log(Level.SEVERE,
+			Cuboid.log(Level.SEVERE,
 					"CuboidPlugin : Error while writing data");
 		}
-		Main.log(Level.INFO, "CuboidPlugin : Done.");
+		Cuboid.log(Level.INFO, "CuboidPlugin : Done.");
 	}
 
 	public static void updateSQL(CuboidC cuboid) {
@@ -277,7 +277,7 @@ public class CuboidAreas {
 			// playersINVs
 			ps.executeUpdate();
 		} catch (SQLException ex) {
-			Main
+			Cuboid
 					.log(Level.SEVERE, "Unable to log alert into SQL");
 		} finally {
 			try {
@@ -395,8 +395,8 @@ public class CuboidAreas {
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
-			if (Main.logging)
-				Main.log(
+			if (Cuboid.logging)
+				Cuboid.log(
 						Level.INFO,
 						playerName + " failed to create a cuboid area named "
 								+ cuboidName + " (aleady used)");
@@ -413,29 +413,29 @@ public class CuboidAreas {
 		newCuboid.allowedPlayers.add("o:" + playerName);
 		newCuboid.name = cuboidName;
 		newCuboid.world = worldName;
-		if (Main.protectionOnDefault) {
+		if (Cuboid.protectionOnDefault) {
 			newCuboid.protection = true;
 		}
-		if (Main.restrictedOnDefault) {
+		if (Cuboid.restrictedOnDefault) {
 			newCuboid.restricted = true;
 		}
-		if (Main.sanctuaryOnDefault) {
+		if (Cuboid.sanctuaryOnDefault) {
 			newCuboid.sanctuary = true;
 		}
-		if (Main.creeperDisabledOnDefault) {
+		if (Cuboid.creeperDisabledOnDefault) {
 			newCuboid.creeper = false;
 		}
-		if (Main.pvpDisabledOnDefault) {
+		if (Cuboid.pvpDisabledOnDefault) {
 			newCuboid.PvP = false;
 		}
-		if (Main.healOnDefault) {
+		if (Cuboid.healOnDefault) {
 			newCuboid.heal = true;
 		}
 		listOfCuboids.add(newCuboid);
 
 		player.sendMessage(ChatColor.GREEN + "Cuboid area successfuly created");
-		if (Main.logging)
-			Main.log(
+		if (Cuboid.logging)
+			Cuboid.log(
 					Level.INFO,
 					playerName + " created a new cuboid area named "
 							+ cuboidName);
@@ -449,8 +449,8 @@ public class CuboidAreas {
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
-			if (Main.logging)
-				Main.log(
+			if (Cuboid.logging)
+				Cuboid.log(
 						Level.INFO,
 						playerName
 								+ " failed to create a protected area named "
@@ -487,8 +487,8 @@ public class CuboidAreas {
 
 		player.sendMessage(ChatColor.GREEN
 				+ "Protected area successfuly created");
-		if (Main.logging)
-			Main.log(
+		if (Cuboid.logging)
+			Cuboid.log(
 					Level.INFO,
 					playerName + " created a new protected area named "
 							+ cuboidName);
@@ -523,8 +523,8 @@ public class CuboidAreas {
 				+ returnCode);
 
 		player.sendMessage(ChatColor.GREEN + "Cuboid area successfuly moved");
-		if (Main.logging)
-			Main.log(Level.INFO,
+		if (Cuboid.logging)
+			Cuboid.log(Level.INFO,
 					playerName + " moved a cuboid area named " + cuboid.name);
 	}
 
@@ -539,15 +539,15 @@ public class CuboidAreas {
 		if (new CuboidBackup(cuboid, false).deleteFromDisc()) {
 			player.sendMessage(ChatColor.GREEN
 					+ "Cuboid area successfuly removed");
-			if (Main.logging)
-				Main.log(
+			if (Cuboid.logging)
+				Cuboid.log(
 						Level.INFO,
 						playerName + " removed a cuboid area named "
 								+ cuboid.name);
 		} else {
 			player.sendMessage(ChatColor.YELLOW
 					+ "Cuboid area removed, but unable to remove the backup file.");
-			Main.log(
+			Cuboid.log(
 					Level.INFO,
 					"Unable to delete a backup file when removing a cuboid area ("
 							+ cuboid.name + ")");

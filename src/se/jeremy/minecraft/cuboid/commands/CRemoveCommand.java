@@ -8,14 +8,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import se.jeremy.minecraft.cuboid.Cuboid;
 import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
-import se.jeremy.minecraft.cuboid.Main;
 
 public class CRemoveCommand implements CommandExecutor {
-	private Main plugin;
+	private Cuboid plugin;
 
-	public CRemoveCommand(Main instance) {
+	public CRemoveCommand(Cuboid instance) {
 		this.plugin = instance;
 	}
 

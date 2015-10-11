@@ -1,254 +1,376 @@
 package se.jeremy.minecraft.cuboid;
 
-import java.io.Serializable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Level;
 
-import org.bukkit.ChatColor;
+import se.jeremy.minecraft.cuboid.commands.*;
+import se.jeremy.minecraft.cuboid.listener.*;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
-@SuppressWarnings("serial")
-public class Cuboid implements Serializable {
-	// old data format, kept here for retro-compatibility
-	String name;
-	int[] coords;
-	boolean protection;
-	boolean restricted;
-	boolean inventories;
-	ArrayList<String> allowedPlayers;
-	String welcomeMessage;
-	String farewellMessage;
-	String warning;
-	ArrayList<String> presentPlayers;
-	ArrayList<String> disallowedCommands;
-	HashMap<String, CuboidInventory> playerInventories;
-	String world;
+public class Cuboid extends JavaPlugin implements Listener {
 
-	public Cuboid() {
-		this.name = "noname";
-		this.world = "world";
-		this.coords = new int[6];
-		this.allowedPlayers = new ArrayList<String>();
-		this.protection = false;
-		this.restricted = false;
-		this.inventories = false;
-		this.warning = null;
-		this.welcomeMessage = null;
-		this.farewellMessage = null;
-		this.presentPlayers = new ArrayList<String>();
-		this.disallowedCommands = new ArrayList<String>();
-		this.playerInventories = new HashMap<String, CuboidInventory>();
-	}
+	public String name = "CuboidPlugin";
+	static boolean logging = false;
+	// TODO : look for // SQL
+	static boolean SQLstorage = false;
 
-	public boolean contains(int X, int Y, int Z) {
-		if (X >= coords[0] && X <= coords[3] && Z >= coords[2]
-				&& Z <= coords[5] && Y >= coords[1] && Y <= coords[4])
-			return true;
-		return false;
-	}
+	static ArrayList<Integer> operableItems;
+	static boolean allowBlacklistedBlocks = false;
+	public static boolean chestProtection = true;
+	public static int mainToolID = 269;
+	public static int checkToolID = 268;
 
-	
-	// TODO need to come back to this later
-	public boolean isAllowed(Player player) {
-		return true;
-	}
+	public static boolean protectionSytem = true;
+	public static boolean protectionWarn = false;
+	// worldwide area features
+	public static String[] restrictedGroups;
+	public static boolean globalDisablePvP = false;
+	public static boolean globalCreeperProt = false;
+	public static boolean globalSanctuary = false;
+	// local area features default values
+	static boolean protectionOnDefault = false;
+	static boolean restrictedOnDefault = false;
+	static boolean sanctuaryOnDefault = false;
+	static boolean creeperDisabledOnDefault = false;
+	static boolean pvpDisabledOnDefault = false;
+	static boolean healOnDefault = false;
+	// local area features allowance for owners/and protect-allowed
+	public static boolean onMoveFeatures = true;
+	public static boolean allowOwnersToBackup = false;
+	public static boolean allowRestrictedZones = false;
+	public static boolean allowNoPvpZones = true;
+	public static boolean allowNoCreeperZones = true;
+	public static boolean allowSanctuaries = false;
+	// List of players denied entry to a restricted cuboid, that are to not
+	// trigger the teleport functions
+	public static ArrayList<String> notTeleport;
+	// Temporaty fix for wrinting to disk...
+	static long writeDelay = 1800000;
 
-	public boolean isAllowed(String command) {
-		for (String disallowed : disallowedCommands) {
-			if (command.equals(disallowed))
-				return false;
+	static Timer writeTimer = new Timer();
+	// Listeners
+	public CPBlock cpb = new CPBlock(this);
+	public CPPlayer cpp = new CPPlayer();
+	public CPEntity cpe = new CPEntity();
+	public static File data;
+	public static Cuboid plugin;
+
+	@Override
+	public void onEnable() {
+		data = this.getDataFolder();
+		plugin = this;
+		checkFolder();
+		loadProperties();
+		CuboidAreas.loadCuboidAreas();
+		getServer().getPluginManager().registerEvents(cpb, this);
+		getServer().getPluginManager().registerEvents(cpp, this);
+		getServer().getPluginManager().registerEvents(cpe, this);
+		setupCommands();
+
+		notTeleport = new ArrayList<String>();
+		if (writeDelay > 0) {
+			writeTimer.schedule(new WriteJob(), writeDelay);
 		}
-		return true;
+
+		CuboidAreas.inside = new HashMap<String, ArrayList<CuboidC>>();
+
+		for (Player p : getServer().getOnlinePlayers()) {
+			CuboidAreas.movement(p, p.getLocation());
+		}
+		getLogger().log(Level.INFO, "initializing v17.9 for hMod 131+");
 	}
 
-	public boolean isOwner(Player player) {
-		String playerName = "o:" + player.getName();
-		for (String allowedPlayer : allowedPlayers) {
-			if (allowedPlayer.equalsIgnoreCase(playerName)) {
+	@Override
+	public void onDisable() {
+		for (Player p : getServer().getOnlinePlayers()) {
+			CuboidAreas.leaveAll(p);
+		}
+		CuboidAreas.writeCuboidAreas();
+
+		if (globalCreeperProt || globalDisablePvP || globalSanctuary) {
+			try {
+				ObjectOutputStream oos = new ObjectOutputStream(
+						new FileOutputStream(new File(getDataFolder(),
+								"globalFeatues.dat")));
+				oos.writeObject(globalDisablePvP);
+				oos.writeObject(globalCreeperProt);
+				oos.writeObject(globalSanctuary);
+				oos.close();
+			} catch (Exception e) {
+				getLogger().log(Level.SEVERE,
+						"Error while writing the state of global features");
+			}
+		} else {
+			File globalFile = new File(getDataFolder(), "globalFeatues.dat");
+			if (globalFile.exists()) {
+				globalFile.delete();
+			}
+		}
+
+		getLogger().log(Level.INFO, "shutting down");
+		writeTimer = new Timer();
+		CuboidAreas.healTimer = new Timer();
+	}
+
+	public static void log(Level level, String msg) {
+		plugin.getLogger().log(level, msg);
+	}
+	// TODO finish adding them all
+	private void setupCommands() {
+		// getCommand("ccircle").setExecutor(new CCircleCommand(this));
+		// getCommand("ccopy").setExecutor(new CCopyCommand());
+		getCommand("cmod").setExecutor(new CModCommand(this));
+		getCommand("undo").setExecutor(new UndoCommand());
+		getCommand("protect").setExecutor(new CProtectCommand());
+	}
+
+	/*
+	 * Ensures the existence of the full directory
+	 */
+	private void checkFolder() {
+		if (!getDataFolder().exists())
+			getDataFolder().mkdir();
+
+		if (!new File(getDataFolder(), "config.yml").exists())
+			saveDefaultConfig();
+		if (!new File(getDataFolder(), "cuboidAreas.dat").exists()) {
+			try {
+				new File(getDataFolder(), "cuboidAreas.dat").createNewFile();
+			} catch (Exception e) {
+
+			}
+		}
+	}
+
+	public void loadProperties() {
+		try {
+			// Protection properties
+			CuboidAreas.addedHeight = getConfig().getInt("minProtectedHeight");
+			protectionWarn = getConfig().getBoolean("protectionWarning");
+			CuboidAreas.newestHavePriority = getConfig().getBoolean(
+					"newestHavePriority");
+			// Worldwide features toggle
+			restrictedGroups = getConfig().getString("restrictedGroups").split(
+					",");
+			for (int i = 0; i < restrictedGroups.length; i++) {
+				restrictedGroups[i] = restrictedGroups[i].trim();
+			}
+			// general cuboid properties
+			logging = getConfig().getBoolean("fullLogging");
+			allowBlacklistedBlocks = getConfig().getBoolean(
+					"allowBlacklistedBlocks");
+			chestProtection = getConfig().getBoolean("chestProtection");
+			mainToolID = getConfig().getInt("mainToolID");
+			checkToolID = getConfig().getInt("checkToolID");
+			writeDelay = (long) (60000 * getConfig().getInt("autoSaveDelay"));
+			onMoveFeatures = getConfig().getBoolean("onMoveFeatures");
+			protectionSytem = getConfig().getBoolean("protectionSytem");
+			protectionOnDefault = getConfig().getBoolean("protectionOnDefault");
+			restrictedOnDefault = getConfig().getBoolean("restrictedOnDefault");
+			sanctuaryOnDefault = getConfig().getBoolean("sanctuaryOnDefault");
+			creeperDisabledOnDefault = getConfig().getBoolean(
+					"creeperDisabledOnDefault");
+			pvpDisabledOnDefault = getConfig().getBoolean(
+					"pvpDisabledOnDefault");
+			healOnDefault = getConfig().getBoolean("healOnDefault");
+			allowRestrictedZones = getConfig().getBoolean(
+					"allowRestrictedZones");
+			allowNoPvpZones = getConfig().getBoolean("allowNoPvpZones");
+			allowNoCreeperZones = getConfig().getBoolean("allowNoCreeperZones");
+			allowSanctuaries = getConfig().getBoolean("allowSanctuaries");
+			int healPower = (int) Math.ceil(getConfig().getInt("healPower"));
+			if (healPower < 0) {
+				healPower = 0;
+			}
+			CuboidAreas.healPower = healPower;
+			long healDelay = (long) Math.ceil(getConfig().getInt("healDelay"));
+			if (healDelay < 1) {
+				healDelay = 1;
+			}
+			CuboidAreas.healDelay = healDelay * 1000;
+
+			// generating list of operable items within protected areas
+			operableItems = new ArrayList<Integer>();
+			String[] operableString = getConfig().getString("operableItemIDs")
+					.split(",");
+			for (String operableItem : operableString) {
+				if (operableItem == null || operableItem.equalsIgnoreCase("")) {
+					continue;
+				}
+				try {
+					operableItems.add(Integer.parseInt(operableItem));
+				} catch (NumberFormatException e) {
+					getLogger().log(Level.INFO,
+							"Invalid item ID skipped : " + operableItem);
+				}
+			}
+
+			// reading state of global features if needed
+			File globalFile = new File(getDataFolder() + File.separator
+					+ "globalFeatues.dat");
+			if (globalFile.exists()) {
+				try {
+					ObjectInputStream ois = new ObjectInputStream(
+							new FileInputStream(globalFile));
+					globalDisablePvP = (Boolean) ois.readObject();
+					globalCreeperProt = (Boolean) ois.readObject();
+					globalSanctuary = (Boolean) ois.readObject();
+					ois.close();
+				} catch (Exception e) {
+					getLogger().log(Level.SEVERE,
+							"Error while reading the state of global features");
+				}
+			}
+
+			getLogger().log(Level.INFO, "Properties loaded");
+		} catch (Exception e) {
+			getLogger().log(Level.SEVERE,
+					"Exception while reading from config.yml", e);
+		}
+
+	}
+
+	// //////////////////////
+	// // FUNCTIONS ////
+	// //////////////////////
+
+	public Player playerMatch(String name) {
+		Collection<? extends Player> online = Bukkit.getOnlinePlayers();
+		
+		if (online.size() < 1) {
+			return null;
+		}
+		
+		Player lastPlayer = null;
+
+		for (Player player : online) {
+			String playerName = player.getName();
+			String playerDisplayName = player.getDisplayName();
+
+			if (playerName.equalsIgnoreCase(name)) {
+				lastPlayer = player;
+				break;
+			} else if (playerDisplayName.equalsIgnoreCase(name)) {
+				lastPlayer = player;
+				break;
+			}
+
+			if (playerName.toLowerCase().indexOf(name.toLowerCase()) != -1) {
+				if (lastPlayer != null) {
+					return null;
+				}
+
+				lastPlayer = player;
+			} else if (playerDisplayName.toLowerCase().indexOf(
+					name.toLowerCase()) != -1) {
+				if (lastPlayer != null) {
+					return null;
+				}
+
+				lastPlayer = player;
+			}
+		}
+
+		return lastPlayer;
+	}
+
+	public boolean isValidBlockID(int blocID) {
+		if (blocID >= 0 && blocID <= 91) {
+			if ((blocID > 20 && blocID < 35) || blocID == 36) {
+				return false;
+			} else {
 				return true;
 			}
+		} else
+			return false;
+	}
+
+	public boolean isCreatorItem(ItemStack itemStack) {
+		if (itemStack.getTypeId() == 259 || itemStack.getTypeId() == 290
+				|| itemStack.getTypeId() == 291 || itemStack.getTypeId() == 292
+				|| itemStack.getTypeId() == 293 || itemStack.getTypeId() == 294
+				|| itemStack.getTypeId() == 295 || itemStack.getTypeId() == 323
+				|| itemStack.getTypeId() == 324 || itemStack.getTypeId() == 325
+				|| itemStack.getTypeId() == 326 || itemStack.getTypeId() == 327
+				|| itemStack.getTypeId() == 330 || itemStack.getTypeId() == 331
+				|| itemStack.getTypeId() == 338) {
+			return true;
 		}
 		return false;
 	}
 
-	public void allowPlayer(String playerName) {
-		boolean done = false;
-		boolean newIsOwner = false;
-		if (playerName.startsWith("o:")) {
-			playerName = playerName.substring(2);
-			newIsOwner = true;
+	public boolean cuboidExists(String playerName, String cuboidName) {
+		return new File(getDataFolder() + File.separator + playerName,
+				cuboidName + ".cuboid").exists();
+	}
+
+	public String listPersonalCuboids(String owner) {
+		if (!new File(getDataFolder() + File.separator + owner).exists()) {
+			return null;
 		}
+		String[] fileList = new File(getDataFolder() + File.separator + owner)
+				.list();
+		String result = (fileList.length > 0) ? "" : null;
 
-		for (int j = 0; j < this.allowedPlayers.size() && !done; j++) {
-			String allowedPlayer = this.allowedPlayers.get(j);
-
-			// if the new player already is in the list as simple allowed
-			if (allowedPlayer.equalsIgnoreCase(playerName)) {
-				// we switch him to owner if needed
-				if (newIsOwner) {
-					this.allowedPlayers.set(j, "o:" + playerName);
-				}
-				// we've found the guy, no need to add him again.
-				done = true;
-			}
-
-			// if the new player already is an owner, no need to go further
-			if (allowedPlayer.equalsIgnoreCase("o:" + playerName)) {
-				done = true;
+		for (int i = 0; i < fileList.length; i++) {
+			if (fileList[i].endsWith(".cuboid") == true) {
+				result += " "
+						+ fileList[i].substring(0, fileList[i].length() - 7);
 			}
 		}
 
-		// If the player wasn't found, we add him.
-		if (!done) {
-			this.allowedPlayers.add(((newIsOwner) ? "o:" : "") + playerName);
+		return result;
+	}
+
+	public void printCuboidHelp(Player player) {
+		player.sendMessage("/cmod list - prints a list of cuboid areas");
+		player.sendMessage("/cmod who - prints a list of players in this area");
+		player.sendMessage("/cmod <name> info - prints info about the area");
+		player.sendMessage("/cmod <name> allow <list> - allow players/commands");
+		player.sendMessage("/cmod <name> disallow <list> - disallow players/commands");
+		player.sendMessage("/cmod <name> toggle <option> - toggles the option");
+		player.sendMessage("/cmod <name> welcome <text> - sets welcome message");
+		player.sendMessage("/cmod <name> farewell <text> - sets farewell message");
+		player.sendMessage("/cmod <name> warning <text> - sets 'restricted' message");
+		player.sendMessage("/cmod <name> backup - backs up the cuboidArea");
+		player.sendMessage("/cmod <name> restore - restores the cuboidArea");
+		if (player.hasPermission("/cuboid")) {
+			player.sendMessage("/cmod reload - reloads CuboidPlugin properties");
+		}
+		if (player.hasPermission("/protect")) {
+			player.sendMessage("/cmod <name> create - creates a new cuboidArea");
+			player.sendMessage("/cmod <name> delete - deletes the cuboidArea");
+			player.sendMessage("/cmod <name> move - moves the cuboidArea to selection");
+
 		}
 	}
 
-	public void disallowPlayer(String playerName) {
-		this.allowedPlayers.remove(playerName);
+	public boolean isGloballyRestricted(Player player) {
+		if (player.hasPermission("cuboidplugin.globalrestrict"))
+			return true;
+
+		return false;
 	}
 
-	public void disallowCommand(String command) {
-		if (!disallowedCommands.contains(command))
-			disallowedCommands.add(command);
-	}
-
-	public void allowCommand(String command) {
-		disallowedCommands.remove(command);
-	}
-
-	public void playerEnters(Player player) {
-		this.presentPlayers.add(player.getName());
-		if (this.welcomeMessage != null)
-			player.sendMessage(ChatColor.YELLOW + this.welcomeMessage);
-		if (this.inventories) {
-			CuboidInventory cuboidInventory;
-			boolean newVisitor = true;
-			if (playerInventories.containsKey(player.getName())) {
-				cuboidInventory = playerInventories.get(player.getName());
-				newVisitor = false;
-			} else {
-				cuboidInventory = new CuboidInventory();
-			}
-			Inventory outsideInventory = player.getInventory();
-			// TODO confirm fix
-			// storage of inventory
-			cuboidInventory.outside = new ArrayList<CuboidItem>();
-			for (int i = 0; i < outsideInventory.getContents().length; i++) {
-				ItemStack item = outsideInventory.getItem(i);
-				if (item != null) {
-					cuboidInventory.outside.add(new CuboidItem(item));
-					outsideInventory.remove(i);
-				}
-			}
-			playerInventories.put(player.getName(), cuboidInventory);
-
-			// restore old inventory
-			if (!newVisitor) {
-				for (CuboidItem item : cuboidInventory.inside) {
-					ItemStack is = new ItemStack(item.itemId);
-					is.setDurability((short) item.durability);
-					is.setAmount(item.amount);
-					player.getInventory().addItem(is);
-				}
-			}
+	public class WriteJob extends TimerTask {
+		public void run() {
+			CuboidAreas.writeCuboidAreas();
+			writeTimer.schedule(new WriteJob(), writeDelay);
 		}
 	}
 
-	public void playerLeaves(Player player) {
-		this.presentPlayers.remove(player.getName());
-		if (this.farewellMessage != null)
-			player.sendMessage(ChatColor.YELLOW + this.farewellMessage);
-		if (this.inventories) {
-			CuboidInventory cuboidInventory = playerInventories.get(player
-					.getName());
-			Inventory insideInventory = player.getInventory();
-
-			// storage of inventory
-			cuboidInventory.inside = new ArrayList<CuboidItem>();
-			for (int i = 0; i < insideInventory.getContents().length; i++) {
-				ItemStack item = insideInventory.getItem(i);
-				if (item != null) {
-					cuboidInventory.outside.add(new CuboidItem(item));
-					insideInventory.remove(i);
-				}
-			}
-			playerInventories.put(player.getName(), cuboidInventory);
-
-			// restore old inventory
-			for (CuboidItem item : cuboidInventory.outside) {
-				ItemStack is = new ItemStack(item.itemId);
-				is.setDurability((short) item.durability);
-				is.setAmount(item.amount);
-				player.getInventory().addItem(is);
-			}
-		}
-	}
-
-	public void printInfos(Player player, boolean allowed, boolean players,
-			boolean commands) {
-		player.sendMessage(ChatColor.YELLOW
-				+ "----    Area information    ----");
-		player.sendMessage(ChatColor.YELLOW + "Name : " + ChatColor.WHITE
-				+ this.name);
-		player.sendMessage(ChatColor.YELLOW + "Protection : " + ChatColor.WHITE
-				+ (this.protection ? "enabled" : "disabled"));
-		player.sendMessage(ChatColor.YELLOW + "Restriction : "
-				+ ChatColor.WHITE + (this.restricted ? "enabled" : "disabled"));
-		player.sendMessage(ChatColor.YELLOW + "Area specific inventory : "
-				+ ChatColor.WHITE + (this.inventories ? "yes" : "no"));
-		if (allowed) {
-			printAllowedPlayers(player);
-		}
-		if (players) {
-			printPresentPlayers(player);
-		}
-		if (commands) {
-			printDisallowedCommands(player);
-		}
-	}
-
-	public void printAllowedPlayers(Player player) {
-		if (this.allowedPlayers.size() == 0) {
-			player.sendMessage(ChatColor.YELLOW + "Allowed players : "
-					+ ChatColor.WHITE + "<list is empty>");
-			return;
-		}
-		String list = "";
-		for (String playerName : this.allowedPlayers) {
-			list += " " + playerName;
-		}
-		player.sendMessage(ChatColor.YELLOW + "Allowed players :"
-				+ ChatColor.WHITE + list);
-	}
-
-	public void printPresentPlayers(Player player) {
-		if (this.presentPlayers.size() == 0) {
-			player.sendMessage(ChatColor.YELLOW + "Present players : "
-					+ ChatColor.WHITE + "<list is empty>");
-			return;
-		}
-		String list = "";
-		for (String playerName : this.presentPlayers) {
-			list += " " + playerName;
-		}
-		player.sendMessage(ChatColor.YELLOW + "Present players :"
-				+ ChatColor.WHITE + list);
-	}
-
-	public void printDisallowedCommands(Player player) {
-		if (this.disallowedCommands.size() == 0) {
-			player.sendMessage(ChatColor.YELLOW + "Disallowed commands : "
-					+ ChatColor.WHITE + "<list is empty>");
-			return;
-		}
-		String list = "";
-		for (String command : this.disallowedCommands) {
-			list += " " + command;
-		}
-		player.sendMessage(ChatColor.YELLOW + "Disallowed commands :"
-				+ ChatColor.WHITE + list);
-	}
 }

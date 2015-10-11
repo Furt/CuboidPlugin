@@ -1,16 +1,16 @@
 name: CuboidPlugin
-main: se.jeremy.minecraft.cuboid
+main: se.jeremy.minecraft.cuboid.Cuboid
 author: enjikaka
 website: http://minecraft.jeremy.se
 version: 1.0
 
 commands:
-	cmod:
-		description: modify a cuboid
-		usage: /<command>
-	undo:
-		description: undo last command changes
-		usage: /<command>
-	protect:
-		description: protect a currently selected cuboid
-		usage: /<command>
+    cmod:
+        description: modify a cuboid
+        usage: /<command>
+    undo:
+        description: undo last command changes
+        usage: /<command>
+    protect:
+        description: protect a currently selected cuboid
+        usage: /<command>

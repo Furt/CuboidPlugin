@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class CuboidHealJob extends TimerTask {
 	String playerName;
 	CuboidC cuboid;
-	private Main plugin;
+	private Cuboid plugin;
 
 	public CuboidHealJob(String playerName, CuboidC cuboid) {
 		this.playerName = playerName;

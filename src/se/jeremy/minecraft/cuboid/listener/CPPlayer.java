@@ -8,16 +8,16 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import se.jeremy.minecraft.cuboid.Cuboid;
 import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
-import se.jeremy.minecraft.cuboid.Main;
 
 public class CPPlayer implements Listener {
 
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
-		if (Main.onMoveFeatures) {
+		if (Cuboid.onMoveFeatures) {
 			CuboidC arrival = CuboidAreas.findCuboidArea(to.getWorld()
 					.getName(), (int) to.getX(), (int) to.getY(), (int) to
 					.getZ());
@@ -27,7 +27,7 @@ public class CPPlayer implements Listener {
 				if (arrival.warning != null) {
 					player.sendMessage(ChatColor.RED + arrival.warning);
 				}
-				Main.notTeleport.add(player.getName());
+				Cuboid.notTeleport.add(player.getName());
 				player.teleport(event.getFrom());
 				return;
 			}
@@ -38,7 +38,7 @@ public class CPPlayer implements Listener {
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
-		if (Main.onMoveFeatures) {
+		if (Cuboid.onMoveFeatures) {
 			CuboidC arrival = CuboidAreas.findCuboidArea(to.getWorld()
 					.getName(), (int) to.getX(), (int) to.getY(), (int) to
 					.getZ());
@@ -52,8 +52,8 @@ public class CPPlayer implements Listener {
 			}
 
 			// if he was teleported out of a restricted area
-			if (Main.notTeleport.contains(player.getName())) {
-				Main.notTeleport.remove(player.getName());
+			if (Cuboid.notTeleport.contains(player.getName())) {
+				Cuboid.notTeleport.remove(player.getName());
 			} else {
 				CuboidAreas.movement(player, to);
 			}

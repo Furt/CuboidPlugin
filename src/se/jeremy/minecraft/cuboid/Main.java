@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import se.jeremy.minecraft.cuboid.commands.*;
 import se.jeremy.minecraft.cuboid.listener.*;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -246,11 +247,12 @@ public class Main extends JavaPlugin {
 	// //////////////////////
 
 	public Player playerMatch(String name) {
-		if (getServer().getOnlinePlayers().length < 1) {
+		
+		if (Bukkit.getOnlinePlayers().count() < 1) {
 			return null;
 		}
 
-		Player[] online = getServer().getOnlinePlayers();
+		Player[] online = Bukkit.getOnlinePlayers();
 		Player lastPlayer = null;
 
 		for (Player player : online) {

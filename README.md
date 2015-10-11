@@ -1,4 +1,4 @@
-I - Introduction
+# Introduction
 
 CuboidPlugin is a powerful tool that allows users to perform various actions on user-selected areas withing minecraft.
 Here is a quick list of its possibilities :
@@ -8,7 +8,7 @@ Here is a quick list of its possibilities :
     Area-specific toggle-able features : block protection, access restriction, area-specific inventory, healing areas, sanctuaries (no mob spawn + no damage from them), no creeper explosions, no-PvP areas, local command blacklist, area-specific list of players, backup & restore by area-name
 
 
-II - Download and changelogs
+# Download and changelogs
 
     Required hMod version : hMod build 132 or newer
 
@@ -22,7 +22,7 @@ II - Download and changelogs
     https://github.com/Relliktsohg/CuboidPlugin, if you feel like helping / forking
 
 
-III - Installation and configuration
+# Installation and configuration
 
     Copy CuboidPlugin.jar in the plugins folder
     Edit server.properties, and add "CuboidPlugin" to the plugins line (careful with CAPS)
@@ -32,9 +32,9 @@ III - Installation and configuration
     /ignoresOwnership command clearance to whoever can ignore areas' protection, restricted access and local command blacklists (should be moderators and admins)
     note that '/cuboid' and '/ignoresOwnership' are not an actual commands. This is just a way to check who is allowed to do what.
 
-IV - Usage
+# Usage
 
--- General information --
+## General information
 
 Wood Sword : Right-click when pointing to a block to know if it is in a cuboid area, and have few info about it.
 - no peculiar right needed
@@ -81,7 +81,7 @@ How to set up a guest zone :
 - set restrictedGroups=defaultGroupName (in your cuboidPlugin.properties, and replace defaultGroupName by the correct name)
 - ingame, create a cuboid where you want the guests to be able to build, with the /protect g:defaultGroupName guestZone
 
--- Worldwide features --
+## Worldwide features
 
 Only admins can use these commands :
 
@@ -98,7 +98,7 @@ Also, there is a bug with the onSpawn hook, so I can't prevent spawning for now,
 
 /cmod globalstatus - Prints the status of the global features
 
--- Cuboid selection --
+## Cuboid selection
 
 When holding a wood shovel (or the tool you configured), right click on a bloc, then another bloc.
 It displays messages, and you're ready to type a treatment command. Issuing a treatment command on a cuboid DOES NOT reset the selection.
@@ -108,7 +108,7 @@ On this image: [Image: Cuboid_01.png], the two points you have to set up are A a
 /cmod <areaName> select - This selects a cuboid Area, enabling you to perform action on it from afar. Caution : the target chunk has to be loaded first, and I haven't tried to perform action on a non-loaded area.
 
 
--- Area-specific commands --
+## Area-specific commands
 
 /cmod - prints the list of commands you can use, with a short description
 - Anyone can use this
@@ -170,7 +170,7 @@ pvp - toggles the no-pvp flag (by default, pvp is allowed)
 - Requires the right to use /protect command
 
 
--- Edition commands --
+## Edition commands
 
 /csize : Displays the number of blocs inside the selected cuboid
 - Requires the right to use /cuboid command
@@ -217,9 +217,9 @@ The selected point should be the North East lower corner of the copied cuboid. I
 - Requires the right to use /cuboid command
 
 
--- Construction commands --
+## Construction commands
 
-/ccircle <radius> <block ID|name> [height] : You only need to select one point. It draws a circle on the ground with the specified block type. Optionally, you can specify a height to create a cylinder. (negative height is possible - carful with going through bedrock)
+```/ccircle <radius> <block ID|name> [height]```: You only need to select one point. It draws a circle on the ground with the specified block type. Optionally, you can specify a height to create a cylinder. (negative height is possible - carful with going through bedrock)
 - Requires the right to use /cuboid command
 
 /cdisc <radius> <block ID|name> [height] : You only need to select one point. It draws a disc on the ground with the specified block type. Optionally, you can specify a height to create a filled cylinder. (negative height is possible - carful with going through bedrock)

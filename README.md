@@ -36,8 +36,8 @@ Here is a quick list of its possibilities :
 
 ## General information
 
-Wood Sword: Right-click when pointing to a block to know if it is in a cuboid area, and have few info about it.
-- no peculiar right needed
+Right-click when pointing to a block with a wooden sword in your hand to know if it is in a cuboid area, and have few info about it.
+
 Output example:
 
     -----  Area's Name  ----

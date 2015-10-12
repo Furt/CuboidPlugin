@@ -1,5 +1,7 @@
 package se.jeremy.minecraft.cuboid.commands;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -7,18 +9,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import se.jeremy.minecraft.cuboid.Cuboid;
 import se.jeremy.minecraft.cuboid.CuboidAction;
 import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
 
 public class CCircleCommand implements CommandExecutor {
-	private Cuboid plugin;
-
-	public CCircleCommand(Cuboid instance) {
-		this.plugin = instance;
-	}
-
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) {
@@ -26,47 +21,48 @@ public class CCircleCommand implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
 		
-		if (playersArea != null && !playersArea.isAllowed(args[0]) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+		if (playersArea != null && !playersArea.isAllowed(cmd.getName()) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
 			player.sendMessage(ChatColor.RED+ "This command is disallowed in this area");
 			return true;
 		}
 
-		if (CuboidAction.isReady(playerName, false)) {
-			boolean disc = args[0].equalsIgnoreCase("/cdisc") ? true : false;
+		if (CuboidAction.isReady(playerId, false)) {
+			boolean disc = cmd.getName().equalsIgnoreCase("/cdisc") ? true : false;
+			
+			Material blockType = Material.COBBLESTONE;
+			
 			int radius = 0;
-			//int blockID = 4;
-			Material block = Material.COBBLESTONE;
 			int height = 0;
 			
-			if (args.length > 2) {
+			if (args.length > 1) {
 				try {
-					radius = Integer.parseInt(args[1]);
+					radius = Integer.parseInt(args[0]);
 				} catch (NumberFormatException n) {
-					player.sendMessage(ChatColor.RED + args[1]
+					player.sendMessage(ChatColor.RED + args[0]
 							+ " is not a valid radius.");
 					return true;
 				}
 				if (radius < 1) {
-					player.sendMessage(ChatColor.RED + args[1]
+					player.sendMessage(ChatColor.RED + args[0]
 							+ " is not a valid radius.");
 					return true;
 				}
 
-				block = Material.getMaterial(args[2]);
+				blockType = Material.getMaterial(args[1]);
 
-				if (!block.isBlock()) {
-					player.sendMessage(ChatColor.RED + args[2]+ " is not a valid block ID.");
+				if (blockType == null) {
+					player.sendMessage(ChatColor.RED + args[1]+ " is not a valid block ID.");
 					return true;
 				}
 
-				if (args.length == 4) {
+				if (args.length == 3) {
 					try {
-						height = Integer.parseInt(args[3]);
+						height = Integer.parseInt(args[2]);
 					} catch (NumberFormatException n) {
-						player.sendMessage(ChatColor.RED + args[3]
+						player.sendMessage(ChatColor.RED + args[2]
 								+ " is not a valid height.");
 						return true;
 					}
@@ -78,10 +74,10 @@ public class CCircleCommand implements CommandExecutor {
 				}
 
 				if (disc) {
-					CuboidAction.buildCircle(playerName, radius, block, height, true);
+					CuboidAction.buildCircle(playerId, radius, blockType, height, true);
 					player.sendMessage(ChatColor.GREEN + "The " + ((height == 0) ? "disc" : "cylinder") + " has been build");
 				} else {
-					CuboidAction.buildCircle(playerName, radius, block, height, false);
+					CuboidAction.buildCircle(playerId, radius, blockType, height, false);
 					player.sendMessage(ChatColor.GREEN + "The " + ((height == 0) ? "circle" : "cylinder") + " has been build");
 				}
 

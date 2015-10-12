@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("serial")
 public class CuboidC implements Serializable {
 	public String name = "noname";
-	String world = "world";
+	World world = Bukkit.getWorld("world");
 	public int[] coords = new int[6];
 	public boolean protection = false;
 	public boolean restricted = false;
@@ -26,13 +27,9 @@ public class CuboidC implements Serializable {
 	public String farewellMessage = null;
 	public String warning = null;
 	ArrayList<String> disallowedCommands = new ArrayList<String>();
-	private Cuboid plugin;
-
-	public CuboidC() {
-	}
 
 	public boolean contains(String worldName, int X, int Y, int Z) {
-		if (worldName.equalsIgnoreCase(world) && X >= coords[0] && X <= coords[3]
+		if (worldName.equalsIgnoreCase(world.getName()) && X >= coords[0] && X <= coords[3]
 				&& Z >= coords[2] && Z <= coords[5] && Y >= coords[1]
 				&& Y <= coords[4])
 			return true;
@@ -234,7 +231,7 @@ public class CuboidC implements Serializable {
 				+ ChatColor.WHITE + list);
 	}
 
-	public String getWorld() {
+	public World getWorld() {
 		return world;
 	}
 }

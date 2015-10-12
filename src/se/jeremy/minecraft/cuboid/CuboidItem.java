@@ -1,13 +1,16 @@
 package se.jeremy.minecraft.cuboid;
 import java.io.Serializable;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 @SuppressWarnings("serial")
-public class CuboidItem implements Serializable{	
-	int itemId = 1, amount = 1, durability = 0;
+public class CuboidItem implements Serializable {	
+	int amount = 1, durability = 0;
+	Material material;
+	
 	public CuboidItem(ItemStack item){
-		this.itemId = item.getTypeId();
+		this.material = item.getType();
 		this.amount = item.getAmount();
 		this.durability = item.getDurability();
 	}

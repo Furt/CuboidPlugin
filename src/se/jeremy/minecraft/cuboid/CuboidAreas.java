@@ -256,7 +256,7 @@ public class CuboidAreas {
 									+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, cuboid.name);
-			ps.setString(2, cuboid.world);
+			ps.setString(2, cuboid.world.getUID() + "");
 			ps.setInt(3, cuboid.coords[0]);
 			ps.setInt(4, cuboid.coords[1]);
 			ps.setInt(5, cuboid.coords[2]);
@@ -398,7 +398,7 @@ public class CuboidAreas {
 
 	public static boolean createCuboidArea(Player player, String cuboidName) {
 		UUID playerId = player.getUniqueId();
-		String worldName = player.getWorld().getName();
+		
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
@@ -419,7 +419,7 @@ public class CuboidAreas {
 			newCuboid.coords[i + 3] = secondPoint[i];
 		newCuboid.allowedPlayers.add("o:" + playerId);
 		newCuboid.name = cuboidName;
-		newCuboid.world = worldName;
+		newCuboid.world = player.getWorld();
 		if (Cuboid.protectionOnDefault) {
 			newCuboid.protection = true;
 		}
@@ -452,7 +452,6 @@ public class CuboidAreas {
 	public static boolean protectCuboidArea(Player player,
 			ArrayList<String> ownersList, String cuboidName, boolean highProtect) {
 		UUID playerId = player.getUniqueId();
-		String worldName = player.getWorld().getName();
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
 					+ "There is already an area with that name");
@@ -484,7 +483,7 @@ public class CuboidAreas {
 			newCuboid.coords[i + 3] = secondPoint[i];
 		newCuboid.allowedPlayers = ownersList;
 		newCuboid.name = cuboidName;
-		newCuboid.world = worldName;
+		newCuboid.world = player.getWorld();
 		newCuboid.protection = true;
 
 		listOfCuboids.add(newCuboid);

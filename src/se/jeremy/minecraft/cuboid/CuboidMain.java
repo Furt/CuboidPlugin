@@ -148,7 +148,7 @@ public class CuboidMain implements Serializable {
 			// restore old inventory
 			if (!newVisitor) {
 				for (CuboidItem item : cuboidInventory.inside) {
-					ItemStack is = new ItemStack(item.itemId);
+					ItemStack is = new ItemStack(item.material);
 					is.setDurability((short) item.durability);
 					is.setAmount(item.amount);
 					player.getInventory().addItem(is);
@@ -179,7 +179,7 @@ public class CuboidMain implements Serializable {
 
 			// restore old inventory
 			for (CuboidItem item : cuboidInventory.outside) {
-				ItemStack is = new ItemStack(item.itemId);
+				ItemStack is = new ItemStack(item.material);
 				is.setDurability((short) item.durability);
 				is.setAmount(item.amount);
 				player.getInventory().addItem(is);

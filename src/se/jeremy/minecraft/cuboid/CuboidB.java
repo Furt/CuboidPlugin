@@ -3,7 +3,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 @SuppressWarnings("serial")
 public class CuboidB implements Serializable{	
 	String name= "noname";
-	String world = "world";
+	World world = Bukkit.getWorld("world");
 	int[] coords = new int[6];
 	boolean protection = false;
 	boolean restricted = false;
@@ -129,14 +131,14 @@ public class CuboidB implements Serializable{
 				ItemStack item = outsideInventory.getItem(i);
 				if (item != null) {
 					cuboidInventory.outside.add(new CuboidItem(item));
-					outsideInventory.remove(i);
+					outsideInventory.removeItem(item);
 				}
 			}
 			playerInventories.put(player.getName(), cuboidInventory);
 			
 			if (!newVisitor){
 				for (CuboidItem item : cuboidInventory.inside) {
-					ItemStack is = new ItemStack(item.itemId);
+					ItemStack is = new ItemStack(item.material);
 					is.setDurability((short) item.durability);
 					is.setAmount(item.amount);
 					player.getInventory().addItem(is);
@@ -169,7 +171,7 @@ public class CuboidB implements Serializable{
 			playerInventories.put(player.getName(), cuboidInventory);
 			
 			for (CuboidItem item : cuboidInventory.outside) {
-				ItemStack is = new ItemStack(item.itemId);
+				ItemStack is = new ItemStack(item.material);
 				is.setDurability((short) item.durability);
 				is.setAmount(item.amount);
 				player.getInventory().addItem(is);

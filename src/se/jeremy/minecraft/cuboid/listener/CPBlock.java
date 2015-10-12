@@ -122,7 +122,7 @@ public class CPBlock implements Listener {
 			Block blockClicked = event.getClickedBlock();
 			
 			if (player.getItemInHand().getType().equals(Cuboid.mainTool) && (player.hasPermission("cuboidplugin.protect") || player.hasPermission("cuboidplugin.cuboid"))) {
-				boolean whichPoint = CuboidAction.setPoint(player.getName(), blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
+				boolean whichPoint = CuboidAction.setPoint(player.getUniqueId(), blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
 				player.sendMessage(ChatColor.BLUE + ((whichPoint) ? "First" : "Second") + " point is set.");
 			} else if (player.getItemInHand().getType().equals(Cuboid.checkTool)) {
 				CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getLocation());

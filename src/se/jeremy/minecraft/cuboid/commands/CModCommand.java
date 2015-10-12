@@ -1,5 +1,6 @@
 package se.jeremy.minecraft.cuboid.commands;
 
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
@@ -21,14 +22,14 @@ public class CModCommand implements CommandExecutor {
 		this.plugin = instance;
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		
 		if (!(sender instanceof Player)) {
 			return true;
 		}
+		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
 
 		if (args.length == 0) {
 			plugin.printCuboidHelp(player);
@@ -37,13 +38,10 @@ public class CModCommand implements CommandExecutor {
 
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("list")) {
-				player.sendMessage(ChatColor.YELLOW + "Cuboid areas"
-						+ ChatColor.YELLOW + " : "
-						+ CuboidAreas.displayCuboidsList());
+				player.sendMessage(ChatColor.YELLOW + "Cuboid areas" + ChatColor.YELLOW + " : " + CuboidAreas.displayCuboidsList());
 			} else if (args[0].equalsIgnoreCase("who")) {
 				if (!Cuboid.onMoveFeatures) {
-					player.sendMessage(ChatColor.YELLOW
-							+ "onMove functions are disabled. So are area playerlists");
+					player.sendMessage(ChatColor.YELLOW + "onMove functions are disabled. So are area playerlists");
 				} else {
 					CuboidC cuboidArea = CuboidAreas.findCuboidArea(player.getLocation());
 					
@@ -80,30 +78,24 @@ public class CModCommand implements CommandExecutor {
 				if (Cuboid.globalSanctuary) {
 					player.sendMessage(ChatColor.YELLOW + "Monsters :" + ChatColor.YELLOW + " harmless");
 				} else {
-					player.sendMessage(ChatColor.YELLOW + "Monsters :"
-							+ ChatColor.YELLOW + " dangerous");
+					player.sendMessage(ChatColor.YELLOW + "Monsters :" + ChatColor.YELLOW + " dangerous");
 				}
-				player.sendMessage(ChatColor.RED
-						+ "Local setting overwrite global ones.");
+				player.sendMessage(ChatColor.RED + "Local setting overwrite global ones.");
 			} else if (args[0].equalsIgnoreCase("reload")) {
 				if (!player.hasPermission("cuboidplugin.cuboid")) {
-					player.sendMessage(ChatColor.RED
-							+ "You are not allowed to use this command.");
+					player.sendMessage(ChatColor.RED + "You are not allowed to use this command.");
 					return true;
 				}
 				plugin.loadProperties();
-				player.sendMessage(ChatColor.GREEN
-						+ "CuboidPlugin properties reloaded");
+				player.sendMessage(ChatColor.GREEN + "CuboidPlugin properties reloaded");
 				plugin.getLogger().log(Level.INFO, "properties reloaded");
 			} else if (args[0].equalsIgnoreCase("write")) {
 				if (!player.hasPermission("cuboidplugin.cuboid")) {
-					player.sendMessage(ChatColor.RED
-							+ "You are not allowed to use this command.");
+					player.sendMessage(ChatColor.RED + "You are not allowed to use this command.");
 					return true;
 				}
 				CuboidAreas.writeCuboidAreas();
-				player.sendMessage(ChatColor.GREEN
-						+ "CuboidPlugin data written to hard drive.");
+				player.sendMessage(ChatColor.GREEN + "CuboidPlugin data written to hard drive.");
 			} else {
 				plugin.printCuboidHelp(player);
 			}
@@ -111,9 +103,9 @@ public class CModCommand implements CommandExecutor {
 		}
 		if (args.length >= 2) {
 			CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
-			if (playersArea != null && !playersArea.isAllowed(args[0]) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
-				player.sendMessage(ChatColor.RED
-						+ "This command is disallowed in this area");
+			
+			if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+				player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 				return true;
 			}
 			
@@ -162,7 +154,7 @@ public class CModCommand implements CommandExecutor {
 							+ "You are not allowed to use this command.");
 					return true;
 				}
-				if (CuboidAction.isReady(playerName, true))
+				if (CuboidAction.isReady(playerId, true))
 					CuboidAreas.createCuboidArea(player, args[0]);
 				else
 					player.sendMessage(ChatColor.RED
@@ -229,7 +221,7 @@ public class CModCommand implements CommandExecutor {
 							+ "You are not allowed to use this command.");
 					return true;
 				}
-				CuboidAction.setBothPoint(playerName, cuboidArea.coords);
+				CuboidAction.setBothPoint(playerId, cuboidArea.coords);
 				player.sendMessage(ChatColor.GREEN + "Area selected : "
 						+ cuboidArea.name);
 			} else if (args[1].equalsIgnoreCase("move")) {
@@ -238,7 +230,7 @@ public class CModCommand implements CommandExecutor {
 							+ "You are not allowed to use this command.");
 					return true;
 				}
-				if (CuboidAction.isReady(playerName, true))
+				if (CuboidAction.isReady(playerId, true))
 					CuboidAreas.moveCuboidArea(player, cuboidArea);
 				else
 					player.sendMessage(ChatColor.RED
@@ -359,10 +351,9 @@ public class CModCommand implements CommandExecutor {
 					return true;
 				}
 			} else if (args[1].equalsIgnoreCase("restore")) {
-				if ((Cuboid.allowOwnersToBackup && cuboidArea.isOwner(player))
-						|| player.hasPermission("cuboidplugin.protect")) {
-					byte returnCode = new CuboidBackup(cuboidArea, false)
-							.loadFromDisc(playerName);
+				if ((Cuboid.allowOwnersToBackup && cuboidArea.isOwner(player)) || player.hasPermission("cuboidplugin.protect")) {
+					byte returnCode = new CuboidBackup(cuboidArea, false).loadFromDisc(playerId);
+					
 					if (returnCode == 0) {
 						player.sendMessage(ChatColor.GREEN
 								+ "Cuboid area successfuly restored");

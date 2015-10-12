@@ -16,4 +16,13 @@ commands:
         usage: /<command>
     cwalls:
         description: Builds walls for the selected cuboid
-        usage: /<command> [material]
+        usage: /<command> <material>
+    ccircle:
+        description: Draws a circle on the ground with the specified block type
+        usage: /<command> <radius> <material> [height]
+    ccopy:
+        description: Copy the selected cuboid
+        usage: /<command>
+    cdel:
+        description: Removes all blocks within the cuboid.
+        usage: /<command>

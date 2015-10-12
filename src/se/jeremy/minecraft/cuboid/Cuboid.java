@@ -150,9 +150,9 @@ public class Cuboid extends JavaPlugin implements Listener {
 		getCommand("undo").setExecutor(new UndoCommand());
 		getCommand("protect").setExecutor(new CProtectCommand());
 		getCommand("cwalls").setExecutor(new CWallsCommand());
-		getCommand("ccircle").setExecutor(new CCircleCommand());
-		getCommand("ccopy").setExecutor(new CCopyCommand());
-		getCommand("cdel").setExecutor(new CDelCommand());
+		//getCommand("ccircle").setExecutor(new CCircleCommand());
+		//getCommand("ccopy").setExecutor(new CCopyCommand());
+		//getCommand("cdel").setExecutor(new CDelCommand());
 	}
 
 	/*

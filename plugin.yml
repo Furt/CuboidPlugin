@@ -6,11 +6,14 @@ version: 1.0
 
 commands:
     cmod:
-        description: modify a cuboid
+        description: Modify a cuboid
         usage: /<command>
     undo:
-        description: undo last command changes
+        description: Undo last command changes
         usage: /<command>
     protect:
-        description: protect a currently selected cuboid
+        description: Protect a currently selected cuboid
         usage: /<command>
+    cwalls:
+        description: Builds walls for the selected cuboid
+        usage: /<command> [material]

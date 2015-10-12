@@ -1,12 +1,14 @@
 package se.jeremy.minecraft.cuboid;
 
+import org.bukkit.Material;
+
 public class CuboidSelection {	
 	boolean status = false;	// status == false --> the first corner is to be selected
 	boolean undoable = false;
 	int[] firstCorner = null;
 	int[] secondCorner = null;
-	int[][][] lastCopiedCuboid = null;	// Populated with a /ccopy
-	int[][][] lastSelectedCuboid = null;	//	Populated when using a /cload, different from above to enable /undo
+	Material[][][] lastCopiedCuboid = null;	// Populated with a /ccopy
+	Material[][][] lastSelectedCuboid = null;	//	Populated when using a /cload, different from above to enable /undo
 	int[] pastePoint = null;
 	
 	public CuboidSelection(){

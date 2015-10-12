@@ -16,6 +16,7 @@ import se.jeremy.minecraft.cuboid.commands.*;
 import se.jeremy.minecraft.cuboid.listener.*;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -31,16 +32,24 @@ public class Cuboid extends JavaPlugin implements Listener {
 	static ArrayList<Integer> operableItems;
 	static boolean allowBlacklistedBlocks = false;
 	public static boolean chestProtection = true;
+	
+	// TODO : Remove ID in favor of Material
 	public static int mainToolID = 269;
+	public static Material mainTool = Material.WOOD_SPADE;
+	
+	// TODO : Remove ID in favor of Material
 	public static int checkToolID = 268;
+	public static Material checkTool = Material.WOOD_AXE;
 
 	public static boolean protectionSytem = true;
 	public static boolean protectionWarn = false;
+	
 	// worldwide area features
 	public static String[] restrictedGroups;
 	public static boolean globalDisablePvP = false;
 	public static boolean globalCreeperProt = false;
 	public static boolean globalSanctuary = false;
+	
 	// local area features default values
 	static boolean protectionOnDefault = false;
 	static boolean restrictedOnDefault = false;
@@ -48,6 +57,7 @@ public class Cuboid extends JavaPlugin implements Listener {
 	static boolean creeperDisabledOnDefault = false;
 	static boolean pvpDisabledOnDefault = false;
 	static boolean healOnDefault = false;
+	
 	// local area features allowance for owners/and protect-allowed
 	public static boolean onMoveFeatures = true;
 	public static boolean allowOwnersToBackup = false;
@@ -55,13 +65,16 @@ public class Cuboid extends JavaPlugin implements Listener {
 	public static boolean allowNoPvpZones = true;
 	public static boolean allowNoCreeperZones = true;
 	public static boolean allowSanctuaries = false;
+	
 	// List of players denied entry to a restricted cuboid, that are to not
 	// trigger the teleport functions
 	public static ArrayList<String> notTeleport;
+	
 	// Temporaty fix for wrinting to disk...
 	static long writeDelay = 1800000;
 
 	static Timer writeTimer = new Timer();
+	
 	// Listeners
 	public CPBlock cpb = new CPBlock(this);
 	public CPPlayer cpp = new CPPlayer();
@@ -136,6 +149,7 @@ public class Cuboid extends JavaPlugin implements Listener {
 		getCommand("cmod").setExecutor(new CModCommand(this));
 		getCommand("undo").setExecutor(new UndoCommand());
 		getCommand("protect").setExecutor(new CProtectCommand());
+		getCommand("cwalls").setExecutor(new CWallsCommand(this));
 	}
 
 	/*
@@ -286,17 +300,6 @@ public class Cuboid extends JavaPlugin implements Listener {
 		}
 
 		return lastPlayer;
-	}
-
-	public boolean isValidBlockID(int blocID) {
-		if (blocID >= 0 && blocID <= 91) {
-			if ((blocID > 20 && blocID < 35) || blocID == 36) {
-				return false;
-			} else {
-				return true;
-			}
-		} else
-			return false;
 	}
 
 	public boolean isCreatorItem(ItemStack itemStack) {

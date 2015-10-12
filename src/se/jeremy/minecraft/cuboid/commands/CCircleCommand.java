@@ -37,8 +37,10 @@ public class CCircleCommand implements CommandExecutor {
 		if (CuboidAction.isReady(playerName, false)) {
 			boolean disc = args[0].equalsIgnoreCase("/cdisc") ? true : false;
 			int radius = 0;
-			int blockID = 4;
+			//int blockID = 4;
+			Material block = Material.COBBLESTONE;
 			int height = 0;
+			
 			if (args.length > 2) {
 				try {
 					radius = Integer.parseInt(args[1]);
@@ -53,16 +55,10 @@ public class CCircleCommand implements CommandExecutor {
 					return true;
 				}
 
-				try {
-					blockID = Integer.parseInt(args[2]);
-				} catch (NumberFormatException n) {
-					blockID = Material.getMaterial(args[2]).getId();
-					// blockID = etc.getDataSource().getItem(args[2]);
-				}
+				block = Material.getMaterial(args[2]);
 
-				if (!plugin.isValidBlockID(blockID)) {
-					player.sendMessage(ChatColor.RED + args[2]
-							+ " is not a valid block ID.");
+				if (!block.isBlock()) {
+					player.sendMessage(ChatColor.RED + args[2]+ " is not a valid block ID.");
 					return true;
 				}
 
@@ -82,17 +78,11 @@ public class CCircleCommand implements CommandExecutor {
 				}
 
 				if (disc) {
-					CuboidAction.buildCircle(playerName, radius, blockID,
-							height, true);
-					player.sendMessage(ChatColor.GREEN + "The "
-							+ ((height == 0) ? "disc" : "cylinder")
-							+ " has been build");
+					CuboidAction.buildCircle(playerName, radius, block, height, true);
+					player.sendMessage(ChatColor.GREEN + "The " + ((height == 0) ? "disc" : "cylinder") + " has been build");
 				} else {
-					CuboidAction.buildCircle(playerName, radius, blockID,
-							height, false);
-					player.sendMessage(ChatColor.GREEN + "The "
-							+ ((height == 0) ? "circle" : "cylinder")
-							+ " has been build");
+					CuboidAction.buildCircle(playerName, radius, block, height, false);
+					player.sendMessage(ChatColor.GREEN + "The " + ((height == 0) ? "circle" : "cylinder") + " has been build");
 				}
 
 			} else {

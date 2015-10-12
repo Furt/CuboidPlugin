@@ -18,17 +18,16 @@ public class CPPlayer implements Listener {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
 		if (Cuboid.onMoveFeatures) {
-			CuboidC arrival = CuboidAreas.findCuboidArea(to.getWorld()
-					.getName(), (int) to.getX(), (int) to.getY(), (int) to
-					.getZ());
-			if (arrival != null && arrival.restricted
-					&& !player.hasPermission("/ignoresOwnership")
-					&& !arrival.isAllowed(player)) {
+			CuboidC arrival = CuboidAreas.findCuboidArea(to);
+			
+			if (arrival != null && arrival.restricted && !player.hasPermission("/ignoresOwnership") && !arrival.isAllowed(player)) {
 				if (arrival.warning != null) {
 					player.sendMessage(ChatColor.RED + arrival.warning);
 				}
+				
 				Cuboid.notTeleport.add(player.getName());
 				player.teleport(event.getFrom());
+				
 				return;
 			}
 			CuboidAreas.movement(player, event.getTo());
@@ -38,16 +37,15 @@ public class CPPlayer implements Listener {
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		Location to = event.getTo();
+		
 		if (Cuboid.onMoveFeatures) {
-			CuboidC arrival = CuboidAreas.findCuboidArea(to.getWorld()
-					.getName(), (int) to.getX(), (int) to.getY(), (int) to
-					.getZ());
-			if (arrival != null && arrival.restricted
-					&& !player.hasPermission("/ignoresOwnership")
-					&& !arrival.isAllowed(player)) {
+			CuboidC arrival = CuboidAreas.findCuboidArea(to);
+			
+			if (arrival != null && arrival.restricted && !player.hasPermission("/ignoresOwnership") && !arrival.isAllowed(player)) {
 				if (arrival.warning != null) {
 					player.sendMessage(ChatColor.RED + arrival.warning);
 				}
+				
 				return;
 			}
 

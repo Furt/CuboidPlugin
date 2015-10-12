@@ -48,8 +48,7 @@ public class CFacesCommand implements CommandExecutor {
 				}
 
 				if (!plugin.isValidBlockID(blockID)) {
-					player.sendMessage(ChatColor.RED + args[1]
-							+ " is not a valid block ID.");
+					player.sendMessage(ChatColor.RED + args[1] + " is not a valid block ID.");
 					return true;
 				}
 

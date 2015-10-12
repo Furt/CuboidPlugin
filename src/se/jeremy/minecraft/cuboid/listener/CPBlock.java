@@ -1,7 +1,6 @@
 package se.jeremy.minecraft.cuboid.listener;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -27,19 +26,13 @@ public class CPBlock implements Listener {
 	}
 
 	// TODO needs moved to proper place
-	public void onItemUse(Player player, Block blockPlaced, Block blockClicked,
-			ItemStack item) {
-		if (blockClicked != null && Cuboid.protectionSytem
-				&& !player.hasPermission("/ignoresOwnership")
-				&& plugin.isCreatorItem(item)) {
-			CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getWorld()
-					.getName(), blockClicked.getX(), blockClicked.getY(),
-					blockClicked.getZ());
+	public void onItemUse(Player player, Block blockPlaced, Block blockClicked, ItemStack item) {
+		if (blockClicked != null && Cuboid.protectionSytem && !player.hasPermission("/ignoresOwnership") && plugin.isCreatorItem(item)) {
+			CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getLocation());
 			if (cuboid != null && cuboid.protection) {
 				boolean allowed = cuboid.isAllowed(player);
 				if (!allowed && Cuboid.protectionWarn) {
-					player.sendMessage(ChatColor.RED
-							+ "This block is protected !");
+					player.sendMessage(ChatColor.RED + "This block is protected !");
 				}
 				// return !allowed;
 			} else {
@@ -51,10 +44,8 @@ public class CPBlock implements Listener {
 
 	public void onComplexBlockChange(Player player, Block block) {
 		if (block instanceof Chest) {
-			if (Cuboid.chestProtection
-					&& !player.hasPermission("/ignoresOwnership")) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getWorld()
-						.getName(), block.getX(), block.getY(), block.getZ());
+			if (Cuboid.chestProtection && !player.hasPermission("/ignoresOwnership")) {
+				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getLocation());
 				if (cuboid != null && cuboid.protection) {
 					// return !cuboid.isAllowed(player);
 				}
@@ -66,10 +57,9 @@ public class CPBlock implements Listener {
 
 	public void onSendComplexBlock(Player player, Block block) {
 		if (block instanceof Chest) {
-			if (Cuboid.chestProtection
-					&& !player.hasPermission("/ignoresOwnership")) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getWorld()
-						.getName(), block.getX(), block.getY(), block.getZ());
+			if (Cuboid.chestProtection && !player.hasPermission("/ignoresOwnership")) {
+				CuboidC cuboid = CuboidAreas.findCuboidArea(block.getLocation());
+				
 				if (cuboid != null && cuboid.protection) {
 					// return !cuboid.isAllowed(player);
 				}
@@ -83,19 +73,17 @@ public class CPBlock implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block blockPlaced = event.getBlockPlaced();
-		if (Cuboid.protectionSytem
-				&& !player.hasPermission("cuboidplugin.ignoresownership")) {
-			CuboidC cuboid = CuboidAreas.findCuboidArea(blockPlaced.getWorld()
-					.getName(), blockPlaced.getX(), blockPlaced.getY(),
-					blockPlaced.getZ());
+		
+		if (Cuboid.protectionSytem && !player.hasPermission("cuboidplugin.ignoresownership")) {
+			CuboidC cuboid = CuboidAreas.findCuboidArea(blockPlaced.getLocation());
+			
 			if (cuboid != null && cuboid.protection) {
 				boolean allowed = cuboid.isAllowed(player);
+				
 				if (!allowed && Cuboid.protectionWarn) {
-					player.sendMessage(ChatColor.RED
-							+ "This block is protected !");
+					player.sendMessage(ChatColor.RED + "This block is protected !");
 					event.setCancelled(true);
 				}
-
 			} else if (plugin.isGloballyRestricted(player)) {
 				event.setCancelled(true);
 			}
@@ -106,19 +94,19 @@ public class CPBlock implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
-		if (Cuboid.protectionSytem
-				&& !player.hasPermission("cuboidplugin.ignoresownership")) {
-			CuboidC cuboid = CuboidAreas.findCuboidArea(block.getWorld()
-					.getName(), block.getX(), block.getY(), block.getZ());
+		
+		if (Cuboid.protectionSytem && !player.hasPermission("cuboidplugin.ignoresownership")) {
+			CuboidC cuboid = CuboidAreas.findCuboidArea(block.getLocation());
+			
 			if (cuboid != null && cuboid.protection) {
 				boolean allowed = cuboid.isAllowed(player);
+				
 				if (!allowed) {
-					if (Cuboid.protectionWarn)
-						player.sendMessage(ChatColor.RED
-								+ "This block is protected !");
+					if (Cuboid.protectionWarn) {
+						player.sendMessage(ChatColor.RED + "This block is protected !");
+					}
 					event.setCancelled(true);
 				}
-
 			} else if (plugin.isGloballyRestricted(player)) {
 				event.setCancelled(true);
 			} else {
@@ -129,29 +117,21 @@ public class CPBlock implements Listener {
 
 	@EventHandler
 	public void onBlockRightClicked(PlayerInteractEvent event) {
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
-				|| event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			Player player = event.getPlayer();
 			Block blockClicked = event.getClickedBlock();
-			if (player.getItemInHand().getType()
-					.equals(Material.getMaterial(Cuboid.mainToolID))
-					&& (player.hasPermission("cuboidplugin.protect") || player
-							.hasPermission("cuboidplugin.cuboid"))) {
-				boolean whichPoint = CuboidAction.setPoint(player.getName(),
-						blockClicked.getX(), blockClicked.getY(),
-						blockClicked.getZ());
-				player.sendMessage(ChatColor.BLUE
-						+ ((whichPoint) ? "First" : "Second")
-						+ " point is set.");
-			} else if (player.getItemInHand().getType()
-					.equals(Material.getMaterial(Cuboid.checkToolID))) {
-				CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked
-						.getWorld().getName(), blockClicked.getX(),
-						blockClicked.getY(), blockClicked.getZ());
-				if (cuboid == null)
+			
+			if (player.getItemInHand().getType().equals(Cuboid.mainTool) && (player.hasPermission("cuboidplugin.protect") || player.hasPermission("cuboidplugin.cuboid"))) {
+				boolean whichPoint = CuboidAction.setPoint(player.getName(), blockClicked.getX(), blockClicked.getY(), blockClicked.getZ());
+				player.sendMessage(ChatColor.BLUE + ((whichPoint) ? "First" : "Second") + " point is set.");
+			} else if (player.getItemInHand().getType().equals(Cuboid.checkTool)) {
+				CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getLocation());
+				
+				if (cuboid == null) {
 					player.sendMessage(ChatColor.YELLOW + "Not a cuboid area");
-				else
+				} else {
 					cuboid.printInfos(player, false, false);
+				}
 			}
 		}
 	}

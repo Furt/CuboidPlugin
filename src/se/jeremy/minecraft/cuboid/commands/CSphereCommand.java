@@ -61,29 +61,24 @@ public class CSphereCommand implements CommandExecutor {
 					// TODO blockID = etc.getDataSource().getItem(args[2]);
 				}
 				if (!plugin.isValidBlockID(blockID)) {
-					player.sendMessage(ChatColor.RED + args[2]
-							+ " is not a valid block ID.");
+					player.sendMessage(ChatColor.RED + args[2] + " is not a valid block ID.");
 					return true;
 				}
 
 				if (ball) {
 					CuboidAction.buildShpere(playerName, radius, blockID, true);
-					player.sendMessage(ChatColor.GREEN
-							+ "The ball has been built");
+					player.sendMessage(ChatColor.GREEN + "The ball has been built");
 				} else {
 					CuboidAction
 							.buildShpere(playerName, radius, blockID, false);
-					player.sendMessage(ChatColor.GREEN
-							+ "The sphere has been built");
+					player.sendMessage(ChatColor.GREEN + "The sphere has been built");
 				}
 
 			} else {
 				if (ball) {
-					player.sendMessage(ChatColor.RED
-							+ "Usage : /cball <radius> <block id|name>");
+					player.sendMessage(ChatColor.RED + "Usage : /cball <radius> <block id|name>");
 				} else {
-					player.sendMessage(ChatColor.RED
-							+ "Usage : /csphere <radius> <block id|name>");
+					player.sendMessage(ChatColor.RED + "Usage : /csphere <radius> <block id|name>");
 				}
 			}
 		} else {

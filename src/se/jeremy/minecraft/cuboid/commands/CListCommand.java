@@ -1,5 +1,8 @@
 package se.jeremy.minecraft.cuboid.commands;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,13 +14,13 @@ import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
 
 public class CListCommand implements CommandExecutor {
+	
 	private Cuboid plugin;
 
 	public CListCommand(Cuboid instance) {
 		this.plugin = instance;
 	}
-
-	@Override
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
 		if (!(sender instanceof Player)) {
@@ -25,19 +28,17 @@ public class CListCommand implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
+		
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
 		
-		if (playersArea != null && !playersArea.isAllowed(args[0])
-				&& !playersArea.isOwner(player)
-				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
-			player.sendMessage(ChatColor.RED
-					+ "This command is disallowed in this area");
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
 
 		if (args.length == 1) {
-			String list = plugin.listPersonalCuboids(playerName);
+			String list = plugin.listPersonalCuboids(playerId);
 			if (list != null) {
 				player.sendMessage(ChatColor.GREEN + "Your saved cuboids :"
 						+ ChatColor.WHITE + list);
@@ -45,13 +46,13 @@ public class CListCommand implements CommandExecutor {
 				player.sendMessage(ChatColor.RED + "You have no saved cuboid");
 			}
 		} else if (args.length == 2 && player.isOp()) {
-			String list = plugin.listPersonalCuboids(args[1]);
+			Player target = Bukkit.getPlayer(args[0]);
+			String list = plugin.listPersonalCuboids(target.getUniqueId());
+			
 			if (list != null) {
-				player.sendMessage(ChatColor.GREEN + args[1]
-						+ "'s saved cuboids :" + ChatColor.WHITE + list);
+				player.sendMessage(ChatColor.GREEN + target.getDisplayName() + "'s saved cuboids :" + ChatColor.WHITE + list);
 			} else {
-				player.sendMessage(ChatColor.RED + args[1]
-						+ " has no saved cuboid");
+				player.sendMessage(ChatColor.RED + target.getDisplayName() + " has no saved cuboid");
 			}
 		} else {
 			if (player.isOp())

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import se.jeremy.minecraft.cuboid.commands.*;
@@ -142,7 +143,8 @@ public class Cuboid extends JavaPlugin implements Listener {
 	public static void log(Level level, String msg) {
 		plugin.getLogger().log(level, msg);
 	}
-	// TODO finish adding them all
+	
+	// TODO : Add all commands
 	private void setupCommands() {
 		getCommand("cmod").setExecutor(new CModCommand(this));
 		getCommand("undo").setExecutor(new UndoCommand());
@@ -317,12 +319,12 @@ public class Cuboid extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	public boolean cuboidExists(String playerName, String cuboidName) {
+	public boolean cuboidExists(UUID playerName, String cuboidName) {
 		return new File(getDataFolder() + File.separator + playerName,
 				cuboidName + ".cuboid").exists();
 	}
 
-	public String listPersonalCuboids(String owner) {
+	public String listPersonalCuboids(UUID owner) {
 		if (!new File(getDataFolder() + File.separator + owner).exists()) {
 			return null;
 		}

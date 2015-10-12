@@ -41,8 +41,7 @@ public class CFacesCommand implements CommandExecutor {
 				}
 
 				CuboidAction.buildCuboidFaces(playerId, blockType, true);
-				player.sendMessage(ChatColor.GREEN
-						+ "The faces of the cuboid have been built");
+				player.sendMessage(ChatColor.GREEN + "The faces of the cuboid have been built");
 			} else {
 				return false;
 			}

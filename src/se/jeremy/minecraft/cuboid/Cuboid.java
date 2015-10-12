@@ -64,10 +64,10 @@ public class Cuboid extends JavaPlugin implements Listener {
 	// local area features allowance for owners/and protect-allowed
 	public static boolean onMoveFeatures = true;
 	public static boolean allowOwnersToBackup = false;
-	public static boolean allowRestrictedZones = false;
+	public static boolean allowRestrictedZones = true;
 	public static boolean allowNoPvpZones = true;
 	public static boolean allowNoCreeperZones = true;
-	public static boolean allowSanctuaries = false;
+	public static boolean allowSanctuaries = true;
 	
 	// List of players denied entry to a restricted cuboid, that are to not
 	// trigger the teleport functions

@@ -26,6 +26,7 @@ public class CPBlock implements Listener {
 	}
 
 	// TODO needs moved to proper place
+	@EventHandler
 	public void onItemUse(Player player, Block blockPlaced, Block blockClicked, ItemStack item) {
 		if (blockClicked != null && Cuboid.protectionSytem && !player.hasPermission("/ignoresOwnership") && plugin.isCreatorItem(item)) {
 			CuboidC cuboid = CuboidAreas.findCuboidArea(blockClicked.getLocation());
@@ -42,6 +43,7 @@ public class CPBlock implements Listener {
 		// return false;
 	}
 
+	@EventHandler
 	public void onComplexBlockChange(Player player, Block block) {
 		if (block instanceof Chest) {
 			if (Cuboid.chestProtection && !player.hasPermission("/ignoresOwnership")) {
@@ -55,6 +57,7 @@ public class CPBlock implements Listener {
 		// return false;
 	}
 
+	@EventHandler
 	public void onSendComplexBlock(Player player, Block block) {
 		if (block instanceof Chest) {
 			if (Cuboid.chestProtection && !player.hasPermission("/ignoresOwnership")) {

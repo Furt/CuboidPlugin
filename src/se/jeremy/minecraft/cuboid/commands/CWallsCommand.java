@@ -2,7 +2,6 @@ package se.jeremy.minecraft.cuboid.commands;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -28,7 +27,7 @@ public class CWallsCommand implements CommandExecutor {
 		UUID playerId = player.getUniqueId();
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
 		
-		if (playersArea != null && !playersArea.isAllowed(args[0]) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
 			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}

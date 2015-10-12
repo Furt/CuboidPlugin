@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("serial")
@@ -59,10 +60,11 @@ public class CuboidC implements Serializable {
 		return false;
 	}
 
-	public boolean isAllowed(String command) {
+	public boolean isAllowed(Command command) {
 		for (String disallowed : disallowedCommands) {
-			if (command.equals(disallowed))
+			if (command.getName().equals(disallowed)) {
 				return false;
+			}
 		}
 		return true;
 	}

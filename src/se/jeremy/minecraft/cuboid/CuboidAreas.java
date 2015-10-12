@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Timer;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
@@ -396,7 +397,7 @@ public class CuboidAreas {
 	// ////////////////////////////
 
 	public static boolean createCuboidArea(Player player, String cuboidName) {
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
 		String worldName = player.getWorld().getName();
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
@@ -404,19 +405,19 @@ public class CuboidAreas {
 			if (Cuboid.logging)
 				Cuboid.log(
 						Level.INFO,
-						playerName + " failed to create a cuboid area named "
+						playerId + " failed to create a cuboid area named "
 								+ cuboidName + " (aleady used)");
 			return false;
 		}
-		int[] firstPoint = CuboidAction.getPoint(playerName, false);
-		int[] secondPoint = CuboidAction.getPoint(playerName, true);
+		int[] firstPoint = CuboidAction.getPoint(playerId, false);
+		int[] secondPoint = CuboidAction.getPoint(playerId, true);
 
 		CuboidC newCuboid = new CuboidC();
 		for (short i = 0; i < 3; i++)
 			newCuboid.coords[i] = firstPoint[i];
 		for (short i = 0; i < 3; i++)
 			newCuboid.coords[i + 3] = secondPoint[i];
-		newCuboid.allowedPlayers.add("o:" + playerName);
+		newCuboid.allowedPlayers.add("o:" + playerId);
 		newCuboid.name = cuboidName;
 		newCuboid.world = worldName;
 		if (Cuboid.protectionOnDefault) {
@@ -443,14 +444,14 @@ public class CuboidAreas {
 		if (Cuboid.logging)
 			Cuboid.log(
 					Level.INFO,
-					playerName + " created a new cuboid area named "
+					playerId + " created a new cuboid area named "
 							+ cuboidName);
 		return true;
 	}
 
 	public static boolean protectCuboidArea(Player player,
 			ArrayList<String> ownersList, String cuboidName, boolean highProtect) {
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
 		String worldName = player.getWorld().getName();
 		if (findCuboidArea(cuboidName) != null) {
 			player.sendMessage(ChatColor.RED
@@ -458,15 +459,15 @@ public class CuboidAreas {
 			if (Cuboid.logging)
 				Cuboid.log(
 						Level.INFO,
-						playerName
+						playerId
 								+ " failed to create a protected area named "
 								+ cuboidName + " (aleady used)");
 			return false;
 		}
 
 		// Getting the corners' coordinates and correcting them if necessary
-		int[] firstPoint = CuboidAction.getPoint(playerName, false);
-		int[] secondPoint = CuboidAction.getPoint(playerName, true);
+		int[] firstPoint = CuboidAction.getPoint(playerId, false);
+		int[] secondPoint = CuboidAction.getPoint(playerId, true);
 		if (highProtect) {
 			firstPoint[1] = 0;
 			// increased height for newest mc
@@ -496,16 +497,16 @@ public class CuboidAreas {
 		if (Cuboid.logging)
 			Cuboid.log(
 					Level.INFO,
-					playerName + " created a new protected area named "
+					playerId + " created a new protected area named "
 							+ cuboidName);
 
 		return true;
 	}
 
 	public static void moveCuboidArea(Player player, CuboidC cuboid) {
-		String playerName = player.getName();
-		int[] firstPoint = CuboidAction.getPoint(playerName, false);
-		int[] secondPoint = CuboidAction.getPoint(playerName, true);
+		UUID playerId = player.getUniqueId();
+		int[] firstPoint = CuboidAction.getPoint(playerId, false);
+		int[] secondPoint = CuboidAction.getPoint(playerId, true);
 
 		/*if (cuboid.protection)
 			CuboidAction.updateChestsState(playerName, cuboid.coords[0],
@@ -531,7 +532,7 @@ public class CuboidAreas {
 		player.sendMessage(ChatColor.GREEN + "Cuboid area successfuly moved");
 		if (Cuboid.logging)
 			Cuboid.log(Level.INFO,
-					playerName + " moved a cuboid area named " + cuboid.name);
+					playerId + " moved a cuboid area named " + cuboid.name);
 	}
 
 	public static void removeCuboidArea(Player player, CuboidC cuboid) {

@@ -296,7 +296,13 @@ public class CuboidAreas {
 	// // DATA SENDING ////
 	// //////////////////////////
 
-	public static CuboidC findCuboidArea(String world, int X, int Y, int Z) {
+	public static CuboidC findCuboidArea(Location loc) {
+		
+		String world = loc.getWorld().getName();
+		int X = loc.getBlockX();
+		int Y = loc.getBlockY(); 
+		int Z = loc.getBlockZ();
+		
 		CuboidC lastEntry = null;
 		for (CuboidC cuboid : listOfCuboids) {
 			if (cuboid.contains(world, X, Y, Z)) {

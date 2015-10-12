@@ -13,21 +13,18 @@ import se.jeremy.minecraft.cuboid.CuboidC;
 public class CDelCommand implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			return true;
 		}
+		
 		Player player = (Player) sender;
 		String playerName = player.getName();
-		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation().getWorld().getName(), (int) player
-				.getLocation().getX(), (int) player.getLocation().getY(),
-				(int) player.getLocation().getZ());
-		if (playersArea != null && !playersArea.isAllowed(args[0])
-				&& !playersArea.isOwner(player)
-				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
-			player.sendMessage(ChatColor.RED
-					+ "This command is disallowed in this area");
+		
+		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
+		
+		if (playersArea != null && !playersArea.isAllowed(args[0]) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
 

@@ -140,7 +140,7 @@ public class CuboidMain implements Serializable {
 				ItemStack item = outsideInventory.getItem(i);
 				if (item != null) {
 					cuboidInventory.outside.add(new CuboidItem(item));
-					outsideInventory.remove(i);
+					outsideInventory.removeItem(item);
 				}
 			}
 			playerInventories.put(player.getName(), cuboidInventory);
@@ -172,7 +172,7 @@ public class CuboidMain implements Serializable {
 				ItemStack item = insideInventory.getItem(i);
 				if (item != null) {
 					cuboidInventory.outside.add(new CuboidItem(item));
-					insideInventory.remove(i);
+					insideInventory.removeItem(item);
 				}
 			}
 			playerInventories.put(player.getName(), cuboidInventory);

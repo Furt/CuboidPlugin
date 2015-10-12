@@ -82,6 +82,7 @@ public class CuboidContent implements Serializable {
 		return 0;
 	}
 
+	@SuppressWarnings("resource")
 	private byte load() {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(
@@ -106,6 +107,7 @@ public class CuboidContent implements Serializable {
 		return 0;
 	}
 
+	@SuppressWarnings("resource")
 	public static boolean copyFile(File sourceFile, File destFile) {
 		boolean returnStatus = true;
 		if (!destFile.exists()) {

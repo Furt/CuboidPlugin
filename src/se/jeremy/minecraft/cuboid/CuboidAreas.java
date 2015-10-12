@@ -49,7 +49,7 @@ public class CuboidAreas {
 	static int addedHeight = 0;
 	static boolean newestHavePriority = true;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "resource" })
 	public static void loadCuboidAreas() {
 		listOfCuboids = new ArrayList<CuboidC>();
 

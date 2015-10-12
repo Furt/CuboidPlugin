@@ -46,6 +46,7 @@ public class CListCommand implements CommandExecutor {
 				player.sendMessage(ChatColor.RED + "You have no saved cuboid");
 			}
 		} else if (args.length == 2 && player.isOp()) {
+			@SuppressWarnings("deprecation")
 			Player target = Bukkit.getPlayer(args[0]);
 			String list = plugin.listPersonalCuboids(target.getUniqueId());
 			

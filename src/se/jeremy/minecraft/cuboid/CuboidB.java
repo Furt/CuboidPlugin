@@ -163,9 +163,10 @@ public class CuboidB implements Serializable{
 			cuboidInventory.inside = new ArrayList<CuboidItem>();
 			for (int i = 0; i < insideInventory.getContents().length; i++) {
 				ItemStack item = insideInventory.getItem(i);
+				
 				if (item != null) {
 					cuboidInventory.outside.add(new CuboidItem(item));
-					insideInventory.remove(i);
+					insideInventory.removeItem(item);
 				}
 			}
 			playerInventories.put(player.getName(), cuboidInventory);

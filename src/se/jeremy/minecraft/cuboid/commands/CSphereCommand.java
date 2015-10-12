@@ -33,7 +33,7 @@ public class CSphereCommand implements CommandExecutor {
 		if (CuboidAction.isReady(playerId, false)) {
 			boolean ball = (args[0].equalsIgnoreCase("/cball")) ? true : false;
 			int radius = 0;
-			int blockID = 4;
+			
 			Material blockType = Material.COBBLESTONE;
 			
 			if (args.length > 1) {

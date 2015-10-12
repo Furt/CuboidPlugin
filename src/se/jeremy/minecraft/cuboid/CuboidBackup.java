@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
@@ -121,6 +120,7 @@ public class CuboidBackup implements Serializable {
 		return 0;
 	}
 
+	@SuppressWarnings("resource")
 	public byte loadFromDisc(UUID playerId) {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(
@@ -145,20 +145,20 @@ public class CuboidBackup implements Serializable {
 
 		restoreCuboidData(playerId);
 
-		if (Cuboid.logging)
-			plugin.getLogger().log(
-					Level.INFO,
-					"Loaded cuboidArea backup : " + this.name + " on world: "
-							+ world);
+		if (Cuboid.logging) {
+			plugin.getLogger().log(Level.INFO, "Loaded cuboidArea backup : " + this.name + " on world: " + world);
+		}
+			
 		return 0;
 	}
 
 	public boolean deleteFromDisc() {
-		File fileToDelete = new File(plugin.getDataFolder() + File.separator
-				+ "backups" + File.separator + world, this.name + ".cuboid");
+		File fileToDelete = new File(plugin.getDataFolder() + File.separator + "backups" + File.separator + world, this.name + ".cuboid");
+		
 		if (fileToDelete.exists()) {
 			return fileToDelete.delete();
 		}
+		
 		return true;
 	}
 }

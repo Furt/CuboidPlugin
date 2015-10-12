@@ -152,8 +152,9 @@ public class Cuboid extends JavaPlugin implements Listener {
 		getCommand("protect").setExecutor(new CProtectCommand());
 		getCommand("cwalls").setExecutor(new CWallsCommand());
 		getCommand("ccircle").setExecutor(new CCircleCommand());
-		getCommand("ccopy").setExecutor(new CCopyCommand());
-		getCommand("cpaste").setExecutor(new CPasteCommand());
+		// TODO : Get copy and paste to work
+		//getCommand("ccopy").setExecutor(new CCopyCommand());
+		//getCommand("cpaste").setExecutor(new CPasteCommand());
 		getCommand("cdel").setExecutor(new CDelCommand());
 	}
 

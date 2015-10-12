@@ -423,10 +423,7 @@ public class CuboidAction {
 				selection.firstCorner[2] -= value;
 				selection.secondCorner[2] -= value;
 			} else if (movementType.equalsIgnoreCase("North")) {
-				copyCuboid(playerId, selection, selection.firstCorner[0]
-						- value, selection.secondCorner[0],
-						selection.firstCorner[1], selection.secondCorner[1],
-						selection.firstCorner[2], selection.secondCorner[2]);
+				copyCuboid(playerId, selection, selection.firstCorner[0] - value, selection.secondCorner[0], selection.firstCorner[1], selection.secondCorner[1], selection.firstCorner[2], selection.secondCorner[2]);
 				int deleteIterator = 0;
 				
 				for (int i = selection.secondCorner[0]; i >= selection.firstCorner[0]; i--) {

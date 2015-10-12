@@ -14,7 +14,6 @@ import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
 
 public class CFacesCommand implements CommandExecutor {
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			return true;
@@ -42,8 +41,6 @@ public class CFacesCommand implements CommandExecutor {
 
 				CuboidAction.buildCuboidFaces(playerId, blockType, true);
 				player.sendMessage(ChatColor.GREEN + "The faces of the cuboid have been built");
-			} else {
-				return false;
 			}
 		} else {
 			player.sendMessage(ChatColor.RED + "No cuboid has been selected");

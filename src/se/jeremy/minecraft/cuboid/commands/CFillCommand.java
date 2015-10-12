@@ -41,8 +41,6 @@ public class CFillCommand implements CommandExecutor {
 				} else {
 					player.sendMessage(ChatColor.RED + "" + blockType + " is not a valid block ID.");
 				}
-			} else {
-				return false;
 			}
 		} else {
 			player.sendMessage(ChatColor.RED + "No cuboid has been selected");

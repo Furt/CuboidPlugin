@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/Jeremy/Documents/Eclipse/spigot.jar"/>
 	<classpathentry kind="lib" path="C:/Users/jerem/AppData/Roaming/.minecraft/Spigot/Bukkit/target/bukkit-1.8.8-R0.1-SNAPSHOT-shaded.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

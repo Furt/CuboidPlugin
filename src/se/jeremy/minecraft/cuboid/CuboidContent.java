@@ -14,6 +14,7 @@ import java.nio.channels.FileChannel;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 /*
@@ -46,9 +47,9 @@ public class CuboidContent implements Serializable {
 		return this.cuboidData;
 	}
 
-	public byte save() {
-
-		File cuboidFolder = plugin.getDataFolder();
+	public int save() {
+		
+		File cuboidFolder = Bukkit.getPluginManager().getPlugin("Cuboid").getDataFolder();
 		try {
 			if (!cuboidFolder.exists()) {
 				cuboidFolder.mkdir();
@@ -68,17 +69,16 @@ public class CuboidContent implements Serializable {
 		}
 
 		try {
-			ObjectOutputStream oos = new ObjectOutputStream(
-					new BufferedOutputStream(new FileOutputStream(new File(
-							cuboidFolder + File.separator + owner
-									+ File.separator, this.name + ".cuboid"))));
+			File cuboidFile = new File(cuboidFolder + File.separator + owner + File.separator, this.name + ".cuboid");
+			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(cuboidFile)));
 			oos.writeObject(this.cuboidData);
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return 2;
 		}
-		plugin.getLogger().log(Level.INFO, "New saved cuboid : " + this.name);
+		
+		Bukkit.getLogger().log(Level.INFO, "New saved cuboid : " + this.name);
 		return 0;
 	}
 

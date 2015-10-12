@@ -200,7 +200,7 @@ public class CuboidAction {
 		return 0;
 	}
 
-	public static byte saveCuboid(UUID playerId, String cuboidName) {
+	public static int saveCuboid(UUID playerId, String cuboidName) {
 		CuboidSelection selection = getPlayerSelection(playerId);
 		
 		World world = Bukkit.getPlayer(playerId).getWorld();
@@ -221,7 +221,8 @@ public class CuboidAction {
 			}
 		}
 
-		return new CuboidContent(plugin, playerId, cuboidName, tableaux).save();
+		CuboidContent cc = new CuboidContent(plugin, playerId, cuboidName, tableaux);
+		return cc.save();
 	}
 
 	public static byte loadCuboid(UUID playerId, String cuboidName) {

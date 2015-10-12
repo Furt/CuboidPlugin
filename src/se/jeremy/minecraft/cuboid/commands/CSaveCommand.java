@@ -41,7 +41,7 @@ public class CSaveCommand implements CommandExecutor {
 			
 			if (!plugin.cuboidExists(playerId, cuboidName) || args.length == 2 && args[1].startsWith("over")) {
 				if (CuboidAction.isReady(playerId, true)) {
-					byte returnCode = CuboidAction.saveCuboid(playerId, cuboidName);
+					int returnCode = CuboidAction.saveCuboid(playerId, cuboidName);
 					
 					if (returnCode == 0) {
 						player.sendMessage(ChatColor.GREEN + "Selected cuboid is saved with the name " + cuboidName);

@@ -7,6 +7,10 @@ Here is a quick list of its possibilities :
     Construction features : build walls, build cube faces, draw circles and discs, build spheres and balls, build pyramids
     Area-specific toggle-able features : block protection, access restriction, area-specific inventory, healing areas, sanctuaries (no mob spawn + no damage from them), no creeper explosions, no-PvP areas, local command blacklist, area-specific list of players, backup & restore by area-name
 
+## Notice
+
+This plugin is still in development. Commands that work right now are marked with **[√]**.
+
 
 # Download and changelogs
 
@@ -205,7 +209,7 @@ For instance : /replace grass sand goldore will replace any grass(2) or sand(12)
 You can also use itemIDs if you like, or mix both : /replace 2 sand 14 will do the same as above.
 - Requires the right to use /cuboid command
 
-```/cdel```: Simply removes any block within the Cuboid. I've removed a lot of unwanted constructions with this thing.
+```/cdel``` **[√]**: Simply removes any block within the Cuboid. I've removed a lot of unwanted constructions with this thing.
 Same as above, please do not abuse. (Though it is tempting to use this to flatten the area for you soon-to-come huge manor =D)
 - Requires the right to use /cuboid command
 
@@ -234,7 +238,7 @@ The selected point should be the North East lower corner of the copied cuboid. I
 
 ## Construction commands
 
-```/ccircle <radius> <block ID|name> [height]```: You only need to select one point. It draws a circle on the ground with the specified block type. Optionally, you can specify a height to create a cylinder. (negative height is possible - carful with going through bedrock)
+```/ccircle <radius> <block ID|name> [height]``` **[√]**: You only need to select one point. It draws a circle on the ground with the specified block type. Optionally, you can specify a height to create a cylinder. (negative height is possible - carful with going through bedrock)
 *Requires the right to use /cuboid command*
 
 ```/cdisc <radius> <block ID|name> [height]```: You only need to select one point. It draws a disc on the ground with the specified block type. Optionally, you can specify a height to create a filled cylinder. (negative height is possible - carful with going through bedrock)
@@ -249,7 +253,7 @@ The selected point should be the North East lower corner of the copied cuboid. I
 ```/cfaces <block ID|name>```: Needs two corners selected. It builds the faces of the selected cuboid. If you're afraid of the dark, don't place yourself inside, place some toches beforhand, or build it with glass Wink
 *Requires the right to use /cuboid command*
 
-```/cwalls <block ID|name>```: Needs two corners selected. It builds the faces of the selected cuboid, without floor and ceiling. Also, resolves the fear of the dark, as sunlight can now go through the roof \o/
+```/cwalls <block ID|name>``` **[√]**: Needs two corners selected. It builds the faces of the selected cuboid, without floor and ceiling. Also, resolves the fear of the dark, as sunlight can now go through the roof \o/
 *Requires the right to use /cuboid command*
 
 ```/cpyramid <radius> <block ID|name> [empty]```: Needs a single point selected. Builds a pyramid of the selected material, with the selected point as base center. This command is also undo-able.

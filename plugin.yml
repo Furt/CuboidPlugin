@@ -29,10 +29,14 @@ commands:
         description: Removes all blocks within the cuboid.
         usage: /<command>
         permission: cuboid.use
-#    ccopy:
-#        description: Copy the selected cuboid
-#        usage: /<command>
-#        permission: cuboid.use
+    ccopy:
+        description: Copy the selected cuboid
+        usage: /<command>
+        permission: cuboid.use
+    cpaste:
+        description: Paste the selected cuboid
+        usage: /<command>
+        permission: cuboid.use
 
 permissions:
     cuboid.use:

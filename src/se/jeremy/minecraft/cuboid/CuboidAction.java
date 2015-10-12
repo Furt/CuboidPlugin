@@ -589,9 +589,11 @@ public class CuboidAction {
 							+ ((height != 0) ? "cylinder" : "circle"));
 	}
 
-	public static void buildShpere(UUID playerId, int radius, int blocktype, boolean fill) {
+	public static void buildShpere(UUID playerId, int radius, Material blocktype, boolean fill) {
 		CuboidSelection selection = getPlayerSelection(playerId);
 
+		World world = Bukkit.getPlayer(playerId).getWorld();
+		
 		int Xcenter = selection.firstCorner[0];
 		int Ycenter = selection.firstCorner[1];
 		int Zcenter = selection.firstCorner[2];
@@ -610,16 +612,8 @@ public class CuboidAction {
 					double diff = Math.sqrt(Math.pow(i - Xcenter, 2.0D)
 							+ Math.pow(j - Ycenter, 2.0D)
 							+ Math.pow(k - Zcenter, 2.0D));
-					if (diff < radius + 0.5
-							&& (fill || (!fill && diff > radius - 0.5))) {
-						Bukkit.getServer()
-								.getPlayer(playerId)
-								.getWorld()
-								.getBlockAt(
-										new Location(Bukkit.getServer()
-												.getPlayer(playerId)
-												.getWorld(), i, j, k))
-								.setTypeId(blocktype);
+					if (diff < radius + 0.5 && (fill || (!fill && diff > radius - 0.5))) {
+						world.getBlockAt(i, j, k).setType(blocktype);
 					}
 				}
 			}
@@ -628,9 +622,10 @@ public class CuboidAction {
 			plugin.getLogger().log(Level.INFO, playerId + " built a " + ((fill) ? "ball" : "sphere"));
 	}
 
-	public static void buildPyramid(UUID playerId, int radius,
-			int blockType, boolean fill) {
+	public static void buildPyramid(UUID playerId, int radius, Material blockType, boolean fill) {
 		CuboidSelection selection = getPlayerSelection(playerId);
+		
+		World world = Bukkit.getPlayer(playerId).getWorld();
 
 		int Xcenter = selection.firstCorner[0];
 		int Ycenter = selection.firstCorner[1];
@@ -647,15 +642,10 @@ public class CuboidAction {
 		for (int j = Ymin; j <= Ymax; j++) {
 			for (int i = Xmin; i <= Xmax; i++) {
 				for (int k = Zmin; k <= Zmax; k++) {
-					Bukkit.getServer()
-							.getPlayer(playerId)
-							.getWorld()
-							.getBlockAt(
-									new Location(Bukkit.getServer()
-											.getPlayer(playerId).getWorld(),
-											i, j, k)).setTypeId(blockType);
+					world.getBlockAt(i, j, k).setType(blockType);
 				}
 			}
+			
 			Xmin += 1;
 			Xmax -= 1;
 			Zmin += 1;
@@ -672,16 +662,10 @@ public class CuboidAction {
 			for (int j = Ymin; j <= Ymax; j++) {
 				for (int i = Xmin; i <= Xmax; i++) {
 					for (int k = Zmin; k <= Zmax; k++) {
-						Bukkit.getServer()
-								.getPlayer(playerId)
-								.getWorld()
-								.getBlockAt(
-										new Location(Bukkit.getServer()
-												.getPlayer(playerId)
-												.getWorld(), i, j, k))
-								.setType(Material.AIR);
+						world.getBlockAt(i, j, k).setType(Material.AIR);
 					}
 				}
+				
 				Xmin += 1;
 				Xmax -= 1;
 				Zmin += 1;
@@ -690,11 +674,8 @@ public class CuboidAction {
 		}
 
 		if (Cuboid.logging)
-			plugin.getLogger().log(
-					Level.INFO,
-					playerId + " built a " + ((fill) ? "filled " : "")
-							+ "pyramid.");
-	}
+			plugin.getLogger().log(Level.INFO, playerId + " built a " + ((fill) ? "filled " : "") + "pyramid.");
+		}
 
 	
 	 /*public static void updateChestsState(UUID playerId, int firstX, int

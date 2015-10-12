@@ -58,10 +58,10 @@ public class CSphereCommand implements CommandExecutor {
 				}
 
 				if (ball) {
-					CuboidAction.buildShpere(playerId, radius, blockID, true);
+					CuboidAction.buildShpere(playerId, radius, blockType, true);
 					player.sendMessage(ChatColor.GREEN + "The ball has been built");
 				} else {
-					CuboidAction.buildShpere(playerId, radius, blockID, false);
+					CuboidAction.buildShpere(playerId, radius, blockType, false);
 					player.sendMessage(ChatColor.GREEN + "The sphere has been built");
 				}
 

@@ -33,7 +33,6 @@ public class CPyramidCommand implements CommandExecutor {
 
 		if (CuboidAction.isReady(playerId, false)) {
 			int radius = 0;
-			int blockID = 4;
 			Material blockType = Material.COBBLESTONE;
 			
 			if (args.length > 1) {
@@ -49,7 +48,7 @@ public class CPyramidCommand implements CommandExecutor {
 				}
 				
 				
-				blockType = Material.getMaterial(args[1]);
+				blockType = Material.matchMaterial(args[1]);
 
 				if (blockType == null) {
 					player.sendMessage(ChatColor.RED + args[1] + " is not a valid block ID.");
@@ -61,7 +60,7 @@ public class CPyramidCommand implements CommandExecutor {
 					filled = false;
 				}
 
-				CuboidAction.buildPyramid(playerId, radius, blockID, filled);
+				CuboidAction.buildPyramid(playerId, radius, blockType, filled);
 				player.sendMessage(ChatColor.GREEN + "The pyramid has been built");
 			} else {
 				player.sendMessage(ChatColor.RED + "Usage : /cpyramid <radius> <block id|name>");

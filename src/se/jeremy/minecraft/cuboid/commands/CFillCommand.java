@@ -33,7 +33,7 @@ public class CFillCommand implements CommandExecutor {
 		if (CuboidAction.isReady(playerId, true)) {
 			if (args.length > 1) {
 				Material blockType = Material.AIR;
-				blockType = Material.getMaterial(args[0]);
+				blockType = Material.matchMaterial(args[0]);
 				
 				if (blockType != null) {
 					CuboidAction.fillCuboid(playerId, blockType);

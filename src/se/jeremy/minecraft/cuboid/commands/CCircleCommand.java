@@ -41,17 +41,15 @@ public class CCircleCommand implements CommandExecutor {
 				try {
 					radius = Integer.parseInt(args[0]);
 				} catch (NumberFormatException n) {
-					player.sendMessage(ChatColor.RED + args[0]
-							+ " is not a valid radius.");
+					player.sendMessage(ChatColor.RED + args[0] + " is not a valid radius.");
 					return true;
 				}
 				if (radius < 1) {
-					player.sendMessage(ChatColor.RED + args[0]
-							+ " is not a valid radius.");
+					player.sendMessage(ChatColor.RED + args[0] + " is not a valid radius.");
 					return true;
 				}
 
-				blockType = Material.getMaterial(args[1]);
+				blockType = Material.matchMaterial(args[1]);
 
 				if (blockType == null) {
 					player.sendMessage(ChatColor.RED + args[1]+ " is not a valid block ID.");
@@ -62,10 +60,10 @@ public class CCircleCommand implements CommandExecutor {
 					try {
 						height = Integer.parseInt(args[2]);
 					} catch (NumberFormatException n) {
-						player.sendMessage(ChatColor.RED + args[2]
-								+ " is not a valid height.");
+						player.sendMessage(ChatColor.RED + args[2] + " is not a valid height.");
 						return true;
 					}
+					
 					if (height > 0) {
 						height--;
 					} else if (height < 0) {
@@ -83,12 +81,11 @@ public class CCircleCommand implements CommandExecutor {
 
 			} else {
 				if (disc) {
-					player.sendMessage(ChatColor.RED
-							+ "Usage : /cdisc <radius> <block id|name> [height]");
+					player.sendMessage(ChatColor.RED + "Usage : /cdisc <radius> <block id|name> [height]");
 				} else {
-					player.sendMessage(ChatColor.RED
-							+ "Usage : /ccircle <radius> <block id|name> [height]");
+					player.sendMessage(ChatColor.RED + "Usage : /ccircle <radius> <block id|name> [height]");
 				}
+				return true;
 			}
 		} else {
 			player.sendMessage(ChatColor.RED + "No point has been selected");

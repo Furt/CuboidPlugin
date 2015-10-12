@@ -83,7 +83,6 @@ public class Cuboid extends JavaPlugin implements Listener {
 	public static File data;
 	public static Cuboid plugin;
 
-	@Override
 	public void onEnable() {
 		data = this.getDataFolder();
 		plugin = this;
@@ -150,7 +149,7 @@ public class Cuboid extends JavaPlugin implements Listener {
 		getCommand("undo").setExecutor(new UndoCommand());
 		getCommand("protect").setExecutor(new CProtectCommand());
 		getCommand("cwalls").setExecutor(new CWallsCommand());
-		//getCommand("ccircle").setExecutor(new CCircleCommand());
+		getCommand("ccircle").setExecutor(new CCircleCommand());
 		//getCommand("ccopy").setExecutor(new CCopyCommand());
 		//getCommand("cdel").setExecutor(new CDelCommand());
 	}
@@ -319,9 +318,8 @@ public class Cuboid extends JavaPlugin implements Listener {
 		return false;
 	}
 
-	public boolean cuboidExists(UUID playerName, String cuboidName) {
-		return new File(getDataFolder() + File.separator + playerName,
-				cuboidName + ".cuboid").exists();
+	public boolean cuboidExists(UUID playerId, String cuboidName) {
+		return new File(getDataFolder() + File.separator + playerId, cuboidName + ".cuboid").exists();
 	}
 
 	public String listPersonalCuboids(UUID owner) {

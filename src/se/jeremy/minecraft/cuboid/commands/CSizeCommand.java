@@ -1,5 +1,7 @@
 package se.jeremy.minecraft.cuboid.commands;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,30 +14,27 @@ import se.jeremy.minecraft.cuboid.CuboidC;
 
 public class CSizeCommand implements CommandExecutor {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			return true;
 		}
+		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
+		
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
-		if (playersArea != null && !playersArea.isAllowed(args[0])
-				&& !playersArea.isOwner(player)
-				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
-			player.sendMessage(ChatColor.RED
-					+ "This command is disallowed in this area");
+		
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboid.use")) {
+			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
 
-		if (CuboidAction.isReady(playerName, true)) {
-			player.sendMessage(ChatColor.GREEN
-					+ "The selected cuboid size is : "
-					+ CuboidAction.blocksCount(playerName) + " blocks");
+		if (CuboidAction.isReady(playerId, true)) {
+			player.sendMessage(ChatColor.GREEN + "The selected cuboid size is : " + CuboidAction.blocksCount(playerId) + " blocks");
 		} else {
 			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
 		return true;
 	}
+	
 }

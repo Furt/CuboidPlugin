@@ -32,7 +32,7 @@ public class CFacesCommand implements CommandExecutor {
 			Material blockType = Material.COBBLESTONE;
 			
 			if (args.length == 1) {
-				blockType = Material.getMaterial(args[0]);
+				blockType = Material.matchMaterial(args[0]);
 
 				if (blockType == null) {
 					player.sendMessage(ChatColor.RED + args[1] + " is not a valid block ID.");

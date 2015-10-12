@@ -8,21 +8,39 @@ commands:
     cmod:
         description: Modify a cuboid
         usage: /<command>
+        permission: cuboid.use
     undo:
         description: Undo last command changes
         usage: /<command>
+        permission: cuboid.use
     protect:
         description: Protect a currently selected cuboid
         usage: /<command>
+        permission: cuboid.protect
     cwalls:
         description: Builds walls for the selected cuboid
         usage: /<command> <material>
+        permission: cuboid.use
     ccircle:
         description: Draws a circle on the ground with the specified block type
         usage: /<command> <radius> <material> [height]
-    ccopy:
-        description: Copy the selected cuboid
-        usage: /<command>
+        permission: cuboid.use
     cdel:
         description: Removes all blocks within the cuboid.
         usage: /<command>
+        permission: cuboid.use
+#    ccopy:
+#        description: Copy the selected cuboid
+#        usage: /<command>
+#        permission: cuboid.use
+
+permissions:
+    cuboid.use:
+        description: Gives access to cuboid commands.
+        default: true
+    cuboid.protect:
+        description: Gives access to protection commands.
+        default: true
+    cuboid.admin:
+        description: Gives access to admin commands.
+        default: op

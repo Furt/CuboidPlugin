@@ -44,10 +44,14 @@ public class CuboidC implements Serializable {
 
 	// TODO come back to later
 	public boolean isAllowed(Player player) {
-		String playerName = player.getName().toLowerCase();
+		String playerName = player.getUniqueId() + "";
+		
+		if (player.hasPermission("cuboid.admin")) {
+			return true;
+		}
+		
 		for (String allowedPlayer : allowedPlayers) {
-			if (allowedPlayer.equalsIgnoreCase(playerName)
-					|| allowedPlayer.equalsIgnoreCase("o:" + playerName)) {
+			if (allowedPlayer.equalsIgnoreCase(playerName) || allowedPlayer.equalsIgnoreCase("o:" + playerName)) {
 				return true;
 			}
 			if (allowedPlayer.startsWith("g:")) {

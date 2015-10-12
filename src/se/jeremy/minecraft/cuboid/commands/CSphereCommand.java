@@ -1,5 +1,7 @@
 package se.jeremy.minecraft.cuboid.commands;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -7,70 +9,59 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import se.jeremy.minecraft.cuboid.Cuboid;
 import se.jeremy.minecraft.cuboid.CuboidAction;
 import se.jeremy.minecraft.cuboid.CuboidAreas;
 import se.jeremy.minecraft.cuboid.CuboidC;
 
 public class CSphereCommand implements CommandExecutor {
-	private Cuboid plugin;
-
-	public CSphereCommand(Cuboid instance) {
-		this.plugin = instance;
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		
 		if (!(sender instanceof Player)) {
 			return true;
 		}
+		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
+		
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
-		if (playersArea != null && !playersArea.isAllowed(args[0])
-				&& !playersArea.isOwner(player)
-				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
-			player.sendMessage(ChatColor.RED
-					+ "This command is disallowed in this area");
+		
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
 
-		if (CuboidAction.isReady(playerName, false)) {
+		if (CuboidAction.isReady(playerId, false)) {
 			boolean ball = (args[0].equalsIgnoreCase("/cball")) ? true : false;
 			int radius = 0;
 			int blockID = 4;
-			if (args.length > 2) {
+			Material blockType = Material.COBBLESTONE;
+			
+			if (args.length > 1) {
 				try {
-					radius = Integer.parseInt(args[1]);
+					radius = Integer.parseInt(args[0]);
 				} catch (NumberFormatException n) {
-					player.sendMessage(ChatColor.RED + args[1]
+					player.sendMessage(ChatColor.RED + args[0]
 							+ " is not a valid radius.");
 					return true;
 				}
 				if (radius < 2) {
-					player.sendMessage(ChatColor.RED
-							+ "The radius has to be greater than 1");
+					player.sendMessage(ChatColor.RED + "The radius has to be greater than 1");
 					return true;
 				}
 
-				try {
-					blockID = Integer.parseInt(args[2]);
-				} catch (NumberFormatException n) {
-					blockID = Material.getMaterial(args[2]).getId();
-					// TODO blockID = etc.getDataSource().getItem(args[2]);
-				}
-				if (!plugin.isValidBlockID(blockID)) {
+				blockType = Material.matchMaterial(args[1]);
+				
+
+				if (blockType == null) {
 					player.sendMessage(ChatColor.RED + args[2] + " is not a valid block ID.");
 					return true;
 				}
 
 				if (ball) {
-					CuboidAction.buildShpere(playerName, radius, blockID, true);
+					CuboidAction.buildShpere(playerId, radius, blockID, true);
 					player.sendMessage(ChatColor.GREEN + "The ball has been built");
 				} else {
-					CuboidAction
-							.buildShpere(playerName, radius, blockID, false);
+					CuboidAction.buildShpere(playerId, radius, blockID, false);
 					player.sendMessage(ChatColor.GREEN + "The sphere has been built");
 				}
 

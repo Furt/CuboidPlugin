@@ -37,7 +37,7 @@ public class CWallsCommand implements CommandExecutor {
 			
 			if (args.length >= 1) {
 				player.sendMessage(ChatColor.YELLOW + "So, you want to build walls with " + args[0] + "?");
-				blockType = Material.getMaterial(args[0]);
+				blockType = Material.matchMaterial(args[0]);
 
 				if (blockType == null) {
 					player.sendMessage(ChatColor.RED + args[0] + " is not a valid block.");
@@ -53,8 +53,7 @@ public class CWallsCommand implements CommandExecutor {
 		} else {
 			player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 		}
-
-		player.sendMessage("Got to the end...");
+		
 		return true;
 	}
 

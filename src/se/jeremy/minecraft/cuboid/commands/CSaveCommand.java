@@ -1,5 +1,7 @@
 package se.jeremy.minecraft.cuboid.commands;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,48 +20,41 @@ public class CSaveCommand implements CommandExecutor {
 		this.plugin = instance;
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		
 		if (!(sender instanceof Player)) {
 			return true;
 		}
+		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
+		
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
-		if (playersArea != null && !playersArea.isAllowed(args[0])
-				&& !playersArea.isOwner(player)
-				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
-			player.sendMessage(ChatColor.RED
-					+ "This command is disallowed in this area");
+		
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission(cmd.getPermission())) {
+			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
 
-		if (args.length > 1) {
-			String cuboidName = args[1].toLowerCase();
-			if (!plugin.cuboidExists(playerName, cuboidName)
-					|| args.length == 3 && args[2].startsWith("over")) {
-				if (CuboidAction.isReady(playerName, true)) {
-					byte returnCode = CuboidAction.saveCuboid(playerName,
-							cuboidName);
+		if (args.length > 0) {
+			String cuboidName = args[0].toLowerCase();
+			
+			if (!plugin.cuboidExists(playerId, cuboidName) || args.length == 2 && args[1].startsWith("over")) {
+				if (CuboidAction.isReady(playerId, true)) {
+					byte returnCode = CuboidAction.saveCuboid(playerId, cuboidName);
+					
 					if (returnCode == 0) {
-						player.sendMessage(ChatColor.GREEN
-								+ "Selected cuboid is saved with the name "
-								+ cuboidName);
+						player.sendMessage(ChatColor.GREEN + "Selected cuboid is saved with the name " + cuboidName);
 					} else if (returnCode == 1) {
-						player.sendMessage(ChatColor.RED
-								+ "Could not create the target folder.");
+						player.sendMessage(ChatColor.RED + "Could not create the target folder.");
 					} else if (returnCode == 2) {
-						player.sendMessage(ChatColor.RED
-								+ "Error while writing the file.");
+						player.sendMessage(ChatColor.RED + "Error while writing the file.");
 					}
 				} else {
-					player.sendMessage(ChatColor.RED
-							+ "No cuboid has been selected");
+					player.sendMessage(ChatColor.RED + "No cuboid has been selected");
 				}
 			} else {
-				player.sendMessage(ChatColor.RED
-						+ "This cuboid name is already taken.");
+				player.sendMessage(ChatColor.RED + "This cuboid name is already taken.");
 			}
 		} else {
 			player.sendMessage(ChatColor.RED + "Usage : /csave <cuboid name>");

@@ -1,6 +1,7 @@
 package se.jeremy.minecraft.cuboid.commands;
 
 import java.io.File;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -26,22 +27,19 @@ public class CRemoveCommand implements CommandExecutor {
 		}
 		
 		Player player = (Player) sender;
-		String playerName = player.getName();
+		UUID playerId = player.getUniqueId();
 		
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
 		
-		if (playersArea != null && !playersArea.isAllowed(args[0])
-				&& !playersArea.isOwner(player)
-				&& !player.hasPermission("cuboidplugin.ignoreownership")) {
-			player.sendMessage(ChatColor.RED
-					+ "This command is disallowed in this area");
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
 
 		if (args.length > 1) {
 			String cuboidName = args[1].toLowerCase();
-			if (plugin.cuboidExists(playerName, cuboidName)) {
-				File toDelete = new File("cuboids/" + playerName + "/"
+			if (plugin.cuboidExists(playerId, cuboidName)) {
+				File toDelete = new File("cuboids/" + playerId + "/"
 						+ cuboidName + ".cuboid");
 				if (toDelete.delete()) {
 					player.sendMessage(ChatColor.GREEN + "Cuboid sucessfuly deleted");
@@ -51,8 +49,6 @@ public class CRemoveCommand implements CommandExecutor {
 			} else {
 				player.sendMessage(ChatColor.RED + "This cuboid does not exist.");
 			}
-		} else {
-			player.sendMessage(ChatColor.RED + "Usage : /cremove <cuboid name>");
 		}
 
 		return false;

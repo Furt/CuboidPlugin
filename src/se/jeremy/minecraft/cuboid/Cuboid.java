@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -305,17 +307,38 @@ public class Cuboid extends JavaPlugin implements Listener {
 	}
 
 	public boolean isCreatorItem(ItemStack itemStack) {
-		if (itemStack.getTypeId() == 259 || itemStack.getTypeId() == 290
-				|| itemStack.getTypeId() == 291 || itemStack.getTypeId() == 292
-				|| itemStack.getTypeId() == 293 || itemStack.getTypeId() == 294
-				|| itemStack.getTypeId() == 295 || itemStack.getTypeId() == 323
-				|| itemStack.getTypeId() == 324 || itemStack.getTypeId() == 325
-				|| itemStack.getTypeId() == 326 || itemStack.getTypeId() == 327
-				|| itemStack.getTypeId() == 330 || itemStack.getTypeId() == 331
-				|| itemStack.getTypeId() == 338) {
-			return true;
-		}
-		return false;
+		List<Material> creatorItems = Arrays.asList(
+				Material.FLINT_AND_STEEL,
+				Material.WOOD_HOE,
+				Material.STONE_HOE,
+				Material.IRON_HOE,
+				Material.GOLD_HOE,
+				Material.DIAMOND_HOE,
+				Material.SEEDS,
+				Material.SIGN,
+				Material.SIGN_POST,
+				Material.WALL_SIGN,
+				Material.ACACIA_DOOR,
+				Material.ACACIA_DOOR_ITEM,
+				Material.BIRCH_DOOR,
+				Material.DARK_OAK_DOOR,
+				Material.IRON_DOOR,
+				Material.JUNGLE_DOOR,
+				Material.SPRUCE_DOOR,
+				Material.TRAP_DOOR,
+				Material.REDSTONE,
+				Material.SUGAR_CANE,
+				Material.SNOW_BALL,
+				Material.EGG,
+				Material.FISHING_ROD,
+				Material.REDSTONE_COMPARATOR,
+				Material.MAP,
+				Material.SHEARS,
+				Material.ITEM_FRAME,
+				Material.BUCKET
+		);
+		
+		return creatorItems.contains(itemStack);
 	}
 
 	public boolean cuboidExists(UUID playerId, String cuboidName) {
@@ -326,14 +349,13 @@ public class Cuboid extends JavaPlugin implements Listener {
 		if (!new File(getDataFolder() + File.separator + owner).exists()) {
 			return null;
 		}
-		String[] fileList = new File(getDataFolder() + File.separator + owner)
-				.list();
+		
+		String[] fileList = new File(getDataFolder() + File.separator + owner).list();
 		String result = (fileList.length > 0) ? "" : null;
 
 		for (int i = 0; i < fileList.length; i++) {
 			if (fileList[i].endsWith(".cuboid") == true) {
-				result += " "
-						+ fileList[i].substring(0, fileList[i].length() - 7);
+				result += " " + fileList[i].substring(0, fileList[i].length() - 7);
 			}
 		}
 

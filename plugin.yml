@@ -1,8 +1,8 @@
-name: CuboidPlugin
+name: Cuboid
 main: se.jeremy.minecraft.cuboid.Cuboid
 author: enjikaka
 website: http://minecraft.jeremy.se
-version: 1.0
+version: 0.0.1
 
 commands:
     cmod:

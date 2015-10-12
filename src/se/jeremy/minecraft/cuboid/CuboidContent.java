@@ -11,7 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
+import java.util.UUID;
 import java.util.logging.Level;
+
+import org.bukkit.Material;
 
 /*
  * Serialization of selected cuboid (NOT a cuboid area)
@@ -20,26 +23,26 @@ import java.util.logging.Level;
 @SuppressWarnings("serial")
 public class CuboidContent implements Serializable {
 
-	public String owner = "";
+	public UUID owner = null;
 	private String name = "";
-	private int[][][] cuboidData;
+	private Material[][][] cuboidData;
 	public byte loadReturnCode;
 	private Cuboid plugin;
 
-	CuboidContent(Cuboid instance, String owner, String name, int[][][] tableau) {
+	CuboidContent(Cuboid instance, UUID owner, String name, Material[][][] tableau) {
 		this.plugin = instance;
 		this.owner = owner;
 		this.name = name;
 		this.cuboidData = tableau;
 	}
 
-	CuboidContent(String owner, String name) {
+	CuboidContent(UUID owner, String name) {
 		this.owner = owner;
 		this.name = name;
 		this.loadReturnCode = this.load();
 	}
 
-	public int[][][] getData() {
+	public Material[][][] getData() {
 		return this.cuboidData;
 	}
 
@@ -86,7 +89,7 @@ public class CuboidContent implements Serializable {
 							plugin.getDataFolder() + File.separator + owner,
 							this.name + ".cuboid"))));
 			try {
-				this.cuboidData = (int[][][]) (ois.readObject());
+				this.cuboidData = (Material[][][]) (ois.readObject());
 			} catch (Exception e) {
 				e.printStackTrace();
 				return 3;

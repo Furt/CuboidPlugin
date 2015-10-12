@@ -2,6 +2,7 @@ package se.jeremy.minecraft.cuboid;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -18,7 +19,7 @@ import org.bukkit.entity.Player;
  */
 
 public class CuboidAction {
-	static HashMap<String, CuboidSelection> playerSelection = new HashMap<String, CuboidSelection>();
+	static HashMap<UUID, CuboidSelection> playerSelection = new HashMap<UUID, CuboidSelection>();
 	static Object lock = new Object();
 	//static Material[] blocksToBeQueued = { 37, 38, 39, 40, 50, 55, 63, 66, 69, 75, 76, 81, 83 };
 	static Material[] blocksToBeQueued = {};
@@ -28,19 +29,19 @@ public class CuboidAction {
 		CuboidAction.plugin = instance;
 	}
 
-	public static CuboidSelection getPlayerSelection(String playerName) {
-		if (!playerSelection.containsKey(playerName)) {
-			playerSelection.put(playerName, new CuboidSelection());
+	public static CuboidSelection getPlayerSelection(UUID playerId) {
+		if (!playerSelection.containsKey(playerId)) {
+			playerSelection.put(playerId, new CuboidSelection());
 		}
-		return playerSelection.get(playerName);
+		return playerSelection.get(playerId);
 	}
 
-	public static boolean setPoint(String playerName, int X, int Y, int Z) {
-		return getPlayerSelection(playerName).selectCorner(X, Y, Z);
+	public static boolean setPoint(UUID playerId, int X, int Y, int Z) {
+		return getPlayerSelection(playerId).selectCorner(X, Y, Z);
 	}
 
-	public static void setBothPoint(String playerName, int[] coords) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+	public static void setBothPoint(UUID playerId, int[] coords) {
+		CuboidSelection selection = getPlayerSelection(playerId);
 		selection.firstCorner[0] = coords[0];
 		selection.firstCorner[1] = coords[1];
 		selection.firstCorner[2] = coords[2];
@@ -50,20 +51,20 @@ public class CuboidAction {
 		selection.status = false;
 	}
 
-	public static int[] getPoint(String playerName, boolean secondPoint) {
+	public static int[] getPoint(UUID playerId, boolean secondPoint) {
 		if (secondPoint) {
-			return getPlayerSelection(playerName).secondCorner;
+			return getPlayerSelection(playerId).secondCorner;
 		} else {
-			return getPlayerSelection(playerName).firstCorner;
+			return getPlayerSelection(playerId).firstCorner;
 		}
 	}
 
-	public static boolean isUndoAble(String playerName) {
-		return getPlayerSelection(playerName).undoable;
+	public static boolean isUndoAble(UUID playerId) {
+		return getPlayerSelection(playerId).undoable;
 	}
 
-	public static boolean isReady(String playerName, boolean deuxPoints) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+	public static boolean isReady(UUID playerId, boolean deuxPoints) {
+		CuboidSelection selection = getPlayerSelection(playerId);
 		
 		if (deuxPoints && !selection.status && selection.firstCorner != null) {
 			return true;
@@ -74,20 +75,20 @@ public class CuboidAction {
 		return false;
 	}
 
-	public static void copyCuboid(String playerName, boolean manual) {
-		copyCuboid(playerName, getPlayerSelection(playerName), manual);
+	public static void copyCuboid(UUID playerId, boolean manual) {
+		copyCuboid(playerId, getPlayerSelection(playerId), manual);
 	}
 
-	private static void copyCuboid(String playerName, CuboidSelection selection, boolean manual) {
-		copyCuboid(playerName, selection, selection.firstCorner[0], selection.secondCorner[0], selection.firstCorner[1], selection.secondCorner[1], selection.firstCorner[2], selection.secondCorner[2]);
+	private static void copyCuboid(UUID playerId, CuboidSelection selection, boolean manual) {
+		copyCuboid(playerId, selection, selection.firstCorner[0], selection.secondCorner[0], selection.firstCorner[1], selection.secondCorner[1], selection.firstCorner[2], selection.secondCorner[2]);
 
 		if (!manual) {
 			selection.undoable = true;
 		}
 	}
 
-	private static void copyCuboid(String playerName, CuboidSelection selection, int Xmin, int Xmax, int Ymin, int Ymax, int Zmin, int Zmax) {
-		World world = Bukkit.getServer().getPlayer(playerName).getWorld();
+	private static void copyCuboid(UUID playerId, CuboidSelection selection, int Xmin, int Xmax, int Ymin, int Ymax, int Zmin, int Zmax) {
+		World world = Bukkit.getServer().getPlayer(playerId).getWorld();
 		int Xsize = Xmax - Xmin + 1;
 		int Ysize = Ymax - Ymin + 1;
 		int Zsize = Zmax - Zmin + 1;
@@ -116,11 +117,11 @@ public class CuboidAction {
 		return false;
 	}
 
-	public static byte paste(String playerName) {
+	public static byte paste(UUID playerId) {
 		// Paste will occur from North-East to South-West
 
-		CuboidSelection selection = getPlayerSelection(playerName);
-		World world = Bukkit.getServer().getPlayer(playerName).getWorld();
+		CuboidSelection selection = getPlayerSelection(playerId);
+		World world = Bukkit.getServer().getPlayer(playerId).getWorld();
 
 		int Xsize = selection.lastCopiedCuboid.length;
 		if (Xsize == 0) {
@@ -165,9 +166,9 @@ public class CuboidAction {
 		return 0;
 	}
 
-	public static byte undo(String playerName) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		World world = Bukkit.getServer().getPlayer(playerName).getWorld();
+	public static byte undo(UUID playerId) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		World world = Bukkit.getServer().getPlayer(playerId).getWorld();
 
 		Material[][][] toPaste;
 		if (selection.lastSelectedCuboid != null) {
@@ -199,44 +200,43 @@ public class CuboidAction {
 		return 0;
 	}
 
-	public static byte saveCuboid(String playerName, String cuboidName) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+	public static byte saveCuboid(UUID playerId, String cuboidName) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		
+		World world = Bukkit.getPlayer(playerId).getWorld();
 		int Xsize = selection.secondCorner[0] - selection.firstCorner[0] + 1;
 		int Ysize = selection.secondCorner[1] - selection.firstCorner[1] + 1;
 		int Zsize = selection.secondCorner[2] - selection.firstCorner[2] + 1;
 
-		int[][][] tableaux = new int[Xsize][][];
+		Material[][][] tableaux = new Material[Xsize][][];
 		for (int i = 0; i < Xsize; i++) {
-			tableaux[i] = new int[Ysize][];
+			tableaux[i] = new Material[Ysize][];
+			
 			for (int j = 0; j < Ysize; ++j) {
-				tableaux[i][j] = new int[Zsize];
-				for (int k = 0; k < Zsize; ++k)
-					tableaux[i][j][k] = plugin
-							.getServer()
-							.getPlayer(playerName)
-							.getWorld()
-							.getBlockTypeIdAt(selection.firstCorner[0] + i,
-									selection.firstCorner[1] + j,
-									selection.firstCorner[2] + k);
+				tableaux[i][j] = new Material[Zsize];
+				
+				for (int k = 0; k < Zsize; ++k) {
+					tableaux[i][j][k] = world.getBlockAt(selection.firstCorner[0] + i, selection.firstCorner[1] + j, selection.firstCorner[2] + k).getType();
+				}
 			}
 		}
 
-		return new CuboidContent(plugin, playerName, cuboidName, tableaux)
-				.save();
+		return new CuboidContent(plugin, playerId, cuboidName, tableaux).save();
 	}
 
-	public static byte loadCuboid(String playerName, String cuboidName) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		CuboidContent data = new CuboidContent(playerName, cuboidName);
+	public static byte loadCuboid(UUID playerId, String cuboidName) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		CuboidContent data = new CuboidContent(playerId, cuboidName);
+		World world = Bukkit.getPlayer(playerId).getWorld();
 
 		if (data.loadReturnCode == 0) {
 
-			int[][][] tableau = data.getData();
+			Material[][][] tableau = data.getData();
 			int Xsize = tableau.length;
 			int Ysize = tableau[0].length;
 			int Zsize = tableau[0][0].length;
 
-			copyCuboid(playerName, selection, selection.firstCorner[0],
+			copyCuboid(playerId, selection, selection.firstCorner[0],
 					selection.firstCorner[0] + Xsize, selection.firstCorner[1],
 					selection.firstCorner[1] + Ysize, selection.firstCorner[2],
 					selection.firstCorner[2] + Zsize);
@@ -245,20 +245,7 @@ public class CuboidAction {
 				for (int i = 0; i < Xsize; i++) {
 					for (int j = 0; j < Ysize; ++j) {
 						for (int k = 0; k < Zsize; ++k) {
-							Bukkit.getServer()
-									.getPlayer(playerName)
-									.getWorld()
-									.getBlockAt(
-											new Location(Bukkit.getServer()
-													.getPlayer(playerName)
-													.getWorld(),
-													selection.firstCorner[0]
-															+ i,
-													selection.firstCorner[1]
-															+ j,
-													selection.firstCorner[2]
-															+ k))
-									.setTypeId(tableau[i][j][k]);
+							world.getBlockAt(selection.firstCorner[0] + i, selection.firstCorner[1] + j, selection.firstCorner[2] + k).setType(tableau[i][j][k]);
 						}
 					}
 				}
@@ -268,70 +255,59 @@ public class CuboidAction {
 		return data.loadReturnCode;
 	}
 
-	public static int blocksCount(String playerName) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+	public static int blocksCount(UUID playerId) {
+		CuboidSelection selection = getPlayerSelection(playerId);
 		int Xsize = selection.secondCorner[0] - selection.firstCorner[0] + 1;
 		int Ysize = selection.secondCorner[1] - selection.firstCorner[1] + 1;
 		int Zsize = selection.secondCorner[2] - selection.firstCorner[2] + 1;
 		return Xsize * Ysize * Zsize;
 	}
 
-	public static void emptyCuboid(String playerName) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(playerName, selection, false);
+	public static void emptyCuboid(UUID playerId) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		copyCuboid(playerId, selection, false);
+		
+		World world = Bukkit.getPlayer(playerId).getWorld();
 
 		synchronized (lock) {
 			for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
-						Bukkit.getServer()
-								.getPlayer(playerName)
-								.getWorld()
-								.getBlockAt(
-										new Location(Bukkit.getServer()
-												.getPlayer(playerName)
-												.getWorld(), i, j, k))
-								.setTypeId(0);
+						world.getBlockAt(i, j, k).setType(Material.AIR);
 					}
 				}
 			}
 		}
 
 		if (Cuboid.logging)
-			plugin.getLogger()
-					.log(Level.INFO, playerName + " emptied a cuboid");
+			Bukkit.getLogger().log(Level.INFO, Bukkit.getPlayer(playerId).getDisplayName() + " emptied a cuboid");
 	}
 
-	public static void fillCuboid(String playerName, int bloctype) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(playerName, selection, false);
+	public static void fillCuboid(UUID playerId, Material blockType) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		copyCuboid(playerId, selection, false);
+		
+		World world = Bukkit.getPlayer(playerId).getWorld();
 
 		synchronized (lock) {
 			for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
-						Bukkit.getServer()
-								.getPlayer(playerName)
-								.getWorld()
-								.getBlockAt(
-										new Location(Bukkit.getServer()
-												.getPlayer(playerName)
-												.getWorld(), i, j, k))
-								.setTypeId(bloctype);
-						// Bukkit.getServer().getWorld("world").setBlockAt(bloctype,
-						// i, j, k);
+						world.getBlockAt(i, j, k).setType(blockType);
 					}
 				}
 			}
 		}
 
 		if (Cuboid.logging)
-			plugin.getLogger().log(Level.INFO, playerName + " filled a cuboid");
+			plugin.getLogger().log(Level.INFO, Bukkit.getPlayer(playerId).getDisplayName() + " filled a cuboid");
 	}
 
-	public static void replaceBlocks(String playerName, int[] replaceParams) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(playerName, selection, false);
+	public static void replaceBlocks(UUID playerId, Material[] replaceParams) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		copyCuboid(playerId, selection, false);
+		
+		World world = Bukkit.getPlayer(playerId).getWorld();
 
 		synchronized (lock) {
 			int targetBlockIndex = replaceParams.length - 1;
@@ -339,39 +315,24 @@ public class CuboidAction {
 				for (int j = selection.firstCorner[1]; j <= selection.secondCorner[1]; j++) {
 					for (int k = selection.firstCorner[2]; k <= selection.secondCorner[2]; k++) {
 						for (int l = 0; l < targetBlockIndex; l++) {
-							if (Bukkit.getServer().getPlayer(playerName)
-									.getWorld().getBlockTypeIdAt(i, j, k) == replaceParams[l]) {
-								Bukkit.getServer()
-										.getPlayer(playerName)
-										.getWorld()
-										.getBlockAt(
-												new Location(Bukkit.getServer()
-														.getPlayer(playerName)
-														.getWorld(), i, j, k))
-										.setTypeId(
-												replaceParams[targetBlockIndex]);
-								// Bukkit.getServer()
-								// .getWorld("world")
-								// .setBlockAt(
-								// replaceParams[targetBlockIndex],
-								// i, j, k);
+							if (world.getBlockAt(i, j, k).getType() == replaceParams[l]) {
+								world.getBlockAt(i, j, k).setType(replaceParams[targetBlockIndex]);
 							}
 						}
 					}
 				}
 			}
 			if (Cuboid.logging)
-				plugin.getLogger().log(Level.INFO,
-						playerName + " replaced blocks inside a cuboid");
+				Bukkit.getLogger().log(Level.INFO, Bukkit.getPlayer(playerId).getDisplayName() + " replaced blocks inside a cuboid");
 		}
 	}
 
-	public static void buildCuboidFaces(String playerName, Material blockType, boolean sixFaces) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(playerName, selection, false);
+	public static void buildCuboidFaces(UUID playerId, Material blockType, boolean sixFaces) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		copyCuboid(playerId, selection, false);
 		
 		Server server = Bukkit.getServer();
-		World world = server.getPlayer(playerName).getWorld();
+		World world = server.getPlayer(playerId).getWorld();
 
 		synchronized (lock) {
 			for (int i = selection.firstCorner[0]; i <= selection.secondCorner[0]; i++) {
@@ -405,22 +366,22 @@ public class CuboidAction {
 			}
 			
 			if (Cuboid.logging) {
-				plugin.getLogger().log( Level.INFO, playerName + " built the " + ((sixFaces) ? "faces" : "walls") + " of a cuboid");
+				plugin.getLogger().log( Level.INFO, Bukkit.getPlayer(playerId).getDisplayName() + " built the " + ((sixFaces) ? "faces" : "walls") + " of a cuboid");
 			}
 		}
 	}
 
-	public static void rotateCuboidContent(String playerName, int rotationType) {
-		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(playerName, selection, false);
+	public static void rotateCuboidContent(UUID playerId, int rotationType) {
+		CuboidSelection selection = getPlayerSelection(playerId);
+		copyCuboid(playerId, selection, false);
 
 		synchronized (lock) {
-			if (rotationType == 0) { // 90° clockwise
+			if (rotationType == 0) { // 90, clockwise
 			}
-			if (rotationType == 1) { // 90° counter-clockwise
+			if (rotationType == 1) { // 90, counter-clockwise
 
 			}
-			if (rotationType == 2) { // 180°
+			if (rotationType == 2) { // 180
 
 			}
 			if (rotationType == 3) { // upside-down
@@ -429,18 +390,18 @@ public class CuboidAction {
 		}
 
 		if (Cuboid.logging)
-			plugin.getLogger().log(Level.INFO, playerName + "");
+			plugin.getLogger().log(Level.INFO, Bukkit.getPlayer(playerId).getDisplayName() + " rotated a cuboid.");
 	}
 
 	public static void moveCuboidContent(Player player, String movementType, int value) {
-		String playerName = player.getName();
-		CuboidSelection selection = getPlayerSelection(playerName);
-		copyCuboid(playerName, selection, false);
+		UUID playerId = player.getUniqueId();
+		CuboidSelection selection = getPlayerSelection(playerId);
+		copyCuboid(playerId, selection, false);
 		World world = player.getWorld();
 
 		synchronized (lock) {
 			if (movementType.equalsIgnoreCase("East")) {
-				copyCuboid(playerName, selection, selection.firstCorner[0], selection.secondCorner[0], selection.firstCorner[1], selection.secondCorner[1], selection.firstCorner[2] - value, selection.secondCorner[2]);
+				copyCuboid(playerId, selection, selection.firstCorner[0], selection.secondCorner[0], selection.firstCorner[1], selection.secondCorner[1], selection.firstCorner[2] - value, selection.secondCorner[2]);
 				
 				int deleteIterator = 0;
 				
@@ -462,7 +423,7 @@ public class CuboidAction {
 				selection.firstCorner[2] -= value;
 				selection.secondCorner[2] -= value;
 			} else if (movementType.equalsIgnoreCase("North")) {
-				copyCuboid(playerName, selection, selection.firstCorner[0]
+				copyCuboid(playerId, selection, selection.firstCorner[0]
 						- value, selection.secondCorner[0],
 						selection.firstCorner[1], selection.secondCorner[1],
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -485,7 +446,7 @@ public class CuboidAction {
 				selection.firstCorner[0] -= value;
 				selection.secondCorner[0] -= value;
 			} else if (movementType.equalsIgnoreCase("South")) {
-				copyCuboid(playerName, selection, selection.firstCorner[0],
+				copyCuboid(playerId, selection, selection.firstCorner[0],
 						selection.secondCorner[0] + value,
 						selection.firstCorner[1], selection.secondCorner[1],
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -507,7 +468,7 @@ public class CuboidAction {
 				selection.firstCorner[0] += value;
 				selection.secondCorner[0] += value;
 			} else if (movementType.equalsIgnoreCase("West")) {
-				copyCuboid(playerName, selection, selection.firstCorner[0],
+				copyCuboid(playerId, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1],
 						selection.secondCorner[1], selection.firstCorner[2],
 						selection.secondCorner[2] + value);
@@ -529,7 +490,7 @@ public class CuboidAction {
 				selection.firstCorner[2] += value;
 				selection.secondCorner[2] += value;
 			} else if (movementType.equalsIgnoreCase("Up")) {
-				copyCuboid(playerName, selection, selection.firstCorner[0],
+				copyCuboid(playerId, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1],
 						selection.secondCorner[1] + value,
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -551,7 +512,7 @@ public class CuboidAction {
 				selection.firstCorner[1] += value;
 				selection.secondCorner[1] += value;
 			} else if (movementType.equalsIgnoreCase("Down")) {
-				copyCuboid(playerName, selection, selection.firstCorner[0],
+				copyCuboid(playerId, selection, selection.firstCorner[0],
 						selection.secondCorner[0], selection.firstCorner[1]
 								- value, selection.secondCorner[1],
 						selection.firstCorner[2], selection.secondCorner[2]);
@@ -582,13 +543,13 @@ public class CuboidAction {
 			if (Cuboid.logging)
 				plugin.getLogger().log(
 						Level.INFO,
-						playerName + " moved a cuboid : " + value
+						playerId + " moved a cuboid : " + value
 								+ " block(s) " + movementType);
 		}
 	}
 
-	public static void buildCircle(String playerName, int radius, Material blockType, int height, boolean fill) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+	public static void buildCircle(UUID playerId, int radius, Material blockType, int height, boolean fill) {
+		CuboidSelection selection = getPlayerSelection(playerId);
 
 		int Xcenter = selection.firstCorner[0];
 		int Ycenter = selection.firstCorner[1];
@@ -600,7 +561,7 @@ public class CuboidAction {
 		int Ymin = (height + Ycenter >= Ycenter) ? Ycenter : height + Ycenter;
 		int Ymax = (height + Ycenter <= Ycenter) ? Ycenter : height + Ycenter;
 
-		copyCuboid(playerName, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+		copyCuboid(playerId, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 
 		synchronized (lock) {
 			for (int i = Xmin; i <= Xmax; i++) {
@@ -611,11 +572,11 @@ public class CuboidAction {
 						if (diff < radius + 0.5
 								&& (fill || (!fill && diff > radius - 0.5))) {
 							Bukkit.getServer()
-									.getPlayer(playerName)
+									.getPlayer(playerId)
 									.getWorld()
 									.getBlockAt(
 											new Location(Bukkit.getServer()
-													.getPlayer(playerName)
+													.getPlayer(playerId)
 													.getWorld(), i, j, k))
 									.setType(blockType);
 						}
@@ -627,13 +588,12 @@ public class CuboidAction {
 		if (Cuboid.logging)
 			plugin.getLogger().log(
 					Level.INFO,
-					playerName + " built a "
+					playerId + " built a "
 							+ ((height != 0) ? "cylinder" : "circle"));
 	}
 
-	public static void buildShpere(String playerName, int radius,
-			int blocktype, boolean fill) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+	public static void buildShpere(UUID playerId, int radius, int blocktype, boolean fill) {
+		CuboidSelection selection = getPlayerSelection(playerId);
 
 		int Xcenter = selection.firstCorner[0];
 		int Ycenter = selection.firstCorner[1];
@@ -645,7 +605,7 @@ public class CuboidAction {
 		int Zmin = Zcenter - radius;
 		int Zmax = Zcenter + radius;
 
-		copyCuboid(playerName, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+		copyCuboid(playerId, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 
 		for (int i = Xmin; i <= Xmax; i++) {
 			for (int j = Ymin; j <= Ymax; j++) {
@@ -656,11 +616,11 @@ public class CuboidAction {
 					if (diff < radius + 0.5
 							&& (fill || (!fill && diff > radius - 0.5))) {
 						Bukkit.getServer()
-								.getPlayer(playerName)
+								.getPlayer(playerId)
 								.getWorld()
 								.getBlockAt(
 										new Location(Bukkit.getServer()
-												.getPlayer(playerName)
+												.getPlayer(playerId)
 												.getWorld(), i, j, k))
 								.setTypeId(blocktype);
 					}
@@ -668,13 +628,12 @@ public class CuboidAction {
 			}
 		}
 		if (Cuboid.logging)
-			plugin.getLogger().log(Level.INFO,
-					playerName + " built a " + ((fill) ? "ball" : "sphere"));
+			plugin.getLogger().log(Level.INFO, playerId + " built a " + ((fill) ? "ball" : "sphere"));
 	}
 
-	public static void buildPyramid(String playerName, int radius,
+	public static void buildPyramid(UUID playerId, int radius,
 			int blockType, boolean fill) {
-		CuboidSelection selection = getPlayerSelection(playerName);
+		CuboidSelection selection = getPlayerSelection(playerId);
 
 		int Xcenter = selection.firstCorner[0];
 		int Ycenter = selection.firstCorner[1];
@@ -686,17 +645,17 @@ public class CuboidAction {
 		int Ymin = Ycenter;
 		int Ymax = Ycenter + radius;
 
-		copyCuboid(playerName, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
+		copyCuboid(playerId, selection, Xmin, Xmax, Ymin, Ymax, Zmin, Zmax);
 
 		for (int j = Ymin; j <= Ymax; j++) {
 			for (int i = Xmin; i <= Xmax; i++) {
 				for (int k = Zmin; k <= Zmax; k++) {
 					Bukkit.getServer()
-							.getPlayer(playerName)
+							.getPlayer(playerId)
 							.getWorld()
 							.getBlockAt(
 									new Location(Bukkit.getServer()
-											.getPlayer(playerName).getWorld(),
+											.getPlayer(playerId).getWorld(),
 											i, j, k)).setTypeId(blockType);
 				}
 			}
@@ -717,13 +676,13 @@ public class CuboidAction {
 				for (int i = Xmin; i <= Xmax; i++) {
 					for (int k = Zmin; k <= Zmax; k++) {
 						Bukkit.getServer()
-								.getPlayer(playerName)
+								.getPlayer(playerId)
 								.getWorld()
 								.getBlockAt(
 										new Location(Bukkit.getServer()
-												.getPlayer(playerName)
+												.getPlayer(playerId)
 												.getWorld(), i, j, k))
-								.setTypeId(0);
+								.setType(Material.AIR);
 					}
 				}
 				Xmin += 1;
@@ -736,28 +695,28 @@ public class CuboidAction {
 		if (Cuboid.logging)
 			plugin.getLogger().log(
 					Level.INFO,
-					playerName + " built a " + ((fill) ? "filled " : "")
+					playerId + " built a " + ((fill) ? "filled " : "")
 							+ "pyramid.");
 	}
 
-	/*
-	 * public static void updateChestsState(String playerName, int firstX, int
-	 * firstY, int firstZ, int secondX, int secondY, int secondZ) { int startX =
-	 * (firstX <= secondX) ? firstX : secondX; int startY = (firstY <= secondY)
-	 * ? firstY : secondY; int startZ = (firstZ <= secondZ) ? firstZ : secondZ;
-	 * 
-	 * int endX = (firstX <= secondX) ? secondX : firstX; int endY = (firstY <=
-	 * secondY) ? secondY : firstY; int endZ = (firstZ <= secondZ) ? secondZ :
-	 * firstZ;
-	 * 
-	 * for (int i = startX; i <= endX; i++) { for (int j = startY; j <= endY;
-	 * j++) { for (int k = startZ; k <= endZ; k++) { if
-	 * (Bukkit.getServer().getPlayer(playerName).getWorld() .getBlockTypeIdAt(i,
-	 * j, k) == 54 && Bukkit.getServer().getWorld("world") .getComplexBlock(i,
-	 * j, k) != null) { Bukkit.getServer().getWorld("world") .getComplexBlock(i,
-	 * j, k).update(); }
-	 * 
-	 * } } } }
-	 */
+	
+	 /*public static void updateChestsState(UUID playerId, int firstX, int
+	  firstY, int firstZ, int secondX, int secondY, int secondZ) { int startX =
+	  (firstX <= secondX) ? firstX : secondX; int startY = (firstY <= secondY)
+	  ? firstY : secondY; int startZ = (firstZ <= secondZ) ? firstZ : secondZ;
+	  
+	  int endX = (firstX <= secondX) ? secondX : firstX; int endY = (firstY <=
+	  secondY) ? secondY : firstY; int endZ = (firstZ <= secondZ) ? secondZ :
+	  firstZ;
+	  
+	  for (int i = startX; i <= endX; i++) { for (int j = startY; j <= endY;
+	  j++) { for (int k = startZ; k <= endZ; k++) { if
+	  (Bukkit.getServer().getPlayer(playerId).getWorld() .getBlockTypeIdAt(i,
+	  j, k) == 54 && Bukkit.getServer().getWorld("world") .getComplexBlock(i,
+	  j, k) != null) { Bukkit.getServer().getWorld("world") .getComplexBlock(i,
+	  j, k).update(); }
+	  
+	  } } } }*/
+	 
 
 }

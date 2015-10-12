@@ -24,7 +24,7 @@ public class CFacesCommand implements CommandExecutor {
 		UUID playerId = player.getUniqueId();
 		CuboidC playersArea = CuboidAreas.findCuboidArea(player.getLocation());
 		
-		if (playersArea != null && !playersArea.isAllowed(cmd.getName()) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
+		if (playersArea != null && !playersArea.isAllowed(cmd) && !playersArea.isOwner(player) && !player.hasPermission("cuboidplugin.ignoreownership")) {
 			player.sendMessage(ChatColor.RED + "This command is disallowed in this area");
 			return true;
 		}
